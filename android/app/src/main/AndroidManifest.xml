@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.dom24x7.flutter.dom24x7_flutter">
    <application
-        android:label="dom24x7_flutter"
+        android:label="Dom24x7"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
