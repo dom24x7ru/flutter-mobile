@@ -1,3 +1,4 @@
+import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/pages/about_page.dart';
 import 'package:dom24x7_flutter/pages/app_loader_screen_page.dart';
 import 'package:dom24x7_flutter/pages/house_page.dart';
@@ -11,7 +12,10 @@ import 'package:dom24x7_flutter/pages/services_page.dart';
 import 'package:dom24x7_flutter/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  SocketClient.connect('dom24x7-backend.nl.yapahost.ru');
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
