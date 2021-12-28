@@ -1,0 +1,21 @@
+import 'package:dom24x7_flutter/models/post.dart';
+import 'package:mobx/mobx.dart';
+
+part 'posts.g.dart';
+
+class PostsStore = _PostsStore with _$PostsStore;
+
+abstract class _PostsStore with Store {
+  @observable
+  List<Post>? list;
+
+  @action
+  void setPosts(List<Post> posts) {
+    list = posts;
+  }
+
+  @action
+  void clear() {
+    list = null;
+  }
+}

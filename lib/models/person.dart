@@ -1,0 +1,17 @@
+class Person {
+  String? surname;
+  String? name;
+  String? midname;
+  DateTime? birthday;
+  String? sex;
+  String? biography;
+  String? telegram;
+  // access: {name: {level: all, format: name}, mobile: {level: all}, telegram: {level: all}}
+
+  Person(this.surname, this.name, this.midname);
+  Person.fromMap(Map<String, dynamic> map) {
+    surname = map['surname'];
+    name = map['name'];
+    midname = map['midname'];
+  }
+}

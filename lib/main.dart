@@ -10,10 +10,14 @@ import 'package:dom24x7_flutter/pages/sec_auth_page.dart';
 import 'package:dom24x7_flutter/pages/sec_reg_page.dart';
 import 'package:dom24x7_flutter/pages/services_page.dart';
 import 'package:dom24x7_flutter/pages/settings_page.dart';
+import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  SocketClient.connect('dom24x7-backend.nl.yapahost.ru');
+  final store = MainStore();
+  SocketClient client = SocketClient(store);
+  client.connect('dom24x7-backend.nl.yapahost.ru');
+
   runApp(const MyApp());
 }
 
