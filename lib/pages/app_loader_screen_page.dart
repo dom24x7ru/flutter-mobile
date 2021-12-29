@@ -1,23 +1,18 @@
+import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class AppLoaderScreenPage extends StatefulWidget {
+class AppLoaderScreenPage extends StatelessWidget {
   const AppLoaderScreenPage({Key? key}) : super(key: key);
 
   @override
-  _AppLoaderScreenPageState createState() => _AppLoaderScreenPageState();
-}
-
-class _AppLoaderScreenPageState extends State<AppLoaderScreenPage> {
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
+  Widget build(BuildContext context) {
+    final store = Provider.of<MainStore>(context);
+    final client = store.client;
+    client.on('loaded', this, (event, cont) {
       Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Column(

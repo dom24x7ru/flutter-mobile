@@ -12,6 +12,28 @@ mixin _$MainStore on _MainStore, Store {
   final _$_MainStoreActionController = ActionController(name: '_MainStore');
 
   @override
+  void setClient(SocketClient client) {
+    final _$actionInfo =
+        _$_MainStoreActionController.startAction(name: '_MainStore.setClient');
+    try {
+      return super.setClient(client);
+    } finally {
+      _$_MainStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setLoaded(bool status) {
+    final _$actionInfo =
+        _$_MainStoreActionController.startAction(name: '_MainStore.setLoaded');
+    try {
+      return super.setLoaded(status);
+    } finally {
+      _$_MainStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void clear() {
     final _$actionInfo =
         _$_MainStoreActionController.startAction(name: '_MainStore.clear');

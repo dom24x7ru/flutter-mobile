@@ -15,6 +15,20 @@ class SocketClient extends BasicListener with EventEmitter {
   User? user;
   List<String> channels = [];
 
+  final ready = {
+    'house': true,
+    'flats': false,
+    'posts': false,
+    'pinnedPosts': true,
+    'instructions': true,
+    'invites': false,
+    'documents': true,
+    'faq': true,
+    'recommendations': true,
+    'votes': true,
+    'imChannels': true,
+  };
+
   SocketClient(this.store);
 
   void connect(String url) async {
@@ -171,7 +185,6 @@ class SocketClient extends BasicListener with EventEmitter {
       for (String channel in channels) {
         initChannel(channel);
       }
-      // TODO: переходим на начальную страницу
     }
   }
 
@@ -189,6 +202,7 @@ class SocketClient extends BasicListener with EventEmitter {
       store.posts.setPosts(posts);
       closeChannel('all.$houseId.posts');
       initChannel('posts.$houseId');
+      checkReady('posts');
     }
     if (data['flats'].length != 0) {
       List<Flat> flats = [];
@@ -198,6 +212,7 @@ class SocketClient extends BasicListener with EventEmitter {
       store.flats.setFlats(flats);
       closeChannel('all.$houseId.flats');
       initChannel('flats.$houseId');
+      checkReady('flats');
     }
     if (data['invites'].length != 0) {
       List<Invite> invites = [];
@@ -207,10 +222,23 @@ class SocketClient extends BasicListener with EventEmitter {
       store.invites.setInvites(invites);
       closeChannel('all.$houseId.invites');
       initChannel('invites.${user.id}');
+      checkReady('invites');
     }
   }
 
   void storeClearAll() {
     store.clear();
+  }
+
+  void checkReady(String channel, [bool status = true]) {
+    ready[channel] = status;
+
+    // проверяем, что все данные загружены
+    bool loaded = true;
+    for (bool channelStatus in ready.values) {
+      loaded = loaded && channelStatus;
+    }
+    store.setLoaded(loaded);
+    if (loaded) emit('loaded', 'socket');
   }
 }
