@@ -42,6 +42,7 @@ class _SecRegPage extends State<SecRegPage> {
                     children: [
                       TextField(
                         controller: _cMobile,
+                        keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           prefix: Text('+7 '),
                           hintText: 'Ваш номер телефона',
@@ -49,6 +50,7 @@ class _SecRegPage extends State<SecRegPage> {
                       ),
                       TextField(
                         controller: _cMobileRepeat,
+                        keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           prefix: Text('+7 '),
                           hintText: 'Повторить ваш номер телефона',
@@ -56,6 +58,7 @@ class _SecRegPage extends State<SecRegPage> {
                       ),
                       TextField(
                         controller: _cInviteCode,
+                        keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           hintText: 'Введите код приглашения',
                         ),

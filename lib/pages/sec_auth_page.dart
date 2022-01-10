@@ -39,6 +39,7 @@ class _SecAuthPage extends State<SecAuthPage> {
               padding: const EdgeInsets.all(15.0),
               child: TextField(
                 controller: _cMobile,
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   prefix: Text('+7 '),
                   hintText: 'Ваш номер телефона',

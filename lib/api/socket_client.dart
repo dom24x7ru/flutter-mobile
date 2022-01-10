@@ -7,6 +7,7 @@ import 'package:dom24x7_flutter/store/main.dart';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jwt_decode/jwt_decode.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socketcluster_client/socketcluster_client.dart';
 
 class SocketClient extends BasicListener with EventEmitter {
@@ -32,15 +33,23 @@ class SocketClient extends BasicListener with EventEmitter {
   SocketClient(this.store);
 
   void connect(String url) async {
-    await Socket.connect('ws://$url/socketcluster/', listener: this);
+    final prefs = await SharedPreferences.getInstance();
+    final authToken = prefs.getString('authToken');
+    await Socket.connect('ws://$url/socketcluster/', authToken: authToken, listener: this);
     loadStore();
   }
 
   @override
-  void onAuthentication(Socket socket, bool? status) {
+  void onAuthentication(Socket socket, bool? status) async {
     debugPrint('onAuthentication: socket $socket status $status');
     if (status != null && !status) {
       emit('logout', 'socket');
+    } else {
+      if (socket.authToken != null) {
+        loginInit(socket.authToken);
+      } else {
+        emit('logout', 'socket');
+      }
     }
   }
 
@@ -61,10 +70,20 @@ class SocketClient extends BasicListener with EventEmitter {
   }
 
   @override
-  void onSetAuthToken(String? token, Socket socket) {
+  void onSetAuthToken(String? token, Socket socket) async {
     debugPrint('onSetAuthToken: socket $socket token $token');
-    socket.authToken = token;
+
     if (token != null) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('authToken', token);
+
+      loginInit(token);
+    }
+  }
+
+  void loginInit(String? token) {
+    if (token != null) {
+      socket.authToken = token;
       user = User.fromMap(Jwt.parseJwt(token));
       emit('login', 'socket', user);
 

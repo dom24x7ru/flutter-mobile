@@ -4,6 +4,7 @@ import 'package:dom24x7_flutter/types/mobile_type.dart';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SecCodePage extends StatefulWidget {
   const SecCodePage({Key? key}) : super(key: key);
@@ -54,6 +55,7 @@ class _SecCodePage extends State<SecCodePage> {
                   padding: const EdgeInsets.all(15.0),
                   child: TextField(
                     controller: _cMobileCode,
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                       hintText: 'СМС код',
                     ),
@@ -66,7 +68,7 @@ class _SecCodePage extends State<SecCodePage> {
 
   void sendCode(String mobile, BuildContext context, MainStore store) {
     final code = _cMobileCode.text;
-    store.client.socket.emit('user.auth', { 'mobile': mobile, 'code': code }, (String name, dynamic error, dynamic data) {
+    store.client.socket.emit('user.auth', { 'mobile': mobile, 'code': code }, (String name, dynamic error, dynamic data) async {
       if (error != null) {
         // TODO: отобразить ошибку
         debugPrint('$error');
