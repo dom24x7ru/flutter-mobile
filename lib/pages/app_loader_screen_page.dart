@@ -9,8 +9,12 @@ class AppLoaderScreenPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
     final client = store.client;
-    client.on('loaded', this, (event, cont) {
+    final loadedListener = client.on('loaded', this, (event, cont) {
       Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+    });
+    client.on('logout', this, (event, cont) {
+      client.off(loadedListener);
+      Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false);
     });
 
     return Scaffold(

@@ -2,7 +2,6 @@ import 'package:dom24x7_flutter/models/post.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +34,14 @@ class NewsPage extends StatelessWidget {
             children: [
               ListTile(
                 leading: Icon(icon['icon'], color: icon['color']),
-                title: Text(post.title.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold)),
+                title: Text(
+                    post.title.toUpperCase(),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.0,
+                        color: Colors.black45
+                    )
+                ),
                 subtitle: Text(createdAt),
               ),
               Container(

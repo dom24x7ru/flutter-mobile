@@ -40,7 +40,7 @@ class SocketClient extends BasicListener with EventEmitter {
   void onAuthentication(Socket socket, bool? status) {
     debugPrint('onAuthentication: socket $socket status $status');
     if (status != null && !status) {
-      socket.emit('user.auth', { 'mobile': '79258779819', 'code': '8731' });
+      emit('logout', 'socket');
     }
   }
 
@@ -52,6 +52,7 @@ class SocketClient extends BasicListener with EventEmitter {
   @override
   void onConnected(Socket socket) {
     debugPrint('onConnected: socket $socket');
+    this.socket = socket;
   }
 
   @override
@@ -63,7 +64,6 @@ class SocketClient extends BasicListener with EventEmitter {
   void onSetAuthToken(String? token, Socket socket) {
     debugPrint('onSetAuthToken: socket $socket token $token');
     socket.authToken = token;
-    this.socket = socket;
     if (token != null) {
       user = User.fromMap(Jwt.parseJwt(token));
       emit('login', 'socket', user);
@@ -161,7 +161,6 @@ class SocketClient extends BasicListener with EventEmitter {
       }
       storeClearAll();
     }
-    // TODO: переходим на страницу авторизации
   }
 
   void onUser(event, context) {
