@@ -2,7 +2,9 @@ import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
+import 'package:dom24x7_flutter/widgets/house_info_card_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class SectionInfo {
@@ -37,27 +39,31 @@ class HousePage extends StatelessWidget {
       appBar: Header(context, 'Подъезды'),
       bottomNavigationBar: Footer(context, FooterNav.house),
       body: ListView.builder(
-        itemCount: sections.length,
-        itemBuilder: (BuildContext context, int index) {
-          final sectionNumbers = sections.keys.toList();
-          final section = sections[sectionNumbers[index]];
-          return Card(
-            child: Container(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Подъезд ${section!.number}', style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-                  Text('Этажей: ${section.floors}'),
-                  Text('Квартиры: ${section.flatStart} - ${section.flatLast}'),
-                  Text('Заселено: ${section.flatsWithResidents} (${percent(section.flatsWithResidents / section.flats)})'),
-                  Text('Жильцов: ${section.residents}')
-                ],
-              ),
-            )
-          );
-        }
-      ),
+          itemCount: sections.length + 1,
+          itemBuilder: (BuildContext context, int index) {
+            if (index == 0) {
+              return HouseInfoCard(store.flats.list!);
+            }
+
+            final sectionNumbers = sections.keys.toList();
+            final section = sections[sectionNumbers[index - 1]];
+            return Card(
+                child: Container(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Подъезд ${section!.number}', style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+                      Text('Этажей: ${section.floors}'),
+                      Text('Квартиры: ${section.flatStart} - ${section.flatLast}'),
+                      Text('Заселено: ${section.flatsWithResidents} (${percent(section.flatsWithResidents / section.flats)})'),
+                      Text('Жильцов: ${section.residents}')
+                    ],
+                  ),
+                )
+            );
+          }
+      )
     );
   }
 
@@ -82,6 +88,8 @@ class HousePage extends StatelessWidget {
   }
 
   String percent(double value) {
-    return '${(value * 10000).round() / 100}%';
+    var f = NumberFormat('###.00');
+    var result = f.format((value * 10000).round() / 100);
+    return '$result%';
   }
 }

@@ -5,7 +5,7 @@ class Flat {
   late int floor;
   late int section;
   int? rooms;
-  num? square;
+  double square = 0;
   List<Resident> residents = [];
 
   Flat(this.number, this.floor, this.section);
@@ -14,7 +14,9 @@ class Flat {
     floor = map['floor'];
     section = map['section'];
     rooms = map['rooms'];
-    square = map['square'];
+    if (map['square'] != null) {
+      square = map['square'].toDouble();
+    }
     if (map['residents'] != null) {
       for (var item in map['residents']) {
         residents.add(Resident.fromMap(item));
