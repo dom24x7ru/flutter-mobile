@@ -1,10 +1,8 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/types/mobile_type.dart';
-import 'package:eventify/eventify.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SecCodePage extends StatefulWidget {
   const SecCodePage({Key? key}) : super(key: key);
@@ -53,13 +51,20 @@ class _SecCodePage extends State<SecCodePage> {
             children: [
               Container(
                   padding: const EdgeInsets.all(15.0),
-                  child: TextField(
-                    controller: _cMobileCode,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: 'СМС код',
-                    ),
-                  )),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextField(
+                        controller: _cMobileCode,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          hintText: 'Код авторизации',
+                        ),
+                      ),
+                      const Text('Мы вас сейчас позвоним. Введите последние 4 цифры номера входящего звонка', style: TextStyle(color: Colors.black45))
+                    ],
+                  )
+              ),
               ElevatedButton(onPressed: () => sendCode(mobile, context, store), child: Text('Отправить'.toUpperCase()))
             ],
           )),
