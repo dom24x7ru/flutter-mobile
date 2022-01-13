@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/pages/section_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
@@ -12,7 +13,7 @@ class SectionInfo {
   int floors = 0; // количество этажей
   int flats = 0; // количество квартир
   int flatStart = 1000000; // номер начальной квартиры
-  int flatLast = 0; // номер конечно квартиры
+  int flatLast = 0; // номер конечной квартиры
   int residents = 0; // количество жильцов
   int flatsWithResidents = 0; // количество заселенных квартир (по регистрациям в приложении)
 
@@ -47,24 +48,37 @@ class HousePage extends StatelessWidget {
 
             final sectionNumbers = sections.keys.toList();
             final section = sections[sectionNumbers[index - 1]];
-            return Card(
-                child: Container(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Подъезд ${section!.number}', style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-                      Text('Этажей: ${section.floors}'),
-                      Text('Квартиры: ${section.flatStart} - ${section.flatLast}'),
-                      Text('Заселено: ${section.flatsWithResidents} (${percent(section.flatsWithResidents / section.flats)})'),
-                      Text('Жильцов: ${section.residents}')
-                    ],
-                  ),
-                )
+            return GestureDetector(
+              onTap: () => { goSection(context, store.flats.list!, section!.number) },
+              child: Card(
+                  child: Container(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Подъезд ${section!.number}', style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+                        Text('Этажей: ${section.floors}'),
+                        Text('Квартиры: ${section.flatStart} - ${section.flatLast}'),
+                        Text('Заселено: ${section.flatsWithResidents} (${percent(section.flatsWithResidents / section.flats)})'),
+                        Text('Жильцов: ${section.residents}')
+                      ]
+                    )
+                  )
+              )
             );
           }
       )
     );
+  }
+
+  void goSection(BuildContext context, List<Flat> flats, int sectionNumber) {
+    List<Flat> list = [];
+    for (var flat in flats) {
+      if (flat.section == sectionNumber) {
+        list.add(flat);
+      }
+    }
+    Navigator.push(context, MaterialPageRoute(builder: (context) => SectionPage(list)));
   }
 
   Map<int, SectionInfo> getSections(List<Flat>? flats) {
