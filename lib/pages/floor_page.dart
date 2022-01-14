@@ -4,6 +4,8 @@ import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:dom24x7_flutter/widgets/house_info_card_widget.dart';
 import 'package:flutter/material.dart';
 
+import 'flat_page.dart';
+
 class FloorPage extends StatefulWidget {
   final List<Flat> flats;
 
@@ -29,7 +31,7 @@ class _FloorPageState extends State<FloorPage> {
           final flat = widget.flats[index - 1];
           final Color color = flat.residents.isNotEmpty ? Colors.black : Colors.black12;
           return GestureDetector(
-            onTap: () => {},
+            onTap: () => { goFlat(context, flat) },
             child: Card(
               child: Container(
                 padding: const EdgeInsets.all(15.0),
@@ -48,5 +50,10 @@ class _FloorPageState extends State<FloorPage> {
         }
       )
     );
+  }
+
+  void goFlat(BuildContext context, Flat flat) {
+    if (flat.residents.isEmpty) return;
+    Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(flat)));
   }
 }
