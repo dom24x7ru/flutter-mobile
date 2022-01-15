@@ -22,7 +22,7 @@ class SocketClient extends BasicListener with EventEmitter {
     'posts': false,
     'pinnedPosts': true,
     'instructions': true,
-    'invites': false,
+    'invites': true, // для запуска приложения, не обязательно дожидаться
     'documents': true,
     'faq': true,
     'recommendations': true,

@@ -61,7 +61,7 @@ class _SecCodePage extends State<SecCodePage> {
                           hintText: 'Код авторизации',
                         ),
                       ),
-                      const Text('Мы вас сейчас позвоним. Введите последние 4 цифры номера входящего звонка', style: TextStyle(color: Colors.black45))
+                      const Text('Мы вам сейчас позвоним. Введите последние 4 цифры номера входящего звонка', style: TextStyle(color: Colors.black45))
                     ],
                   )
               ),
