@@ -23,6 +23,7 @@ class _InvitePage extends State<InvitePage> {
     final store = Provider.of<MainStore>(context);
     setState(() {
       invites = store.invites.list;
+      invites ??= [];
     });
 
     return Scaffold(
@@ -53,9 +54,13 @@ class _InvitePage extends State<InvitePage> {
               }
             }
             if (index == 2) {
+              String text = 'Вы еще никого не пригласили';
+              if (invites!.isNotEmpty) {
+                text = 'Последние 10 приглашений';
+              }
               return Container(
                 padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-                child: const Text('Последние 10 приглашений', style: TextStyle(color: Colors.black45))
+                child: Text(text, style: const TextStyle(color: Colors.black45))
               );
             }
             final invite = invites![index - 3];
@@ -99,13 +104,13 @@ class _InvitePage extends State<InvitePage> {
         debugPrint('$error');
       }
       if (data != null) {
-        print(data['code']);
         final newInvite = Invite.fromMap({
           'id': data['id'],
           'createdAt': DateTime.now().millisecondsSinceEpoch,
           'code': data['code'],
           'used': false
         });
+        store.invites.list ??= [];
         store.invites.list!.insert(0, newInvite);
         setState(() {
           invite = newInvite;
