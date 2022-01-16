@@ -77,12 +77,10 @@ class _SecCodePage extends State<SecCodePage> {
       if (error != null) {
         // TODO: отобразить ошибку
         debugPrint('$error');
-        return;
       }
       if (data != null && data['status'] != 'OK') {
         // TODO: сообщить что что-то пошло не так
-        debugPrint('$data');
-        return;
+        debugPrint('$data');;
       }
     });
   }

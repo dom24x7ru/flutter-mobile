@@ -65,12 +65,10 @@ class _SecAuthPage extends State<SecAuthPage> {
       if (error != null) {
         // TODO: отобразить ошибку
         debugPrint('$error');
-        return;
       }
       if (data != null && data['status'] != 'OK') {
         // TODO: сообщить что что-то пошло не так
         debugPrint('$data');
-        return;
       }
       Navigator.pushNamedAndRemoveUntil(context, '/security/code', (route) => false, arguments: MobileType(mobile));
     });
