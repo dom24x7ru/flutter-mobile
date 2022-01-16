@@ -1,5 +1,6 @@
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
+import 'package:dom24x7_flutter/widgets/in_development_info_widget.dart';
 import 'package:flutter/material.dart';
 
 class IMPage extends StatelessWidget {
@@ -10,6 +11,7 @@ class IMPage extends StatelessWidget {
     return Scaffold(
       appBar: Header(context, 'Чаты'),
       bottomNavigationBar: Footer(context, FooterNav.im),
+      body: const InDevelopmentInfo()
     );
   }
 }
