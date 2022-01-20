@@ -1,6 +1,6 @@
-import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/person.dart';
+import 'package:dom24x7_flutter/models/person_access.dart';
 import 'package:dom24x7_flutter/models/resident.dart';
 import 'package:dom24x7_flutter/models/user.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -24,6 +24,8 @@ class _SettingsPage extends State<SettingsPage> {
   List<Flat>? _flats;
   Flat? _flat;
   AccessName? _accessName;
+  bool _mobileLevel = false;
+  bool _telegramLevel = false;
 
   late TextEditingController _cSurname;
   late TextEditingController _cName;
@@ -160,7 +162,7 @@ class _SettingsPage extends State<SettingsPage> {
                       Row(
                           children: [
                             Checkbox(
-                              value: false,
+                              value: _mobileLevel,
                               onChanged: (bool? value) => {},
                             ),
                             const Text('Показывать телефон')
@@ -169,7 +171,7 @@ class _SettingsPage extends State<SettingsPage> {
                       Row(
                           children: [
                             Checkbox(
-                              value: false,
+                              value: _telegramLevel,
                               onChanged: (bool? value) => {},
                             ),
                             const Text('Показывать аккаунт телеграм (если указан)')
@@ -192,7 +194,7 @@ class _SettingsPage extends State<SettingsPage> {
                 )
             ),
             ElevatedButton(
-              onPressed: () => { },
+              onPressed: () => { save(store) },
               child: Text('Сохранить'.toUpperCase()),
             )
           ],
@@ -215,6 +217,20 @@ class _SettingsPage extends State<SettingsPage> {
         _cName.text = person.name!;
         _cMidname.text = person.midname!;
         _cTelegram.text = person.telegram!;
+
+        var access = person.access!.name;
+        if (access!.level == Level.nothing) {
+          _accessName = AccessName.nothing;
+        } else if (access.level == Level.all) {
+          if (access.format == NameFormat.name) {
+            _accessName = AccessName.name;
+          } else if (access.format == NameFormat.all) {
+            _accessName = AccessName.all;
+          }
+        }
+
+        _mobileLevel = person.access!.mobile!.level == Level.all;
+        _telegramLevel = person.access!.telegram!.level == Level.all;
       }
       if (user.resident != null) {
         Resident? resident = user.resident;
@@ -248,5 +264,9 @@ class _SettingsPage extends State<SettingsPage> {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('authToken');
     Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false);
+  }
+
+  void save(MainStore store) {
+    print('save');
   }
 }

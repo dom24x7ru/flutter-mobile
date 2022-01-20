@@ -1,3 +1,5 @@
+import 'package:dom24x7_flutter/models/person_access.dart';
+
 class Person {
   String? surname;
   String? name;
@@ -8,7 +10,7 @@ class Person {
   String? telegram;
   String? mobile;
   bool deleted = false;
-  // access: {name: {level: all, format: name}, mobile: {level: all}, telegram: {level: all}}
+  PersonAccess? access;
 
   Person(this.surname, this.name, this.midname);
   Person.fromMap(Map<String, dynamic> map) {
@@ -21,6 +23,9 @@ class Person {
       deleted = map['deleted'];
     } else {
       deleted = false;
+    }
+    if (map['access'] != null) {
+      access = PersonAccess.fromMap(map['access']);
     }
   }
 }
