@@ -11,7 +11,7 @@ abstract class _UserStore with Store {
 
   @action
   void setUser(User? user) {
-    this.value = user;
+    value = user;
   }
 
   @action
