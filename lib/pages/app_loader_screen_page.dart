@@ -14,7 +14,7 @@ class AppLoaderScreenPage extends StatefulWidget {
 class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
   String _version = '0.0.0';
   late SocketClient _client;
-  List<dynamic> _listeners = [];
+  final List<dynamic> _listeners = [];
 
   @override
   void initState() {
@@ -24,14 +24,11 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
 
-      print(1);
       var listener = _client.on('loaded', this, (event, cont) {
-        print(2);
         Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
       });
       _listeners.add(listener);
       listener = _client.on('logout', this, (event, cont) {
-        print(3);
         Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false);
       });
       _listeners.add(listener);
