@@ -12,6 +12,7 @@ class SecAuthPage extends StatefulWidget {
 
 class _SecAuthPage extends State<SecAuthPage> {
   late TextEditingController _cMobile;
+  String? _errorText;
 
   @override
   void initState() {
@@ -40,9 +41,12 @@ class _SecAuthPage extends State<SecAuthPage> {
               child: TextField(
                 controller: _cMobile,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  prefix: Text('+7 '),
-                  hintText: 'Ваш номер телефона',
+                maxLength: 10,
+                onChanged: (String value) => { setState(() => { _errorText = null }) },
+                decoration: InputDecoration(
+                  prefix: const Text('+7 '),
+                  labelText: 'Ваш номер телефона',
+                  errorText: _errorText
                 ),
               )),
           ElevatedButton(
@@ -60,15 +64,28 @@ class _SecAuthPage extends State<SecAuthPage> {
 
   void sendMobile(BuildContext context, MainStore store) {
     final mobile = '7${_cMobile.text}';
-    // TODO: валидация номера телефона
+
+    // валидация номера телефона
+    if (mobile.length == 1) {
+      setState(() => { _errorText = 'Необходимо указать номер телефона' });
+      return;
+    } else if (mobile.length < 11) {
+      setState(() => { _errorText = 'Номер должен состоять из 10 цифр' });
+      return;
+    }
+
     store.client.socket.emit('user.auth', { 'mobile': mobile }, (String name, dynamic error, dynamic data) {
       if (error != null) {
-        // TODO: отобразить ошибку
-        debugPrint('$error');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
       }
       if (data != null && data['status'] != 'OK') {
-        // TODO: сообщить что что-то пошло не так
-        debugPrint('$data');
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Что-то пошло не так, попробуйте чуть позже'), backgroundColor: Colors.red)
+        );
+        return;
       }
       Navigator.pushNamedAndRemoveUntil(context, '/security/code', (route) => false, arguments: MobileType(mobile));
     });

@@ -57,8 +57,9 @@ class _SecCodePage extends State<SecCodePage> {
                       TextField(
                         controller: _cMobileCode,
                         keyboardType: TextInputType.number,
+                        maxLength: 4,
                         decoration: const InputDecoration(
-                          hintText: 'Код авторизации',
+                          labelText: 'Код авторизации',
                         ),
                       ),
                       const Text('Мы вам сейчас позвоним. Введите последние 4 цифры номера входящего звонка', style: TextStyle(color: Colors.black45))
@@ -75,12 +76,16 @@ class _SecCodePage extends State<SecCodePage> {
     final code = _cMobileCode.text;
     store.client.socket.emit('user.auth', { 'mobile': mobile, 'code': code }, (String name, dynamic error, dynamic data) async {
       if (error != null) {
-        // TODO: отобразить ошибку
-        debugPrint('$error');
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
       }
       if (data != null && data['status'] != 'OK') {
-        // TODO: сообщить что что-то пошло не так
-        debugPrint('$data');;
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Что-то пошло не так, попробуйте чуть позже'), backgroundColor: Colors.red)
+        );
+        return;
       }
     });
   }
