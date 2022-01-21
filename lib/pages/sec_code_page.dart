@@ -81,12 +81,6 @@ class _SecCodePage extends State<SecCodePage> {
         );
         return;
       }
-      if (data != null && data['status'] != 'OK') {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Что-то пошло не так, попробуйте чуть позже'), backgroundColor: Colors.red)
-        );
-        return;
-      }
     });
   }
 }

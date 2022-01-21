@@ -1,3 +1,4 @@
+import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -12,11 +13,37 @@ class AppLoaderScreenPage extends StatefulWidget {
 
 class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
   String _version = '0.0.0';
+  late SocketClient _client;
+  List<dynamic> _listeners = [];
 
   @override
   void initState() {
     super.initState();
     _initPackageInfo();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      final store = Provider.of<MainStore>(context, listen: false);
+      _client = store.client;
+
+      print(1);
+      var listener = _client.on('loaded', this, (event, cont) {
+        print(2);
+        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+      });
+      _listeners.add(listener);
+      listener = _client.on('logout', this, (event, cont) {
+        print(3);
+        Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false);
+      });
+      _listeners.add(listener);
+    });
+  }
+
+  @override
+  void dispose() {
+    for (var listener in _listeners) {
+      _client.off(listener);
+    }
+    super.dispose();
   }
 
   Future<void> _initPackageInfo() async {
@@ -28,16 +55,6 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    final store = Provider.of<MainStore>(context);
-    final client = store.client;
-    final loadedListener = client.on('loaded', this, (event, cont) {
-      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-    });
-    client.on('logout', this, (event, cont) {
-      client.off(loadedListener);
-      Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false);
-    });
-
     return Scaffold(
       body: Center(
         child: Column(
