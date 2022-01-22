@@ -38,5 +38,7 @@ abstract class _MainStore with Store {
     flats.clear();
     posts.clear();
     invites.clear();
+
+    loaded = false;
   }
 }

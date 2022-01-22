@@ -16,7 +16,7 @@ class NewsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
 
-    if (!store.loaded) {
+    if (!store.loaded || store.posts.list == null) {
       return Scaffold(
         appBar: Header(context, 'Новости'),
         bottomNavigationBar: Footer(context, FooterNav.news)
