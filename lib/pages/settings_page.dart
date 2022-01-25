@@ -163,7 +163,7 @@ class _SettingsPage extends State<SettingsPage> {
                           children: [
                             Checkbox(
                               value: _mobileLevel,
-                              onChanged: (bool? value) => {},
+                              onChanged: (bool? value) => { setState(() => { _mobileLevel = value! }) },
                             ),
                             const Text('Показывать телефон')
                           ]
@@ -172,7 +172,7 @@ class _SettingsPage extends State<SettingsPage> {
                           children: [
                             Checkbox(
                               value: _telegramLevel,
-                              onChanged: (bool? value) => {},
+                              onChanged: (bool? value) => { setState(() => { _telegramLevel = value! }) },
                             ),
                             const Text('Показывать аккаунт телеграм (если указан)')
                           ]
@@ -267,6 +267,39 @@ class _SettingsPage extends State<SettingsPage> {
   }
 
   void save(MainStore store) {
-    print('save');
+    var data = {
+      'surname': _cSurname.text.trim(),
+      'name': _cName.text.trim(),
+      'midname': _cMidname.text.trim(),
+      'telegram': _cTelegram.text.trim(),
+      'flat': _flat!.id,
+      'access': {
+        'name': {
+          'level': _accessName == AccessName.nothing ? 'nothing' : 'all',
+          'format': _accessName == AccessName.all ? 'all' : 'name'
+        },
+        'mobile': { 'level': _mobileLevel ? 'all' : 'friends' },
+        'telegram': { 'level': _telegramLevel ? 'all' : 'friends' }
+      }
+    };
+    store.client.socket.emit('user.saveProfile', data, (String name, dynamic error, dynamic data) {
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+      if (data != null && data['status'] == 'OK') {
+        store.user.setPerson(Person.fromMap(data['person']));
+        store.user.setResident(Resident.fromMap(data['resident']));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Успешно сохранили'), backgroundColor: Colors.green)
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Сохранить не удалось. Попробуйте сохранить позже'), backgroundColor: Colors.red)
+        );
+      }
+    });
   }
 }

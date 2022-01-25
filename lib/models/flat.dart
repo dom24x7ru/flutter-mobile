@@ -1,6 +1,7 @@
 import 'package:dom24x7_flutter/models/resident.dart';
 
 class Flat {
+  int? id;
   late int number;
   late int floor;
   late int section;
@@ -8,8 +9,9 @@ class Flat {
   double square = 0;
   List<Resident> residents = [];
 
-  Flat(this.number, this.floor, this.section);
+  Flat(this.id, this.number, this.floor, this.section);
   Flat.fromMap(Map<String, dynamic> map) {
+    id = map['id'];
     number = map['number'];
     floor = map['floor'];
     section = map['section'];

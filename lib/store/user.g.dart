@@ -38,6 +38,28 @@ mixin _$UserStore on _UserStore, Store {
   }
 
   @override
+  void setPerson(Person? person) {
+    final _$actionInfo =
+        _$_UserStoreActionController.startAction(name: '_UserStore.setPerson');
+    try {
+      return super.setPerson(person);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setResident(Resident? resident) {
+    final _$actionInfo = _$_UserStoreActionController.startAction(
+        name: '_UserStore.setResident');
+    try {
+      return super.setResident(resident);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void clear() {
     final _$actionInfo =
         _$_UserStoreActionController.startAction(name: '_UserStore.clear');
