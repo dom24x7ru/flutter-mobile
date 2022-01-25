@@ -216,7 +216,7 @@ class _SettingsPage extends State<SettingsPage> {
         _cSurname.text = person!.surname!;
         _cName.text = person.name!;
         _cMidname.text = person.midname!;
-        _cTelegram.text = person.telegram!;
+        _cTelegram.text = person.telegram != null ? person.telegram! : '';
 
         var access = person.access!.name;
         if (access!.level == Level.nothing) {

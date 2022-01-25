@@ -74,6 +74,12 @@ class _SecAuthPage extends State<SecAuthPage> {
       return;
     }
 
+    if (mobile == '70000000000') {
+      // тестовый пользователь
+      Navigator.pushNamedAndRemoveUntil(context, '/security/code', (route) => false, arguments: MobileType(mobile));
+      return;
+    }
+
     store.client.socket.emit('user.auth', { 'mobile': mobile }, (String name, dynamic error, dynamic data) {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
