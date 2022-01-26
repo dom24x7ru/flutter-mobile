@@ -12,6 +12,7 @@ import 'package:socketcluster_client/socketcluster_client.dart';
 
 class SocketClient extends BasicListener with EventEmitter {
   late Socket socket;
+  late String url;
   MainStore store;
   User? user;
   List<String> channels = [];
@@ -35,7 +36,12 @@ class SocketClient extends BasicListener with EventEmitter {
   void connect(String url) async {
     final prefs = await SharedPreferences.getInstance();
     final authToken = prefs.getString('authToken');
-    await Socket.connect('ws://$url/socketcluster/', authToken: authToken, listener: this);
+    this.url = url;
+    await Socket.connect(
+        'ws://$url/socketcluster/',
+        authToken: authToken,
+        listener: this
+    );
     loadStore();
   }
 
@@ -67,6 +73,7 @@ class SocketClient extends BasicListener with EventEmitter {
   @override
   void onDisconnected(Socket socket) {
     debugPrint('onDisconnected: socket $socket');
+    connect(url);
   }
 
   @override
