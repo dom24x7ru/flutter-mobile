@@ -1,10 +1,15 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
+import 'package:dom24x7_flutter/store/documents.dart';
+import 'package:dom24x7_flutter/store/faq.dart';
 import 'package:dom24x7_flutter/store/flats.dart';
 import 'package:dom24x7_flutter/store/invites.dart';
 import 'package:dom24x7_flutter/store/posts.dart';
+import 'package:dom24x7_flutter/store/recommendations.dart';
 import 'package:dom24x7_flutter/store/user.dart';
 import 'package:dom24x7_flutter/store/version.dart';
 import 'package:mobx/mobx.dart';
+
+import 'instructions.dart';
 
 part 'main.g.dart';
 
@@ -18,6 +23,10 @@ abstract class _MainStore with Store {
   final flats = FlatsStore();
   final posts = PostsStore();
   final invites = InvitesStore();
+  final instructions = InstructionsStore();
+  final documents = DocumentsStore();
+  final faq = FAQ();
+  final recommendations = RecommendationsStore();
 
   bool loaded = false;
 
@@ -38,6 +47,10 @@ abstract class _MainStore with Store {
     flats.clear();
     posts.clear();
     invites.clear();
+    instructions.clear();
+    documents.clear();
+    faq.clear();
+    recommendations.clear();
 
     loaded = false;
   }

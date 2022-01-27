@@ -8,7 +8,7 @@ import 'package:dom24x7_flutter/pages/profile_page.dart';
 import 'package:dom24x7_flutter/pages/sec_auth_page.dart';
 import 'package:dom24x7_flutter/pages/sec_code_page.dart';
 import 'package:dom24x7_flutter/pages/sec_reg_page.dart';
-import 'package:dom24x7_flutter/pages/services_page.dart';
+import 'package:dom24x7_flutter/pages/services/services_page.dart';
 import 'package:dom24x7_flutter/pages/settings_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';

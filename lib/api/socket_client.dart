@@ -1,6 +1,10 @@
+import 'package:dom24x7_flutter/models/document.dart';
+import 'package:dom24x7_flutter/models/faq_item.dart';
 import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/instruction.dart';
 import 'package:dom24x7_flutter/models/invite.dart';
 import 'package:dom24x7_flutter/models/post.dart';
+import 'package:dom24x7_flutter/models/recommendation.dart';
 import 'package:dom24x7_flutter/models/user.dart';
 import 'package:dom24x7_flutter/models/version.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -137,10 +141,10 @@ class SocketClient extends BasicListener with EventEmitter {
     on('posts', this, onNothing);
     on('pinnedPosts', this, onNothing);
     on('invites', this, onNothing);
-    on('instructions', this, onNothing);
-    on('documents', this, onNothing);
-    on('faq', this, onNothing);
-    on('recommendations', this, onNothing);
+    on('instructions', this, onInstructions);
+    on('documents', this, onDocuments);
+    on('faq', this, onFAQ);
+    on('recommendations', this, onRecommendations);
     on('votes', this, onNothing);
     on('vote', this, onNothing);
     on('imChannels', this, onNothing);
@@ -249,6 +253,30 @@ class SocketClient extends BasicListener with EventEmitter {
       initChannel('invites.${user.id}');
       checkReady('invites');
     }
+  }
+
+  void onInstructions(event, context) {
+    if (event.eventData['event'] == 'ready') return;
+    final data = event.eventData['data'];
+    store.instructions.addInstruction(Instruction.fromMap(data));
+  }
+
+  void onDocuments(event, context) {
+    if (event.eventData['event'] == 'ready') return;
+    final data = event.eventData['data'];
+    store.documents.addDocument(Document.fromMap(data));
+  }
+
+  void onFAQ(event, context) {
+    if (event.eventData['event'] == 'ready') return;
+    final data = event.eventData['data'];
+    store.faq.addFAQItem(FAQItem.fromMap(data));
+  }
+
+  void onRecommendations(event, context) {
+    if (event.eventData['event'] == 'ready') return;
+    final data = event.eventData['data'];
+    store.recommendations.addRecommendation(Recommendation.fromMap(data));
   }
 
   void storeClearAll() {
