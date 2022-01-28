@@ -17,16 +17,19 @@ class InstructionPage extends StatelessWidget {
         itemCount: instruction.body.length + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
+            final widgets = <Widget>[
+              Text(instruction.title, style: const TextStyle(fontSize: 18.0, color: Colors.white)),
+            ];
+            if (instruction.subtitle.isNotEmpty) {
+              widgets.add(Text(instruction.subtitle, style: const TextStyle(color: Colors.white)));
+            }
             return Card(
               child: Container(
                   padding: const EdgeInsets.all(15.0),
                   color: Colors.blue,
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(instruction.title, style: const TextStyle(fontSize: 18.0, color: Colors.white)),
-                        Text(instruction.subtitle, style: const TextStyle(color: Colors.white)),
-                      ]
+                      children: widgets
                   )
               )
             );
