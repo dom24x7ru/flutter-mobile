@@ -1,3 +1,7 @@
+import 'package:dom24x7_flutter/pages/services/documents_page.dart';
+import 'package:dom24x7_flutter/pages/services/faq_page.dart';
+import 'package:dom24x7_flutter/pages/services/recommendations_page.dart';
+import 'package:dom24x7_flutter/pages/services/votes_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
@@ -65,19 +69,39 @@ class ServicesPage extends StatelessWidget {
               ServiceCard('Документы',
                   count: store.documents.list!.length,
                   color: Colors.red,
-                  onTap: () => {print('Документы')}),
-              ServiceCard('Голосование',
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const DocumentsPage()))
+                  }),
+              ServiceCard('Голосования',
                   count: -1,
                   color: Colors.green,
-                  onTap: () => {print('Голосование')}),
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const VotesPage()))
+                  }),
               ServiceCard('ЧаВо',
                   count: store.faq.list!.length,
                   color: Colors.deepPurple,
-                  onTap: () => {print('ЧаВо')}),
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const FAQPage()))
+                  }),
               ServiceCard('Рекомендации',
                   count: store.recommendations.list!.length,
                   color: Colors.purpleAccent,
-                  onTap: () => {print('Рекомендации')}),
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RecommendationsPage()))
+                  }),
             ])));
   }
 }
