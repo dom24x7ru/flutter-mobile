@@ -1,5 +1,5 @@
 import 'package:dom24x7_flutter/pages/services/documents_page.dart';
-import 'package:dom24x7_flutter/pages/services/faq_page.dart';
+import 'package:dom24x7_flutter/pages/services/faq_categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/recommendations_page.dart';
 import 'package:dom24x7_flutter/pages/services/votes_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -76,7 +76,7 @@ class ServicesPage extends StatelessWidget {
                             builder: (context) => const DocumentsPage()))
                   }),
               ServiceCard('Голосования',
-                  count: -1,
+                  count: 0,
                   color: Colors.green,
                   onTap: () => {
                     Navigator.push(
@@ -91,7 +91,7 @@ class ServicesPage extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const FAQPage()))
+                            builder: (context) => const FAQCategoriesPage()))
                   }),
               ServiceCard('Рекомендации',
                   count: store.recommendations.list!.length,
