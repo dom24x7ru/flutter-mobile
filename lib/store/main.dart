@@ -7,6 +7,7 @@ import 'package:dom24x7_flutter/store/posts.dart';
 import 'package:dom24x7_flutter/store/recommendations.dart';
 import 'package:dom24x7_flutter/store/user.dart';
 import 'package:dom24x7_flutter/store/version.dart';
+import 'package:dom24x7_flutter/store/votes.dart';
 import 'package:mobx/mobx.dart';
 
 import 'instructions.dart';
@@ -27,6 +28,7 @@ abstract class _MainStore with Store {
   final documents = DocumentsStore();
   final faq = FAQ();
   final recommendations = RecommendationsStore();
+  final votes = VotesStore();
 
   bool loaded = false;
 
@@ -51,6 +53,7 @@ abstract class _MainStore with Store {
     documents.clear();
     faq.clear();
     recommendations.clear();
+    votes.clear();
 
     loaded = false;
   }

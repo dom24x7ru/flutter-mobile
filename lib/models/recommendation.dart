@@ -24,6 +24,7 @@ class RecommendationCategory {
   late String name;
   late String img;
   late int sort;
+  int count = 0;
 
   RecommendationCategory.fromMap(Map<String, dynamic> map) {
     id = map['id'];
@@ -36,6 +37,7 @@ class RecommendationCategory {
 class Recommendation {
   late int id;
   late String title;
+  late String body;
   late bool deleted;
   late RecommendationExtra extra;
   late RecommendationCategory category;
@@ -45,6 +47,7 @@ class Recommendation {
   Recommendation.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     title = map['title'];
+    body = map['body'];
     deleted = map['deleted'];
     extra = RecommendationExtra.fromMap(map['extra']);
     category = RecommendationCategory.fromMap(map['category']);

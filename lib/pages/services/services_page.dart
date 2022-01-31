@@ -1,6 +1,6 @@
 import 'package:dom24x7_flutter/pages/services/documents_page.dart';
-import 'package:dom24x7_flutter/pages/services/faq_categories_page.dart';
-import 'package:dom24x7_flutter/pages/services/recommendations_page.dart';
+import 'package:dom24x7_flutter/pages/services/faq/categories_page.dart';
+import 'package:dom24x7_flutter/pages/services/recommendations/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/votes_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
@@ -8,7 +8,7 @@ import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'instructions_page.dart';
+import 'instructions/instructions_page.dart';
 
 class ServiceCard extends StatelessWidget {
   final String title;
@@ -76,7 +76,7 @@ class ServicesPage extends StatelessWidget {
                             builder: (context) => const DocumentsPage()))
                   }),
               ServiceCard('Голосования',
-                  count: 0,
+                  count: store.votes.list!.length,
                   color: Colors.green,
                   onTap: () => {
                     Navigator.push(
@@ -100,7 +100,7 @@ class ServicesPage extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const RecommendationsPage()))
+                            builder: (context) => const RecommendationsCategoriesPage()))
                   }),
             ])));
   }

@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/pages/services/instruction_page.dart';
+import 'package:dom24x7_flutter/pages/services/instructions/instruction_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';

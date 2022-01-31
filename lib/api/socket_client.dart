@@ -7,6 +7,7 @@ import 'package:dom24x7_flutter/models/post.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
 import 'package:dom24x7_flutter/models/user.dart';
 import 'package:dom24x7_flutter/models/version.dart';
+import 'package:dom24x7_flutter/models/vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/cupertino.dart';
@@ -145,8 +146,8 @@ class SocketClient extends BasicListener with EventEmitter {
     on('documents', this, onDocuments);
     on('faq', this, onFAQ);
     on('recommendations', this, onRecommendations);
-    on('votes', this, onNothing);
-    on('vote', this, onNothing);
+    on('votes', this, onVotes);
+    on('vote', this, onVote);
     on('imChannels', this, onNothing);
     on('imChannel', this, onNothing);
     on('channel.ready', this, onNothing);
@@ -277,6 +278,25 @@ class SocketClient extends BasicListener with EventEmitter {
     if (event.eventData['event'] == 'ready') return;
     final data = event.eventData['data'];
     store.recommendations.addRecommendation(Recommendation.fromMap(data));
+  }
+
+  void onVotes(event, context) {
+    if (event.eventData['event'] == 'ready') {
+      // подписаться на каналы по каждому пришедшему голосованию
+      final List<Vote> votes = store.votes.list!;
+      for (Vote vote in votes) {
+        initChannel('vote.${vote.id}');
+      }
+      return;
+    }
+    final data = event.eventData['data'];
+    store.votes.addVote(Vote.fromMap(data));
+  }
+
+  void onVote(event, context) {
+    if (event.eventData['event'] == 'ready') return;
+    final data = event.eventData['data'];
+    store.votes.addVote(Vote.fromMap(data));
   }
 
   void storeClearAll() {
