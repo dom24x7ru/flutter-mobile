@@ -72,14 +72,12 @@ class NewsPage extends StatelessWidget {
       case 'news': return {'icon': Icons.notifications, 'color': Colors.blue};
       case 'instruction': return {'icon': Icons.checklist, 'color': Colors.blue};
       default: {
-        print(post.type);
         return {'icon': Icons.notifications, 'color': Colors.blue};
       }
     }
   }
 
   void goPage(BuildContext context, Post post, List<Flat> flats) {
-    print('${post.type}: ${post.url}');
     if (post.type == 'person') {
       final flatNumber = post.url!.replaceAll('/flat/', '');
       for (var flat in flats) {

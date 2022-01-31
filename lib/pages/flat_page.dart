@@ -68,7 +68,10 @@ class _FlatPageState extends State<FlatPage> {
             Text(getFullName(person), style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))
           ];
           if (person.mobile != null) {
-            children.add(Text(getMobile(person)));
+            children.add(InkWell(
+              child: Text(getMobile(person), style: const TextStyle(color: Colors.blue)),
+              onTap: () => { launch('tel:${person.mobile}') }
+            ));
           }
           if (person.telegram != null) {
             children.add(InkWell(
