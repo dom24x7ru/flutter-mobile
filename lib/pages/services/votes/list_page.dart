@@ -1,3 +1,4 @@
+import 'package:dom24x7_flutter/models/vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
@@ -21,10 +22,9 @@ class VotesListPage extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           final vote = votes[votes.length - index - 1];
           final createdAt = DateFormat('dd.MM.y HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(vote.createdAt));
-          final List<Widget> status = [
-            const Icon(Icons.done, color: Colors.green),
-            const Icon(Icons.block, color: Colors.red)
-          ];
+          final List<Widget> status = [];
+          if (answered(store, vote)) status.add(const Icon(Icons.done, color: Colors.green, size: 15.0));
+          if (vote.closed) status.add(const Icon(Icons.block, color: Colors.red, size: 15.0));
           return Card(
             child: Container(
               padding: const EdgeInsets.all(15.0),
@@ -34,8 +34,13 @@ class VotesListPage extends StatelessWidget {
                   Text(vote.title.toUpperCase()),
                   Text(createdAt, style: const TextStyle(color: Colors.black26)),
                   Container(padding: const EdgeInsets.all(10.0)),
-                  Text('Проголосовало ${vote.answers.length} из ${vote.persons}'),
-                  Row(mainAxisAlignment: MainAxisAlignment.end, children: status)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Проголосовало ${vote.answers.length} из ${vote.persons}'),
+                      Row(mainAxisAlignment: MainAxisAlignment.end, children: status)
+                    ]
+                  )
                 ]
               )
             )
@@ -43,5 +48,15 @@ class VotesListPage extends StatelessWidget {
         }
       )
     );
+  }
+
+  bool answered(MainStore store, Vote vote) {
+    final answers = vote.answers;
+    if (answers.isEmpty) return false;
+
+    final person = store.user.value!.person;
+    if (person == null) return false;
+    
+    return answers.where((answer) => answer.person.id == person.id).isNotEmpty;
   }
 }
