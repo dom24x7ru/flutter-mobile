@@ -1,7 +1,7 @@
 import 'package:dom24x7_flutter/pages/services/documents_page.dart';
 import 'package:dom24x7_flutter/pages/services/faq/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/recommendations/categories_page.dart';
-import 'package:dom24x7_flutter/pages/services/votes_page.dart';
+import 'package:dom24x7_flutter/pages/services/votes/list_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
@@ -82,7 +82,7 @@ class ServicesPage extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const VotesPage()))
+                            builder: (context) => const VotesListPage()))
                   }),
               ServiceCard('ЧаВо',
                   count: store.faq.list!.length,

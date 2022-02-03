@@ -21,11 +21,7 @@ class RecommendationsListPage extends StatelessWidget {
     final categoryName = list.isNotEmpty ? list[0].category.name : null;
 
     return Scaffold(
-        appBar: Header(
-            context,
-            categoryName != null
-                ? getHeaderTitle(categoryName)
-                : 'Неизвестная категория'),
+        appBar: Header(context, categoryName != null ? getHeaderTitle(categoryName) : 'Неизвестная категория'),
         bottomNavigationBar: Footer(context, FooterNav.services),
         body: ListView.builder(
             itemCount: list.length,
