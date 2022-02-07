@@ -60,48 +60,23 @@ class ServicesPage extends StatelessWidget {
               ServiceCard('Инструкции',
                   count: store.instructions.list!.length,
                   color: Colors.blue,
-                  onTap: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const InstructionsPage()))
-                      }),
+                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const InstructionsPage())) }),
               ServiceCard('Документы',
                   count: store.documents.list!.length,
                   color: Colors.red,
-                  onTap: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const DocumentsPage()))
-                  }),
+                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const DocumentsPage())) }),
               ServiceCard('Голосования',
                   count: store.votes.list!.length,
                   color: Colors.green,
-                  onTap: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const VotesListPage()))
-                  }),
+                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const VotesListPage())) }),
               ServiceCard('ЧаВо',
                   count: store.faq.list!.length,
                   color: Colors.deepPurple,
-                  onTap: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const FAQCategoriesPage()))
-                  }),
+                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const FAQCategoriesPage())) }),
               ServiceCard('Рекомендации',
                   count: store.recommendations.list!.length,
                   color: Colors.purpleAccent,
-                  onTap: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RecommendationsCategoriesPage()))
-                  }),
+                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const RecommendationsCategoriesPage())) }),
             ])));
   }
 }

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../utilities.dart';
+
 class FAQListPage extends StatelessWidget {
   final List<FAQItem> list;
   const FAQListPage(this.list, {Key? key}) : super(key: key);
@@ -14,7 +16,7 @@ class FAQListPage extends StatelessWidget {
     final categoryName = list.isNotEmpty ? list[0].category.name : null;
 
     return Scaffold(
-      appBar: Header(context, categoryName != null ? getHeaderTitle(categoryName) : 'Неизвестная категория'),
+      appBar: Header(context, categoryName != null ? Utilities.getHeaderTitle(categoryName) : 'Неизвестная категория'),
       bottomNavigationBar: Footer(context, FooterNav.services),
       body: ListView.separated(
         itemCount: list.length,
@@ -30,11 +32,6 @@ class FAQListPage extends StatelessWidget {
         }
       )
     );
-  }
-
-  String getHeaderTitle(String title) {
-    if (title.length < 20) return title;
-    return title.substring(0, 20) + '...';
   }
 
   void showFAQItem(BuildContext context, FAQItem item) {

@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/instruction.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class InstructionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(context, getHeaderTitle(instruction.title)),
+      appBar: Header(context, Utilities.getHeaderTitle(instruction.title)),
       bottomNavigationBar: Footer(context, FooterNav.services),
       body: ListView.builder(
         itemCount: instruction.body.length + 1,
@@ -43,10 +44,5 @@ class InstructionPage extends StatelessWidget {
         }
       )
     );
-  }
-
-  String getHeaderTitle(String title) {
-    if (title.length < 20) return title;
-    return title.substring(0, 20) + '...';
   }
 }

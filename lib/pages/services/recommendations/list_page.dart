@@ -2,6 +2,7 @@ import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
 import 'package:dom24x7_flutter/store/main.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class RecommendationsListPage extends StatelessWidget {
     final categoryName = list.isNotEmpty ? list[0].category.name : null;
 
     return Scaffold(
-        appBar: Header(context, categoryName != null ? getHeaderTitle(categoryName) : 'Неизвестная категория'),
+        appBar: Header(context, categoryName != null ? Utilities.getHeaderTitle(categoryName) : 'Неизвестная категория'),
         bottomNavigationBar: Footer(context, FooterNav.services),
         body: ListView.builder(
             itemCount: list.length,
@@ -99,11 +100,6 @@ class RecommendationsListPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: infoList)));
             }));
-  }
-
-  String getHeaderTitle(String title) {
-    if (title.length < 20) return title;
-    return title.substring(0, 20) + '...';
   }
 
   String getAuthorName(Recommendation recommendation) {

@@ -4,9 +4,9 @@ import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../utilities.dart';
 import 'flat_page.dart';
 
 class NewsPage extends StatelessWidget {
@@ -30,7 +30,7 @@ class NewsPage extends StatelessWidget {
         itemCount: store.posts.list!.length,
         itemBuilder: (BuildContext context, int index) {
           final Post post = store.posts.list![index];
-          final createdAt = DateFormat('dd.MM.y HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(post.createdAt));
+          final createdAt = Utilities.getDateFormat(post.createdAt);
           final icon = getIconStyle(post);
           return GestureDetector(
             onTap: () => { goPage(context, post, store.flats.list!) },
