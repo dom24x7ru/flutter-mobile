@@ -114,7 +114,7 @@ class RecommendationsListPage extends StatelessWidget {
     if (person.midname != null) {
       fullName += ' ${person.midname!}';
     }
-    if (fullName.isEmpty) {
+    if (fullName.trim().isEmpty) {
       final flat = recommendation.flat;
       return 'сосед(ка) из кв. №${flat.number}, этаж ${flat.floor}, подъезд ${flat.section}';
     }
