@@ -1,3 +1,5 @@
+import 'package:dom24x7_flutter/components/checkbox_component.dart';
+import 'package:dom24x7_flutter/components/radio_component.dart';
 import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/models/person_access.dart';
@@ -116,67 +118,27 @@ class _SettingsPage extends State<SettingsPage> {
                       const Text('Настройки приватности', style: TextStyle(fontSize: 22.0)),
                       Container(padding: const EdgeInsets.all(5.0)),
                       const Text('Отображение имени', style: TextStyle(fontSize: 18.0)),
-                      Row(
-                          children: [
-                            Radio<AccessName>(
-                                value: AccessName.nothing,
-                                groupValue: _accessName,
-                                onChanged: (AccessName? value) {
-                                  setState(() {
-                                    _accessName = value;
-                                  });
-                                }
-                            ),
-                            const Text('Не показывать имя')
-                          ]
+                      Dom24x7Radio<AccessName>(
+                        value: AccessName.nothing,
+                        groupValue: _accessName,
+                        label: 'Не показывать имя',
+                        onChanged: (AccessName? value) { setState(() { _accessName = value; }); }
                       ),
-                      Row(
-                          children: [
-                            Radio<AccessName>(
-                                value: AccessName.name,
-                                groupValue: _accessName,
-                                onChanged: (AccessName? value) {
-                                  setState(() {
-                                    _accessName = value;
-                                  });
-                                }
-                            ),
-                            const Text('Показывать только имя')
-                          ]
+                      Dom24x7Radio<AccessName>(
+                        value: AccessName.name,
+                        groupValue: _accessName,
+                        label: 'Показывать только имя',
+                        onChanged: (AccessName? value) { setState(() { _accessName = value; }); }
                       ),
-                      Row(
-                          children: [
-                            Radio<AccessName>(
-                                value: AccessName.all,
-                                groupValue: _accessName,
-                                onChanged: (AccessName? value) {
-                                  setState(() {
-                                    _accessName = value;
-                                  });
-                                }
-                            ),
-                            const Text('Показывать полностью')
-                          ]
+                      Dom24x7Radio<AccessName>(
+                        value: AccessName.all,
+                        groupValue: _accessName,
+                        label: 'Показывать полностью',
+                        onChanged: (AccessName? value) { setState(() { _accessName = value; }); }
                       ),
                       const Text('Отображение контактов', style: TextStyle(fontSize: 18.0)),
-                      Row(
-                          children: [
-                            Checkbox(
-                              value: _mobileLevel,
-                              onChanged: (bool? value) => { setState(() => { _mobileLevel = value! }) },
-                            ),
-                            const Text('Показывать телефон')
-                          ]
-                      ),
-                      Row(
-                          children: [
-                            Checkbox(
-                              value: _telegramLevel,
-                              onChanged: (bool? value) => { setState(() => { _telegramLevel = value! }) },
-                            ),
-                            const Text('Показывать аккаунт телеграм (если указан)')
-                          ]
-                      )
+                      Dom24x7Checkbox(value: _mobileLevel, label: 'Показывать телефон', onChanged: (bool? value) => { setState(() => { _mobileLevel = value! }) }),
+                      Dom24x7Checkbox(value: _telegramLevel, label: 'Показывать аккаунт телеграм (если указан)', onChanged: (bool? value) => { setState(() => { _telegramLevel = value! }) })
                     ]
                 )
             ),
