@@ -163,7 +163,7 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Не удалось проголосовать. Попробуйте позже'), backgroundColor: Colors.red)
+            const SnackBar(content: Text('Не удалось сохранить голосование. Попробуйте позже'), backgroundColor: Colors.red)
         );
       }
     });

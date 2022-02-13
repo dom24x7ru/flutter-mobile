@@ -1,11 +1,13 @@
 import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/post.dart';
+import 'package:dom24x7_flutter/pages/services/votes/vote_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/vote.dart';
 import '../utilities.dart';
 import 'flat_page.dart';
 
@@ -23,13 +25,44 @@ class NewsPage extends StatelessWidget {
       );
     }
 
+    final Vote? vote = getVote(store);
+    final int itemCount = store.posts.list!.length + (vote != null ? 1 : 0);
+
     return Scaffold(
       appBar: Header(context, 'Новости'),
       bottomNavigationBar: Footer(context, FooterNav.news),
       body: ListView.builder(
-        itemCount: store.posts.list!.length,
+        itemCount: itemCount,
         itemBuilder: (BuildContext context, int index) {
-          final Post post = store.posts.list![index];
+          if (vote != null && index == 0) {
+            // отображаем карточку голосования
+            final createdAt = Utilities.getDateFormat(vote.createdAt);
+            return GestureDetector(
+              onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => VotePage(vote))) },
+              child: Card(
+                color: Colors.green,
+                child: Container(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(vote.title.toUpperCase(), style: const TextStyle(color: Colors.white)),
+                      Text(createdAt, style: const TextStyle(color: Colors.white38)),
+                      Container(padding: const EdgeInsets.all(10.0)),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Проголосовало ${vote.answers.length} из ${vote.persons}', style: const TextStyle(color: Colors.white)),
+                          ]
+                      )
+                    ]
+                  )
+                )
+              )
+            );
+          }
+
+          final Post post = store.posts.list![index + (vote != null ? 1 : 0)];
           final createdAt = Utilities.getDateFormat(post.createdAt);
           final icon = getIconStyle(post);
           return GestureDetector(
@@ -86,5 +119,13 @@ class NewsPage extends StatelessWidget {
         }
       }
     }
+  }
+
+  Vote? getVote(MainStore store) {
+    List<Vote>? votes = store.votes.list;
+    if (votes == null || votes.isEmpty) return null; // нет доступных голосований
+    votes = votes.where((vote) => !vote.closed).toList();
+    if (votes.isEmpty) return null; // во всех голосованиях уже поучаствовали
+    return votes[0]; // вернем первое доступное, в котором уже не участвовали
   }
 }

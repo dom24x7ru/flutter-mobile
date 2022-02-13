@@ -109,7 +109,19 @@ class _VotePageState extends State<VotePage> {
       'answers': questions.where((question) => question.selected).map((question) => question.id).toList()
     };
     store.client.socket.emit('vote.answer', data, (String name, dynamic error, dynamic data) {
-
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+      if (data != null && data['status'] == 'OK') {
+        // TODO: перейти на страницу с результатами (также получить обновление через сокеты)
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Не удалось проголосовать. Попробуйте позже'), backgroundColor: Colors.red)
+        );
+      }
     });
   }
 }
