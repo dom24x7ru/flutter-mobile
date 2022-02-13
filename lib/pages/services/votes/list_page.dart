@@ -1,5 +1,6 @@
 import 'package:dom24x7_flutter/models/vote.dart';
 import 'package:dom24x7_flutter/pages/services/votes/answered_page.dart';
+import 'package:dom24x7_flutter/pages/services/votes/create_page.dart';
 import 'package:dom24x7_flutter/pages/services/votes/vote_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
@@ -19,6 +20,11 @@ class VotesListPage extends StatelessWidget {
     return Scaffold(
       appBar: Header(context, 'Голосования'),
       bottomNavigationBar: Footer(context, FooterNav.services),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const VoteCreatePage())) },
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add)
+      ),
       body: ListView.builder(
         itemCount: votes.length,
         itemBuilder: (BuildContext context, int index) {
