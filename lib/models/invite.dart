@@ -1,17 +1,16 @@
 import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 
-class Invite {
-  late int id;
+class Invite extends Model {
   int? createdAt;
   String? code;
   bool? used;
   Person? person;
   Flat? flat;
 
-  Invite(this.id);
-  Invite.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  Invite(id) : super(id);
+  Invite.fromMap(Map<String, dynamic> map) : super(map['id']) {
     createdAt = map['createdAt'];
     code = map['code'];
     used = map['used'];

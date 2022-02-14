@@ -1,18 +1,17 @@
-class InstructionItem {
-  late int id;
+import 'package:dom24x7_flutter/models/model.dart';
+
+class InstructionItem extends Model {
   late String title;
 
-  InstructionItem(this.id, this.title);
+  InstructionItem(id, this.title) : super(id);
 }
 
-class Instruction {
-  late int id;
+class Instruction extends Model {
   late String title;
   late String subtitle;
   late List<InstructionItem> body;
 
-  Instruction.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  Instruction.fromMap(Map<String, dynamic> map) : super(map['id']) {
     title = map['title'];
     subtitle = map['subtitle'];
     body = [];

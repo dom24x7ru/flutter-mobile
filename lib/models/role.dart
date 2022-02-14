@@ -1,10 +1,10 @@
-class Role {
-  late int id;
+import 'package:dom24x7_flutter/models/model.dart';
+
+class Role extends Model {
   late String name;
 
-  Role(this.id, this.name);
-  Role.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  Role(id, this.name) : super(id);
+  Role.fromMap(Map<String, dynamic> map) : super(map['id']) {
     name = map['name'];
   }
 }

@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/instruction.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:mobx/mobx.dart';
 
 part 'instructions.g.dart';
@@ -11,8 +12,7 @@ abstract class _InstructionsStore with Store {
 
   @action
   void addInstruction(Instruction instruction) {
-    list ??= [];
-    list!.add(instruction);
+    list = Utilities.addOrReplaceById(list, instruction);
   }
 
   @action

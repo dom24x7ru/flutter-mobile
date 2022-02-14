@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 
 class RecommendationExtra {
@@ -19,23 +20,20 @@ class RecommendationExtra {
   }
 }
 
-class RecommendationCategory {
-  late int id;
+class RecommendationCategory extends Model {
   late String name;
   late String img;
   late int sort;
   int count = 0;
 
-  RecommendationCategory.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  RecommendationCategory.fromMap(Map<String, dynamic> map) : super(map['id']) {
     name = map['name'];
     img = map['img'];
     sort = map['sort'];
   }
 }
 
-class Recommendation {
-  late int id;
+class Recommendation extends Model {
   late String title;
   late String body;
   late bool deleted;
@@ -44,8 +42,7 @@ class Recommendation {
   late Person person;
   late Flat flat;
 
-  Recommendation.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  Recommendation.fromMap(Map<String, dynamic> map) : super(map['id']) {
     title = map['title'];
     body = map['body'];
     deleted = map['deleted'];

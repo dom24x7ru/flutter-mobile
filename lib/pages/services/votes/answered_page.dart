@@ -169,7 +169,7 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
     for (VoteAnswer answer in answers) {
       final flat = answer.flat;
       if (flats[flat.id] == null) {
-        flats[flat.id!] = [];
+        flats[flat.id] = [];
         uniqueFlatsCount++;
       }
       flats[flat.id]!.add(answer.person);
@@ -184,7 +184,7 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
     for (VoteAnswer answer in answers) {
       final flat = answer.flat;
       if (flats[flat.id] == null) {
-        flats[flat.id!] = [];
+        flats[flat.id] = [];
         uniqueFlatsSquares += flat.square;
       }
       flats[flat.id]!.add(answer.person);

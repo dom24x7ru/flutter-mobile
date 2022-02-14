@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/vote.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:mobx/mobx.dart';
 
 part 'votes.g.dart';
@@ -11,8 +12,7 @@ abstract class _VotesStore with Store {
 
   @action
   void addVote(Vote vote) {
-    list ??= [];
-    list!.add(vote);
+    list = Utilities.addOrReplaceById(list, vote);
   }
 
   @action

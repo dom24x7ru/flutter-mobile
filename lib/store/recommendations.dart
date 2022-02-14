@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/recommendation.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:mobx/mobx.dart';
 
 part 'recommendations.g.dart';
@@ -11,8 +12,7 @@ abstract class _RecommendationsStore with Store {
 
   @action
   void addRecommendation(Recommendation recommendation) {
-    list ??= [];
-    list!.add(recommendation);
+    list = Utilities.addOrReplaceById(list, recommendation);
   }
 
   @action

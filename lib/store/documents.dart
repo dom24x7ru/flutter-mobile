@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/document.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:mobx/mobx.dart';
 
 part 'documents.g.dart';
@@ -11,8 +12,7 @@ abstract class _DocumentsStore with Store {
 
   @action
   void addDocument(Document document) {
-    list ??= [];
-    list!.add(document);
+    list = Utilities.addOrReplaceById(list, document);
   }
 
   @action

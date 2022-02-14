@@ -1,24 +1,22 @@
-class FAQCategory {
-  late int id;
+import 'package:dom24x7_flutter/models/model.dart';
+
+class FAQCategory extends Model {
   late String name;
   String? description;
 
-  FAQCategory.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  FAQCategory.fromMap(Map<String, dynamic> map) : super(map['id']) {
     name = map['name'];
     description = map['description'];
   }
 }
 
-class FAQItem {
-  late int id;
+class FAQItem extends Model {
   late String title;
   late String body;
   late FAQCategory category;
 
-  FAQItem(this.id, this.title, this.body);
-  FAQItem.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  FAQItem(id, this.title, this.body) : super(id);
+  FAQItem.fromMap(Map<String, dynamic> map) : super(map['id']) {
     title = map['title'];
     body = map['body'];
     category = FAQCategory.fromMap(map['category']);

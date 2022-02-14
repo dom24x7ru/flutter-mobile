@@ -1,9 +1,9 @@
+import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/models/resident.dart';
 import 'package:dom24x7_flutter/models/role.dart';
 
-class User {
-  late int id;
+class User extends Model {
   late String mobile;
   late bool banned;
   late Role role;
@@ -11,9 +11,8 @@ class User {
   Person? person;
   Resident? resident;
 
-  User(this.id, this.mobile, this.banned, this.role);
-  User.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  User(id, this.mobile, this.banned, this.role) : super(id);
+  User.fromMap(Map<String, dynamic> map) : super(map['id']) {
     mobile = map['mobile'];
     banned = map['banned'];
     role = Role.fromMap(map['role']);

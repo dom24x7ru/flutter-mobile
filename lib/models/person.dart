@@ -1,7 +1,7 @@
+import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/person_access.dart';
 
-class Person {
-  int? id;
+class Person extends Model {
   String? surname;
   String? name;
   String? midname;
@@ -13,9 +13,8 @@ class Person {
   bool deleted = false;
   PersonAccess? access;
 
-  Person(this.id, this.surname, this.name, this.midname);
-  Person.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  Person(id, this.surname, this.name, this.midname) : super(id);
+  Person.fromMap(Map<String, dynamic> map) : super(map['id']) {
     surname = map['surname'];
     name = map['name'];
     midname = map['midname'];

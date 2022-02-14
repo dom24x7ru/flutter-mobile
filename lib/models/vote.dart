@@ -1,32 +1,28 @@
 import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 
-class VoteQuestion {
-  late int id;
+class VoteQuestion extends Model {
   String? body;
 
-  VoteQuestion.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  VoteQuestion.fromMap(Map<String, dynamic> map) : super(map['id']) {
     body = map['body'];
   }
 }
 
-class VoteAnswer {
-  late int id;
+class VoteAnswer extends Model {
   late VoteQuestion question;
   late Person person;
   late Flat flat;
 
-  VoteAnswer.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  VoteAnswer.fromMap(Map<String, dynamic> map) : super(map['id']) {
     question = VoteQuestion.fromMap(map['question']);
     person = Person.fromMap(map['person']);
     flat = Flat.fromMap(map['person']['flat']);
   }
 }
 
-class Vote {
-  late int id;
+class Vote extends Model {
   late String title;
   late int createdAt;
   late bool multi;
@@ -39,8 +35,7 @@ class Vote {
   late List<VoteQuestion> questions = [];
   late List<VoteAnswer> answers = [];
 
-  Vote.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  Vote.fromMap(Map<String, dynamic> map) : super(map['id']) {
     title = map['title'];
     createdAt = map['createdAt'];
     multi = map['multi'];

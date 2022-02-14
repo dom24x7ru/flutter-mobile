@@ -1,12 +1,12 @@
-class Document {
-  late int id;
+import 'package:dom24x7_flutter/models/model.dart';
+
+class Document extends Model {
   late String title;
   String? annotation;
   late String url;
 
-  Document(this.id, this.title, this.url);
-  Document.fromMap(Map<String, dynamic> map) {
-    id = map['id'];
+  Document(id, this.title, this.url) : super(id);
+  Document.fromMap(Map<String, dynamic> map) : super(map['id']) {
     title = map['title'];
     annotation = map['annotation'];
     url = map['url'];

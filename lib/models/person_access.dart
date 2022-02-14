@@ -1,4 +1,3 @@
-// access: {name: {level: all, format: name}, mobile: {level: all}, telegram: {level: all}}
 enum Level { nothing, friends, all }
 enum NameFormat { name, all }
 

@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/faq_item.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:mobx/mobx.dart';
 
 part 'faq.g.dart';
@@ -11,8 +12,7 @@ abstract class _FAQ with Store {
 
   @action
   void addFAQItem(FAQItem item) {
-    list ??= [];
-    list!.add(item);
+    list = Utilities.addOrReplaceById(list, item);
   }
 
   @action
