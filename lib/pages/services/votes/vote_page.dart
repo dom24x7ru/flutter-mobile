@@ -1,9 +1,11 @@
 import 'package:dom24x7_flutter/components/checkbox_component.dart';
 import 'package:dom24x7_flutter/models/vote.dart';
+import 'package:dom24x7_flutter/pages/services/votes/answered_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../api/socket_client.dart';
 import '../../../utilities.dart';
 import '../../../widgets/footer_widget.dart';
 import '../../../widgets/header_widget.dart';
@@ -25,11 +27,36 @@ class VotePage extends StatefulWidget {
 
 class _VotePageState extends State<VotePage> {
   late List<Question> questions;
+  late SocketClient _client;
+  final List<dynamic> _listeners = [];
 
   @override
   void initState() {
     super.initState();
     questions = createQuestionsList(widget.vote);
+
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      final store = Provider.of<MainStore>(context, listen: false);
+      _client = store.client;
+
+      var listener = _client.on('vote', this, (event, cont) {
+        Map<String, dynamic> eventData = event.eventData as Map<String, dynamic>;
+        if (eventData['event'] == 'ready') return;
+        final data = eventData['data'];
+        final vote = Vote.fromMap(data);
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => VoteAnsweredPage(vote)));
+      });
+      _listeners.add(listener);
+    });
+  }
+
+  @override
+  void dispose() {
+    for (var listener in _listeners) {
+      _client.off(listener);
+    }
+    super.dispose();
   }
 
   @override
@@ -115,9 +142,7 @@ class _VotePageState extends State<VotePage> {
         );
         return;
       }
-      if (data != null && data['status'] == 'OK') {
-        // TODO: перейти на страницу с результатами (также получить обновление через сокеты)
-      } else {
+      if (data == null || data['status'] != 'OK') {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Не удалось проголосовать. Попробуйте позже'), backgroundColor: Colors.red)
         );

@@ -174,7 +174,8 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
       }
       flats[flat.id]!.add(answer.person);
     }
-    return uniqueFlatsCount / store.flats.list!.length;
+
+    return uniqueFlatsCount / getVoteFlats(store, vote).length;
   }
 
   double percentSquares(MainStore store, Vote vote, VoteQuestion question) {
@@ -189,7 +190,19 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
       }
       flats[flat.id]!.add(answer.person);
     }
-    final squares = store.flats.list!.map((Flat flat) => flat.square).reduce((sum, square) => sum + square);
+
+    final squares = getVoteFlats(store, vote).map((Flat flat) => flat.square).reduce((sum, square) => sum + square);
     return uniqueFlatsSquares / squares;
+  }
+
+  List<Flat> getVoteFlats(MainStore store, Vote vote) {
+    List<Flat> voteFlats = store.flats.list!;
+    if (vote.section != null) {
+      voteFlats = voteFlats.where((flat) => flat.section == vote.section).toList();
+    }
+    if (vote.floor != null) {
+      voteFlats = voteFlats.where((flat) => (flat.section == vote.section && flat.floor == vote.floor)).toList();
+    }
+    return voteFlats;
   }
 }
