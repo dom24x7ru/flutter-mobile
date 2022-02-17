@@ -10,7 +10,7 @@ class IMPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Header(context, 'Чаты'),
-      bottomNavigationBar: Footer(context, FooterNav.im),
+      bottomNavigationBar: Footer(context, FooterNav.news),
       body: const InDevelopmentInfo()
     );
   }

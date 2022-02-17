@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-enum FooterNav { news, house, im, services }
+// enum FooterNav { news, house, im, services }
+enum FooterNav { news, house, services }
 
 class Footer extends BottomNavigationBar {
   Footer(BuildContext context, FooterNav nav, {Key? key})
@@ -16,10 +17,10 @@ class Footer extends BottomNavigationBar {
               icon: Icon(Icons.group),
               label: 'Соседи',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.forum),
-              label: 'Мессенджер',
-            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.forum),
+            //   label: 'Мессенджер',
+            // ),
             BottomNavigationBarItem(
               icon: Icon(Icons.blur_on),
               label: 'Сервисы',
@@ -37,10 +38,10 @@ class Footer extends BottomNavigationBar {
               case 1:
                 Navigator.pushNamedAndRemoveUntil(context, '/house', (route) => false);
                 break;
+              // case 2:
+              //   Navigator.pushNamedAndRemoveUntil(context, '/im', (route) => false);
+              //   break;
               case 2:
-                Navigator.pushNamedAndRemoveUntil(context, '/im', (route) => false);
-                break;
-              case 3:
                 Navigator.pushNamedAndRemoveUntil(context, '/services', (route) => false);
                 break;
               default:
