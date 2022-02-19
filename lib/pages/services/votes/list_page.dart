@@ -88,7 +88,8 @@ class _VotesListPageState extends State<VotesListPage> {
                           )
                       )
                   ),
-                  onTap: () => { gotoVote(context, store, vote) }
+                  onTap: () => { gotoVote(context, store, vote) },
+                  onLongPress: () => { showMenu(context, store, vote) }
               );
             }
         )
@@ -111,5 +112,51 @@ class _VotesListPageState extends State<VotesListPage> {
     } else {
       Navigator.push(context, MaterialPageRoute(builder: (context) => VotePage(vote)));
     }
+  }
+
+  void showMenu(BuildContext context, MainStore store, Vote vote) {
+    final user = store.user.value!;
+    if (user.id != vote.userId) return;
+
+    Color color = vote.closed ? Colors.blue : Colors.red;
+    String title = vote.closed ? 'Переоткрыть голосование' : 'Завершить голосование';
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 100,
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  final action = vote.closed ? 'vote.reopen' : 'vote.close';
+                  store.client.socket.emit(action, { 'voteId': vote.id }, (String name, dynamic error, dynamic data) {
+                    if (error != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+                      );
+                      return;
+                    }
+                    if (data == null || data['status'] != 'OK') {
+                      final message = vote.closed ? 'Не удалось переоткрыть голосование.' : 'Не удалось закрыть голосование.';
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('$message Попробуйте позже'), backgroundColor: Colors.red)
+                      );
+                    }
+                  });
+                  Navigator.pop(context);
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(color)
+                ),
+                child: Text(title.toUpperCase()),
+              )
+            ]
+          )
+        );
+      }
+    );
   }
 }

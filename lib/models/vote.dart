@@ -23,6 +23,7 @@ class VoteAnswer extends Model {
 }
 
 class Vote extends Model {
+  late int userId;
   late String title;
   late int createdAt;
   late bool multi;
@@ -36,6 +37,7 @@ class Vote extends Model {
   late List<VoteAnswer> answers = [];
 
   Vote.fromMap(Map<String, dynamic> map) : super(map['id']) {
+    userId = map['user']['id'];
     title = map['title'];
     createdAt = map['createdAt'];
     multi = map['multi'];

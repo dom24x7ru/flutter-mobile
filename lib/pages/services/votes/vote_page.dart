@@ -44,8 +44,11 @@ class _VotePageState extends State<VotePage> {
         if (eventData['event'] == 'ready') return;
         final data = eventData['data'];
         final vote = Vote.fromMap(data);
-        Navigator.pop(context);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => VoteAnsweredPage(vote)));
+        // если найден наш ответ, то переходим на страницу с результатами
+        if (answered(store, vote)) {
+          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => VoteAnsweredPage(vote)));
+        }
       });
       _listeners.add(listener);
     });
@@ -96,6 +99,16 @@ class _VotePageState extends State<VotePage> {
         )
       )
     );
+  }
+
+  bool answered(MainStore store, Vote vote) {
+    final answers = vote.answers;
+    if (answers.isEmpty) return false;
+
+    final person = store.user.value!.person;
+    if (person == null) return false;
+
+    return answers.where((answer) => answer.person.id == person.id).isNotEmpty;
   }
 
   List<Question> createQuestionsList(Vote vote) {

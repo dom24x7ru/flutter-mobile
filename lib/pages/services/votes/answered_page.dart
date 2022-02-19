@@ -2,6 +2,7 @@ import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/models/vote.dart';
 import 'package:dom24x7_flutter/pages/services/votes/result_page.dart';
+import 'package:dom24x7_flutter/pages/services/votes/vote_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
@@ -144,7 +145,8 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
           },
           children: rows
       ),
-      onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => VoteResultPage(vote))) }
+      onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => VoteResultPage(vote))) },
+      onLongPress: () => { showMenu(context, store, vote) }
     );
   }
 
@@ -204,5 +206,47 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
       voteFlats = voteFlats.where((flat) => (flat.section == vote.section && flat.floor == vote.floor)).toList();
     }
     return voteFlats;
+  }
+
+  void showMenu(BuildContext context, MainStore store, Vote vote) {
+    if (vote.closed) return;
+    
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 100,
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  store.client.socket.emit('vote.cancelAnswer', { 'voteId': vote.id }, (String name, dynamic error, dynamic data) {
+                    if (error != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+                      );
+                      return;
+                    }
+                    if (data == null || data['status'] != 'OK') {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Не удалось отменить голос. Попробуйте позже'), backgroundColor: Colors.red)
+                      );
+                      return;
+                    }
+
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => VotePage(vote)));
+                  });
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.red)
+                ),
+                child: Text('Отменить голос'.toUpperCase()),
+              )
+            ]
+          )
+        );
+      }
+    );
   }
 }
