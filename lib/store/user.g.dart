@@ -49,11 +49,22 @@ mixin _$UserStore on _UserStore, Store {
   }
 
   @override
-  void setResident(Resident? resident) {
+  void addResident(Resident resident) {
     final _$actionInfo = _$_UserStoreActionController.startAction(
-        name: '_UserStore.setResident');
+        name: '_UserStore.addResident');
     try {
-      return super.setResident(resident);
+      return super.addResident(resident);
+    } finally {
+      _$_UserStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setResidents(List<Resident> residents) {
+    final _$actionInfo = _$_UserStoreActionController.startAction(
+        name: '_UserStore.setResidents');
+    try {
+      return super.setResidents(residents);
     } finally {
       _$_UserStoreActionController.endAction(_$actionInfo);
     }

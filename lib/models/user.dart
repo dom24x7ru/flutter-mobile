@@ -9,7 +9,7 @@ class User extends Model {
   late Role role;
   int? houseId;
   Person? person;
-  Resident? resident;
+  List<Resident> residents = [];
 
   User(id, this.mobile, this.banned, this.role) : super(id);
   User.fromMap(Map<String, dynamic> map) : super(map['id']) {
@@ -18,6 +18,10 @@ class User extends Model {
     role = Role.fromMap(map['role']);
     houseId = map['houseId'];
     person = map['person'] != null ? Person.fromMap(map['person']) : null;
-    resident = map['resident'] != null ? Resident.fromMap(map['resident']) : null;
+    if (map['residents'] != null) {
+      for (var resident in map['residents']) {
+        residents.add(Resident.fromMap(resident));
+      }
+    }
   }
 }

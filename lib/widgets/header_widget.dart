@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum AppBarMenu { about, profile, invite, settings }
+enum AppBarMenu { about, profile, invite, settings, spaces }
 
 class Header extends AppBar {
   Header(BuildContext context, String title, {Key? key})
@@ -22,6 +22,8 @@ class Header extends AppBar {
                     value: AppBarMenu.invite, child: Text('Приглашения')),
                 const PopupMenuItem<AppBarMenu>(
                     value: AppBarMenu.settings, child: Text('Настройки')),
+                const PopupMenuItem<AppBarMenu>(
+                    value: AppBarMenu.spaces, child: Text('Помещения')),
               ],
               onSelected: (AppBarMenu item) {
                 switch (item) {
@@ -40,6 +42,10 @@ class Header extends AppBar {
                   case AppBarMenu.settings:
                     Navigator.pushNamedAndRemoveUntil(
                         context, '/settings', (route) => false);
+                    break;
+                  case AppBarMenu.spaces:
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/spaces', (route) => false);
                     break;
                   default:
                     Navigator.pushNamedAndRemoveUntil(

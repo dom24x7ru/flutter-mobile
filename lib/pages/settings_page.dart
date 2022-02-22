@@ -1,10 +1,8 @@
 import 'package:dom24x7_flutter/components/checkbox_component.dart';
 import 'package:dom24x7_flutter/components/radio_component.dart';
-import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/models/person_access.dart';
 import 'package:dom24x7_flutter/models/resident.dart';
-import 'package:dom24x7_flutter/models/user.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
@@ -22,9 +20,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPage extends State<SettingsPage> {
-  User? _user;
-  List<Flat>? _flats;
-  Flat? _flat;
   AccessName? _accessName;
   bool _mobileLevel = false;
   bool _telegramLevel = false;
@@ -32,7 +27,6 @@ class _SettingsPage extends State<SettingsPage> {
   late TextEditingController _cSurname;
   late TextEditingController _cName;
   late TextEditingController _cMidname;
-  late TextEditingController _cFlat;
   late TextEditingController _cTelegram;
 
   @override
@@ -43,9 +37,6 @@ class _SettingsPage extends State<SettingsPage> {
     _cName = TextEditingController();
     _cMidname = TextEditingController();
     _cTelegram = TextEditingController();
-
-    _cFlat = TextEditingController();
-    _cFlat.addListener(findFlat);
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
@@ -59,9 +50,6 @@ class _SettingsPage extends State<SettingsPage> {
     _cName.dispose();
     _cMidname.dispose();
     _cTelegram.dispose();
-
-    _cFlat.removeListener(findFlat);
-    _cFlat.dispose();
 
     super.dispose();
   }
@@ -95,14 +83,6 @@ class _SettingsPage extends State<SettingsPage> {
                     hintText: 'Отчество'
                 )
             ),
-            TextField(
-                controller: _cFlat,
-                enabled: _user == null || _user!.resident!.flat == null,
-                decoration: const InputDecoration(
-                    hintText: 'Введите номер квартиры'
-                )
-            ),
-            Text(getFlatInfo(_flat), style: const TextStyle(color: Colors.black45)),
             TextField(
                 controller: _cTelegram,
                 decoration: const InputDecoration(
@@ -166,10 +146,6 @@ class _SettingsPage extends State<SettingsPage> {
   }
 
   void load(MainStore store) {
-    setState(() {
-      _user = store.user.value;
-      _flats = store.flats.list;
-    });
     if (store.user.value != null) {
       final user = store.user.value;
       if (user == null) return;
@@ -194,30 +170,7 @@ class _SettingsPage extends State<SettingsPage> {
         _mobileLevel = person.access!.mobile!.level == Level.all;
         _telegramLevel = person.access!.telegram!.level == Level.all;
       }
-      if (user.resident != null) {
-        Resident? resident = user.resident;
-        if (resident!.flat != null) {
-          _cFlat.text = resident.flat!.number.toString();
-        }
-      }
     }
-  }
-
-  void findFlat() {
-    if (_flats == null) return;
-    for (Flat flat in _flats!) {
-      if (flat.number.toString() == _cFlat.text) {
-        setState(() {
-          _flat = flat;
-        });
-        return;
-      }
-    }
-  }
-
-  String getFlatInfo(Flat? flat) {
-    if (flat == null) return 'Указанный номер квартиры не найден в доме';
-    return 'кв. №${flat.number}, этаж ${flat.floor}, подъезд ${flat.section}';
   }
 
   void logout(BuildContext context, MainStore store) async {
@@ -234,7 +187,6 @@ class _SettingsPage extends State<SettingsPage> {
       'name': _cName.text.trim(),
       'midname': _cMidname.text.trim(),
       'telegram': _cTelegram.text.trim(),
-      'flat': _flat!.id,
       'access': {
         'name': {
           'level': _accessName == AccessName.nothing ? 'nothing' : 'all',
@@ -253,7 +205,6 @@ class _SettingsPage extends State<SettingsPage> {
       }
       if (data != null && data['status'] == 'OK') {
         store.user.setPerson(Person.fromMap(data['person']));
-        store.user.setResident(Resident.fromMap(data['resident']));
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Успешно сохранили'), backgroundColor: Colors.green)
         );

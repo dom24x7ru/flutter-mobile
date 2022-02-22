@@ -10,6 +10,7 @@ import 'package:dom24x7_flutter/pages/sec_code_page.dart';
 import 'package:dom24x7_flutter/pages/sec_reg_page.dart';
 import 'package:dom24x7_flutter/pages/services/services_page.dart';
 import 'package:dom24x7_flutter/pages/settings_page.dart';
+import 'package:dom24x7_flutter/pages/spaces_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
           '/profile': (context) => const ProfilePage(),
           '/invite': (context) => const InvitePage(),
           '/settings': (context) => const SettingsPage(),
+          '/spaces': (context) => const SpacesPage(),
           '/security/auth': (context) => const SecAuthPage(),
           '/security/reg': (context) => const SecRegPage(),
           '/security/code': (context) => const SecCodePage(),

@@ -199,7 +199,7 @@ class SocketClient extends BasicListener with EventEmitter {
     store.user.setUser(User.fromMap(event.eventData['data']));
     final houseId = store.user.value!.houseId;
     initChannel('all.$houseId.flats');
-    if (store.user.value!.person == null || store.user.value!.resident == null) {
+    if (store.user.value!.person == null || store.user.value!.residents.isEmpty) {
       // пользователь новый и еще не сформирована персона и нет привязки к квартире
       // TODO: переходим на страницу настроек
     } else {

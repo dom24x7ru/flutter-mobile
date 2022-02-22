@@ -1,6 +1,7 @@
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/models/resident.dart';
 import 'package:dom24x7_flutter/models/user.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:mobx/mobx.dart';
 
 part 'user.g.dart';
@@ -23,9 +24,15 @@ abstract class _UserStore with Store {
   }
 
   @action
-  void setResident(Resident? resident) {
+  void addResident(Resident resident) {
     if (value == null) return;
-    value!.resident = resident;
+    value!.residents = Utilities.addOrReplaceById(value!.residents, resident);
+  }
+
+  @action
+  void setResidents(List<Resident> residents) {
+    if (value == null) return;
+    value!.residents = residents;
   }
 
   @action
