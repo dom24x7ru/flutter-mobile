@@ -18,6 +18,14 @@ class _SecAuthPage extends State<SecAuthPage> {
   void initState() {
     super.initState();
     _cMobile = TextEditingController();
+
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      if (ModalRoute.of(context)!.settings.arguments != null) {
+        final args = ModalRoute.of(context)!.settings.arguments as MobileType;
+        final mobile = args.mobile;
+        _cMobile.text = mobile.substring(1, 11);
+      }
+    });
   }
 
   @override

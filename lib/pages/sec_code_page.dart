@@ -96,7 +96,20 @@ class _SecCodePage extends State<SecCodePage> {
                     ],
                   )
               ),
-              ElevatedButton(onPressed: () => sendCode(mobile, context, store), child: Text('Отправить'.toUpperCase()))
+              ElevatedButton(onPressed: () => sendCode(mobile, context, store), child: Text('Отправить'.toUpperCase())),
+              Container(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  children: [
+                    const Text('Также можете вернуться на страницу ввода мобильного номера'),
+                    ElevatedButton(
+                      onPressed: () => { Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false, arguments: MobileType(mobile)) },
+                      child: Text('Вернуться'.toUpperCase()),
+                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
+                    )
+                  ]
+                ),
+              )
             ],
           )),
     );
