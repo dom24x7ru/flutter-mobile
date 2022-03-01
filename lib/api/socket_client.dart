@@ -38,10 +38,11 @@ class SocketClient extends BasicListener with EventEmitter {
 
   SocketClient(this.store);
 
-  void connect(String url) async {
+  Future<void> connect([String url = 'dom24x7-backend.nl.yapahost.ru']) async {
     final prefs = await SharedPreferences.getInstance();
     final authToken = prefs.getString('authToken');
-    this.url = url;
+    String? lastNodeHost = prefs.getString('lastNodeHost');
+    this.url = lastNodeHost ?? url;
     await Socket.connect(
         'ws://$url/socketcluster/',
         authToken: authToken,
@@ -88,6 +89,7 @@ class SocketClient extends BasicListener with EventEmitter {
     if (token != null) {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString('authToken', token);
+      prefs.setString('lastNodeHost', url);
 
       loginInit(token);
     }
@@ -199,9 +201,10 @@ class SocketClient extends BasicListener with EventEmitter {
     store.user.setUser(User.fromMap(event.eventData['data']));
     final houseId = store.user.value!.houseId;
     initChannel('all.$houseId.flats');
-    if (store.user.value!.person == null || store.user.value!.residents.isEmpty) {
+    if (store.user.value!.residents.isEmpty) {
       // пользователь новый и еще не сформирована персона и нет привязки к квартире
       // TODO: переходим на страницу настроек
+      debugPrint('Список привязанных помещений пуст. Нужно перейти на страницу Помещений');
     } else {
       // пользователь уже полностью сформирован и можно подписаться на нужные каналы
       final channels = [

@@ -119,9 +119,17 @@ class _SecCodePage extends State<SecCodePage> {
     final code = _cMobileCode.text;
     store.client.socket.emit('user.auth', { 'mobile': mobile, 'code': code }, (String name, dynamic error, dynamic data) async {
       if (error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
-        );
+        if (error['code'] == 'USER.005') {
+          // пользователь находится на другой ноде
+          final url = error['extra']['url'];
+          await store.client.connect(url);
+          sendCode(mobile, context, store);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${error['code']}: ${error['message']}'),
+                  backgroundColor: Colors.red)
+          );
+        }
         return;
       }
     });

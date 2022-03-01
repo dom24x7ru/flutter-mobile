@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         Provider<MainStore>(create: (_) {
           final store = MainStore();
           SocketClient client = SocketClient(store);
-          client.connect('dom24x7-backend.nl.yapahost.ru');
+          client.connect();
           store.setClient(client);
           return store;
         })
