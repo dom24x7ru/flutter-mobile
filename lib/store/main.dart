@@ -2,6 +2,7 @@ import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/store/documents.dart';
 import 'package:dom24x7_flutter/store/faq.dart';
 import 'package:dom24x7_flutter/store/flats.dart';
+import 'package:dom24x7_flutter/store/im.dart';
 import 'package:dom24x7_flutter/store/invites.dart';
 import 'package:dom24x7_flutter/store/posts.dart';
 import 'package:dom24x7_flutter/store/recommendations.dart';
@@ -29,6 +30,7 @@ abstract class _MainStore with Store {
   final faq = FAQ();
   final recommendations = RecommendationsStore();
   final votes = VotesStore();
+  final im = IMStore();
 
   bool loaded = false;
 
@@ -54,6 +56,7 @@ abstract class _MainStore with Store {
     faq.clear();
     recommendations.clear();
     votes.clear();
+    im.clear();
 
     loaded = false;
   }

@@ -1,6 +1,7 @@
 import 'package:dom24x7_flutter/models/document.dart';
 import 'package:dom24x7_flutter/models/faq_item.dart';
 import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/instruction.dart';
 import 'package:dom24x7_flutter/models/invite.dart';
 import 'package:dom24x7_flutter/models/post.dart';
@@ -44,7 +45,7 @@ class SocketClient extends BasicListener with EventEmitter {
     String? lastNodeHost = prefs.getString('lastNodeHost');
     this.url = lastNodeHost ?? url;
     await Socket.connect(
-        'ws://$url/socketcluster/',
+        'ws://${this.url}/socketcluster/',
         authToken: authToken,
         listener: this
     );
@@ -150,7 +151,7 @@ class SocketClient extends BasicListener with EventEmitter {
     on('recommendations', this, onRecommendations);
     on('votes', this, onVotes);
     on('vote', this, onVote);
-    on('imChannels', this, onNothing);
+    on('imChannels', this, onChannels);
     on('imChannel', this, onNothing);
     on('channel.ready', this, onNothing);
   }
@@ -300,6 +301,14 @@ class SocketClient extends BasicListener with EventEmitter {
     if (event.eventData['event'] == 'ready') return;
     final data = event.eventData['data'];
     store.votes.addVote(Vote.fromMap(data));
+  }
+
+  void onChannels(event, context) {
+    if (event.eventData['event'] == 'ready') {
+      return;
+    }
+    final data = event.eventData['data'];
+    store.im.addChannel(IMChannel.fromMap(data));
   }
 
   void storeClearAll() {
