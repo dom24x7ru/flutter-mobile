@@ -78,6 +78,7 @@ class VoteResultPage extends StatelessWidget {
     for (VoteQuestion question in vote.questions) {
       if (question.body == questionBody) return question;
     }
+    return null;
   }
 
   int questionCompare(VoteQuestion question1, VoteQuestion question2) {

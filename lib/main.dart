@@ -1,7 +1,7 @@
 import 'package:dom24x7_flutter/pages/about_page.dart';
 import 'package:dom24x7_flutter/pages/app_loader_screen_page.dart';
 import 'package:dom24x7_flutter/pages/house_page.dart';
-import 'package:dom24x7_flutter/pages/im_page.dart';
+import 'package:dom24x7_flutter/pages/im/im_channels_page.dart';
 import 'package:dom24x7_flutter/pages/invite_page.dart';
 import 'package:dom24x7_flutter/pages/news_page.dart';
 import 'package:dom24x7_flutter/pages/profile_page.dart';
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
           '/loader': (context) => const AppLoaderScreenPage(),
           '/': (context) => const NewsPage(),
           '/house': (context) => const HousePage(),
-          '/im': (context) => const IMPage(),
+          '/im': (context) => const IMChannelsPage(),
           '/services': (context) => const ServicesPage(),
           '/about': (context) => const AboutPage(),
           '/profile': (context) => const ProfilePage(),

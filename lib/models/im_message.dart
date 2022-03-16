@@ -1,11 +1,13 @@
+import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 
-class IMMessageBodyAnswer extends Model {
+class IMMessageHistoryItem {
   late int createdAt;
   late String text;
 
-  IMMessageBodyAnswer.fromMap(Map<String, dynamic> map) : super(map['id']) {
+  IMMessageHistoryItem.fromMap(Map<String, dynamic> map) {
     createdAt = map['createdAt'];
     text = map['text'];
   }
@@ -13,22 +15,29 @@ class IMMessageBodyAnswer extends Model {
 
 class IMMessageBody {
   late String text;
-  IMMessageBodyAnswer? aMessage;
+  late List<IMMessageHistoryItem> history = [];
+  IMMessage? aMessage;
 
   IMMessageBody.fromMap(Map<String, dynamic> map) {
     text = map['text'];
-    aMessage = map['aMessage'] != null ? IMMessageBodyAnswer.fromMap(map['aMessage']) : null;
+    if (map['history'] != null) {
+      for (var item in map['history']) {
+        history.add(IMMessageHistoryItem.fromMap(item));
+      }
+    }
+    aMessage = map['aMessage'] != null ? IMMessage.fromMap(map['aMessage']) : null;
   }
 }
 
 class IMMessage extends Model {
   late int createdAt;
-  Person? person;
-  late IMMessageBody body;
+  IMPerson? imPerson;
+  IMMessageBody? body;
 
   IMMessage.fromMap(Map<String, dynamic> map) : super(map['id']) {
     createdAt = map['createdAt'];
-    person = map['person'] != null ? Person.fromMap(map['person']) : null;
-    body = IMMessageBody.fromMap(map['body']);
+    final person = map['person'];
+    imPerson = person != null ? IMPerson(Person.fromMap(person), Flat.fromMap(person['flat'])) : null;
+    body = map['body'] != null ? IMMessageBody.fromMap(map['body']) : null; // не будет в ответе
   }
 }

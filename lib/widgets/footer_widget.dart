@@ -29,7 +29,7 @@ class Footer extends BottomNavigationBar {
           backgroundColor: Colors.blue,
           selectedItemColor: Colors.white,
           showUnselectedLabels: false,
-          showSelectedLabels: false,
+          showSelectedLabels: true,
           onTap: (int index) {
             switch (index) {
               case 0:

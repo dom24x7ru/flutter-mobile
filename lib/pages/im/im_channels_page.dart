@@ -1,5 +1,6 @@
 import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/person.dart';
+import 'package:dom24x7_flutter/pages/im/im_messages_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
@@ -7,8 +8,8 @@ import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class IMPage extends StatelessWidget {
-  const IMPage({Key? key}) : super(key: key);
+class IMChannelsPage extends StatelessWidget {
+  const IMChannelsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class IMPage extends StatelessWidget {
 
     return Scaffold(
       appBar: Header(context, 'Чаты'),
-      bottomNavigationBar: Footer(context, FooterNav.news),
+      bottomNavigationBar: Footer(context, FooterNav.im),
       body: ListView.builder(
         itemCount: channels.length,
         itemBuilder: (BuildContext context, int index) {
@@ -27,7 +28,7 @@ class IMPage extends StatelessWidget {
           ];
           if (channel.lastMessage != null) {
             channelInfo.add(
-              Text(channel.lastMessage!.body.text)
+              Text(channel.lastMessage!.body!.text)
             );
           } else {
             channelInfo.add(
@@ -35,7 +36,7 @@ class IMPage extends StatelessWidget {
             );
           }
           return GestureDetector(
-            onTap: () => {},
+            onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => IMMessagesPage(channel, channelTitle(store, channel)))) },
             child: Container(
                 padding: const EdgeInsets.all(15.0),
                 child: Row(

@@ -7,8 +7,12 @@ class Utilities {
     return title.substring(0, 20) + '...';
   }
 
-  static String getDateFormat(int dt) {
-    return DateFormat('dd.MM.y HH:mm:ss').format(DateTime.fromMillisecondsSinceEpoch(dt));
+  static String getDateFormat(int dt, [String format = 'dd.MM.y HH:mm:ss']) {
+    return DateFormat(format).format(DateTime.fromMillisecondsSinceEpoch(dt));
+  }
+
+  static String getDateFormatShort(int dt) {
+    return getDateFormat(dt, 'dd.MM.y');
   }
 
   static String getDateFromNow(int dt) {

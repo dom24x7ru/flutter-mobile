@@ -1,5 +1,5 @@
-import 'package:dom24x7_flutter/components/checkbox_component.dart';
-import 'package:dom24x7_flutter/components/radio_component.dart';
+import 'package:dom24x7_flutter/widgets/checkbox_widget.dart';
+import 'package:dom24x7_flutter/widgets/radio_widget.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
