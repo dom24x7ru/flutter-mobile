@@ -30,7 +30,10 @@ class _VotesListPageState extends State<VotesListPage> {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
 
-      setState(() { votes = store.votes.list!; });
+      setState(() {
+        if (store.votes.list == null) return;
+        votes = store.votes.list!;
+      });
       var listener = _client.on('vote', this, (event, cont) {
         setState(() { votes = store.votes.list!; });
       });
@@ -50,14 +53,19 @@ class _VotesListPageState extends State<VotesListPage> {
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
 
+    Widget? floatingActionButton;
+    if (store.user.value!.resident != null) {
+      floatingActionButton = FloatingActionButton(
+          onPressed: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const VoteCreatePage())) },
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.add)
+      );
+    }
+
     return Scaffold(
         appBar: Header(context, 'Голосования'),
         bottomNavigationBar: Footer(context, FooterNav.services),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const VoteCreatePage())) },
-            backgroundColor: Colors.blue,
-            child: const Icon(Icons.add)
-        ),
+        floatingActionButton: floatingActionButton,
         body: ListView.builder(
             itemCount: votes.length,
             itemBuilder: (BuildContext context, int index) {

@@ -97,7 +97,7 @@ class _SettingsPage extends State<SettingsPage> {
             ),
             TextField(
                 controller: _cFlat,
-                enabled: _user == null || _user!.resident!.flat == null,
+                enabled: _user == null || _user!.resident == null || _user!.resident!.flat == null,
                 decoration: const InputDecoration(
                     hintText: 'Введите номер квартиры'
                 )
@@ -175,9 +175,9 @@ class _SettingsPage extends State<SettingsPage> {
       if (user == null) return;
       if (user.person != null) {
         Person? person = user.person;
-        _cSurname.text = person!.surname!;
-        _cName.text = person.name!;
-        _cMidname.text = person.midname!;
+        _cSurname.text = person!.surname != null ? person.surname! : '';
+        _cName.text = person.name != null ? person.name! : '';
+        _cMidname.text = person.midname != null ? person.midname! : '';
         _cTelegram.text = person.telegram != null ? person.telegram! : '';
 
         var access = person.access!.name;

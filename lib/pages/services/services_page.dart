@@ -66,7 +66,7 @@ class ServicesPage extends StatelessWidget {
                   color: Colors.red,
                   onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const DocumentsPage())) }),
               ServiceCard('Голосования',
-                  count: store.votes.list!.length,
+                  count: store.votes.list != null ? store.votes.list!.length : 0,
                   color: Colors.green,
                   onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const VotesListPage())) }),
               ServiceCard('ЧаВо',

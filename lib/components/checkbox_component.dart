@@ -14,6 +14,13 @@ class Dom24x7Checkbox extends StatefulWidget {
 class _Dom24x7CheckboxState extends State<Dom24x7Checkbox> {
   @override
   Widget build(BuildContext context) {
-    return Row(children: [Checkbox(value: widget.value, onChanged: widget.onChanged), Text(widget.label)]);
+    return Row(
+        children: [
+          Checkbox(value: widget.value, onChanged: widget.onChanged),
+          Expanded(
+              child: Text(widget.label, overflow: TextOverflow.ellipsis, maxLines: 2,)
+          )
+        ]
+    );
   }
 }
