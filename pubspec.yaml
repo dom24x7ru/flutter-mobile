@@ -26,6 +26,7 @@ dependencies:
   grouped_list: ^4.2.0
   firebase_core: ^1.12.0
   visibility_detector: ^0.2.2
+  scrollable_positioned_list: ^0.2.3
 
 dev_dependencies:
   flutter_test:

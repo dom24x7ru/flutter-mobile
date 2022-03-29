@@ -8,7 +8,8 @@ class IMMessageBlock extends StatefulWidget {
   final IMMessage message;
   final IMMessage? prev;
   final IMMessage? next;
-  const IMMessageBlock(this.message, {Key? key, this.prev, this.next}) : super(key: key);
+  final bool isAnswer;
+  const IMMessageBlock(this.message, {Key? key, this.prev, this.next, this.isAnswer = false}) : super(key: key);
 
   @override
   State<IMMessageBlock> createState() => _IMMessageBlockState();
@@ -17,10 +18,31 @@ class IMMessageBlock extends StatefulWidget {
 class _IMMessageBlockState extends State<IMMessageBlock> {
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = [
-      Text(widget.message.body!.text),
-      Text(Utilities.getDateFormat(widget.message.createdAt), style: const TextStyle(color: Colors.black26))
-    ];
+    List<Widget> children = [Text(widget.message.body!.text)];
+
+    // добавляем дату создания сообщения
+    if (!widget.isAnswer) {
+      final timeWidget = Text(
+          Utilities.getTimeFormat(widget.message.createdAt),
+          style: const TextStyle(color: Colors.black26)
+      );
+      if (widget.message.body!.history.isEmpty) {
+        children.add(timeWidget);
+      } else {
+        children.add(Row(
+          children: [
+            const Text('исправлено ', style: TextStyle(color: Colors.black26)),
+            timeWidget
+          ]
+        ));
+      }
+    }
+
+    // является ли сообщение ответом на другое
+    final aMessage = widget.message.body!.aMessage;
+    if (aMessage != null) {
+      children.insert(0, IMMessageBlock(aMessage, isAnswer: true));
+    }
 
     // нужно показывать имя написавшего сообщение
     final prevPersonTitle = _imPersonTitle(widget.prev);
@@ -30,24 +52,43 @@ class _IMMessageBlockState extends State<IMMessageBlock> {
           fontWeight: FontWeight.bold, color: Colors.blue)));
     }
 
-    // нужно ли показывать дату
-    final date = Utilities.getDateFormatShort(widget.message.createdAt);
-    if (widget.prev == null) {
-      children.insert(0, _showDateBlock(date));
-    } else {
-      final prevDate = Utilities.getDateFormatShort(widget.prev!.createdAt);
-      if (date != prevDate) {
+    // нужно ли показывать блок с датой
+    if (!widget.isAnswer) {
+      final date = Utilities.getDateFormatShort(widget.message.createdAt);
+      if (widget.prev == null) {
         children.insert(0, _showDateBlock(date));
+      } else {
+        final prevDate = Utilities.getDateFormatShort(widget.prev!.createdAt);
+        if (date != prevDate) {
+          children.insert(0, _showDateBlock(date));
+        }
       }
     }
 
-    return Container(
-        padding: const EdgeInsets.all(5.0),
+    Widget msgBlockWidget = Container(
+        padding: const EdgeInsets.all(10.0),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: children
         )
     );
+
+    if (widget.isAnswer) {
+      msgBlockWidget = Container(
+          padding: const EdgeInsets.all(10.0),
+          decoration: const BoxDecoration(
+              border: Border(
+                left: BorderSide(color: Colors.blue, width: 3)
+              )
+          ),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: children
+          )
+      );
+    }
+
+    return msgBlockWidget;
   }
 
   String? _imPersonTitle(IMMessage? message) {

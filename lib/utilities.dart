@@ -15,6 +15,10 @@ class Utilities {
     return getDateFormat(dt, 'dd.MM.y');
   }
 
+  static String getTimeFormat(int dt) {
+    return getDateFormat(dt, 'HH:mm');
+  }
+
   static String getDateFromNow(int dt) {
     final int now = DateTime.now().millisecondsSinceEpoch;
     double duration = (now - dt) / 1000; // в секундах

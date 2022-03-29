@@ -7,6 +7,7 @@ import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class IMMessagesPage extends StatefulWidget {
@@ -20,7 +21,8 @@ class IMMessagesPage extends StatefulWidget {
 
 class _IMMessagesPageState extends State<IMMessagesPage> {
   late List<IMMessage> messages = [];
-  final ScrollController _scrollController = ScrollController();
+  late int _currentIndex = 0;
+  final ItemScrollController _scrollController = ItemScrollController();
   bool _needsScroll = false;
 
   @override
@@ -33,12 +35,12 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollToEnd());
+    WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollTo(_currentIndex));
     return Scaffold(
       appBar: Header(context, Utilities.getHeaderTitle(widget.title)),
       bottomNavigationBar: IMInputMessage(widget.channel),
-      body: ListView.builder(
-        controller: _scrollController,
+      body: ScrollablePositionedList.builder(
+        itemScrollController: _scrollController,
         itemCount: messages.length,
         itemBuilder: (BuildContext context, int index) {
           final message = messages[index];
@@ -49,8 +51,8 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
             onVisibilityChanged: (VisibilityInfo info) {
               if (prev != null) return;
               if (info.visibleFraction > 0.5) {
-                debugPrint('загрузить более старые сообщения...');
-                _loadMessages(context, offset: messages.length, scroll: true);
+                _currentIndex = 0;
+                _loadMessages(context, offset: messages.length, more: true);
               }
             },
             child: IMMessageBlock(message, prev: prev, next: next)
@@ -60,7 +62,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     );
   }
 
-  _loadMessages(BuildContext context, { int limit = 20, int offset = 0, bool scroll = true }) {
+  _loadMessages(BuildContext context, { int limit = 20, int offset = 0, bool more = false}) {
     final store = Provider.of<MainStore>(context, listen: false);
     final client = store.client;
     final data = { 'channelId': widget.channel.id, 'limit': limit, 'offset': offset };
@@ -78,27 +80,28 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         return;
       }
       for (var msg in data) {
-        _addMessage(IMMessage.fromMap(msg), scroll);
+        _addMessage(IMMessage.fromMap(msg), more);
       }
     });
   }
 
-  _scrollToEnd() async {
+  _scrollTo(int index) async {
     if (_needsScroll) {
       _needsScroll = false;
-      _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut
-      );
+      _scrollController.jumpTo(index: index);
     }
   }
 
-  _addMessage(IMMessage message, bool scroll) {
+  _addMessage(IMMessage message, bool more) {
     setState(() {
       Utilities.addOrReplaceById(messages, message);
       Utilities.sortById(messages);
-      _needsScroll = scroll;
+      _needsScroll = true;
+      if (!more) {
+        _currentIndex = messages.length - 1;
+      } else {
+        _currentIndex++;
+      }
     });
   }
 }
