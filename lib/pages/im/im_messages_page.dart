@@ -60,17 +60,11 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         itemCount: messages.length,
         itemBuilder: (BuildContext context, int index) {
           final message = messages[index];
-          return IMMessageBlock(message);
+          final prev = index > 0 ? messages[index - 1] : null;
+          final next = index < messages.length - 1 ? messages[index + 1] : null;
+          return IMMessageBlock(message, prev: prev, next: next);
         }
       )
-    );
-  }
-
-  Widget showDateBlock(String dt) {
-    return Container(
-      padding: const EdgeInsets.all(5.0),
-      width: double.infinity,
-      child: Text(dt, textAlign: TextAlign.center),
     );
   }
 
