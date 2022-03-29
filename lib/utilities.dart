@@ -160,4 +160,13 @@ class Utilities {
     }
     return list;
   }
+
+  static List<T> sortById<T extends Model>(List<T> list) {
+    list.sort((obj1, obj2) {
+      if (obj1.id > obj2.id) return 1;
+      if (obj1.id < obj2.id) return -1;
+      return 0;
+    });
+    return list;
+  }
 }

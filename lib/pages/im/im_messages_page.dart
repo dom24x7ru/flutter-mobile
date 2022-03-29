@@ -7,6 +7,7 @@ import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class IMMessagesPage extends StatefulWidget {
   final IMChannel channel;
@@ -26,26 +27,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      final store = Provider.of<MainStore>(context, listen: false);
-      final client = store.client;
-      final data = { 'channelId': widget.channel.id, 'limit': 20, 'offset': 0 };
-      client.socket.emit('im.load', data, (String name, dynamic error, dynamic data) {
-        if (error != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
-          );
-          return;
-        }
-        if (data == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Не удалось загрузить список сообщений'), backgroundColor: Colors.red)
-          );
-          return;
-        }
-        for (var msg in data) {
-          _addMessage(IMMessage.fromMap(msg));
-        }
-      });
+      _loadMessages(context);
     });
   }
 
@@ -62,10 +44,43 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
           final message = messages[index];
           final prev = index > 0 ? messages[index - 1] : null;
           final next = index < messages.length - 1 ? messages[index + 1] : null;
-          return IMMessageBlock(message, prev: prev, next: next);
+          return VisibilityDetector(
+            key: Key(message.id.toString()),
+            onVisibilityChanged: (VisibilityInfo info) {
+              if (prev != null) return;
+              if (info.visibleFraction > 0.5) {
+                debugPrint('загрузить более старые сообщения...');
+                _loadMessages(context, offset: messages.length, scroll: true);
+              }
+            },
+            child: IMMessageBlock(message, prev: prev, next: next)
+          );
         }
       )
     );
+  }
+
+  _loadMessages(BuildContext context, { int limit = 20, int offset = 0, bool scroll = true }) {
+    final store = Provider.of<MainStore>(context, listen: false);
+    final client = store.client;
+    final data = { 'channelId': widget.channel.id, 'limit': limit, 'offset': offset };
+    client.socket.emit('im.load', data, (String name, dynamic error, dynamic data) {
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+      if (data == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Не удалось загрузить список сообщений'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+      for (var msg in data) {
+        _addMessage(IMMessage.fromMap(msg), scroll);
+      }
+    });
   }
 
   _scrollToEnd() async {
@@ -79,10 +94,11 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     }
   }
 
-  _addMessage(IMMessage message) {
+  _addMessage(IMMessage message, bool scroll) {
     setState(() {
       Utilities.addOrReplaceById(messages, message);
-      _needsScroll = true;
+      Utilities.sortById(messages);
+      _needsScroll = scroll;
     });
   }
 }

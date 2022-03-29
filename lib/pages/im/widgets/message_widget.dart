@@ -2,6 +2,7 @@ import 'package:dom24x7_flutter/models/im_message.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:flutter/material.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class IMMessageBlock extends StatefulWidget {
   final IMMessage message;
