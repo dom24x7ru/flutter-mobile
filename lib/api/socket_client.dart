@@ -39,7 +39,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   SocketClient(this.store);
 
-  Future<void> connect([String url = 'dom24x7-backend.nl.yapahost.ru']) async {
+  Future<void> connect([String url = 'node.dom24x7.ru']) async {
     final prefs = await SharedPreferences.getInstance();
     final authToken = prefs.getString('authToken');
     String? lastNodeHost = prefs.getString('lastNodeHost');
@@ -201,24 +201,16 @@ class SocketClient extends BasicListener with EventEmitter {
     if (event.eventData['event'] == 'ready') return;
     store.user.setUser(User.fromMap(event.eventData['data']));
     final houseId = store.user.value!.houseId;
-    initChannel('all.$houseId.flats');
-    if (store.user.value!.residents.isEmpty) {
-      // пользователь новый и еще не сформирована персона и нет привязки к квартире
-      // TODO: переходим на страницу настроек
-      debugPrint('Список привязанных помещений пуст. Нужно перейти на страницу Помещений');
-    } else {
-      // пользователь уже полностью сформирован и можно подписаться на нужные каналы
-      final channels = [
-        'all.$houseId.posts', 'all.$houseId.invites', // начальная инициализация
-        'pinnedPosts.$houseId',
-        'instructions.$houseId',
-        'documents.$houseId',
-        'faq.$houseId',
-        'recommendations.$houseId'
-      ];
-      for (String channel in channels) {
-        initChannel(channel);
-      }
+    final channels = [
+      'all.$houseId.flats', 'all.$houseId.posts', 'all.$houseId.invites', // начальная инициализация
+      'pinnedPosts.$houseId',
+      'instructions.$houseId',
+      'documents.$houseId',
+      'faq.$houseId',
+      'recommendations.$houseId'
+    ];
+    for (String channel in channels) {
+      initChannel(channel);
     }
   }
 
@@ -287,6 +279,7 @@ class SocketClient extends BasicListener with EventEmitter {
   void onVotes(event, context) {
     if (event.eventData['event'] == 'ready') {
       // подписаться на каналы по каждому пришедшему голосованию
+      if (store.votes.list == null) return;
       final List<Vote> votes = store.votes.list!;
       for (Vote vote in votes) {
         initChannel('vote.${vote.id}');
