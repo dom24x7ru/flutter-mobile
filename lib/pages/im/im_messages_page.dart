@@ -6,7 +6,6 @@ import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
 
 class IMMessagesPage extends StatefulWidget {
@@ -20,6 +19,8 @@ class IMMessagesPage extends StatefulWidget {
 
 class _IMMessagesPageState extends State<IMMessagesPage> {
   late List<IMMessage> messages = [];
+  final ScrollController _scrollController = ScrollController();
+  bool _needsScroll = false;
 
   @override
   void initState() {
@@ -42,9 +43,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
           return;
         }
         for (var msg in data) {
-          setState(() {
-            Utilities.addOrReplaceById(messages, IMMessage.fromMap(msg));
-          });
+          _addMessage(IMMessage.fromMap(msg));
         }
       });
     });
@@ -52,10 +51,12 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollToEnd());
     return Scaffold(
       appBar: Header(context, Utilities.getHeaderTitle(widget.title)),
       bottomNavigationBar: IMInputMessage(widget.channel),
       body: ListView.builder(
+        controller: _scrollController,
         itemCount: messages.length,
         itemBuilder: (BuildContext context, int index) {
           final message = messages[index];
@@ -71,5 +72,23 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
       width: double.infinity,
       child: Text(dt, textAlign: TextAlign.center),
     );
+  }
+
+  _scrollToEnd() async {
+    if (_needsScroll) {
+      _needsScroll = false;
+      _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut
+      );
+    }
+  }
+
+  _addMessage(IMMessage message) {
+    setState(() {
+      Utilities.addOrReplaceById(messages, message);
+      _needsScroll = true;
+    });
   }
 }
