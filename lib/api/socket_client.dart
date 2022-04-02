@@ -151,8 +151,8 @@ class SocketClient extends BasicListener with EventEmitter {
     on('recommendations', this, onRecommendations);
     on('votes', this, onVotes);
     on('vote', this, onVote);
-    on('imChannels', this, onChannels);
-    on('imChannel', this, onNothing);
+    on('imChannels', this, onIMChannels);
+    on('imChannel', this, onIMChannel);
     on('channel.ready', this, onNothing);
   }
 
@@ -296,10 +296,23 @@ class SocketClient extends BasicListener with EventEmitter {
     store.votes.addVote(Vote.fromMap(data));
   }
 
-  void onChannels(event, context) {
+  void onIMChannels(event, context) {
     if (event.eventData['event'] == 'ready') {
+      // подписаться на каналы по каждому доступному чату
+      if (store.im.channels == null) return;
+      final List<IMChannel> imChannels = store.im.channels!;
+      for (IMChannel channel in imChannels) {
+        initChannel('imChannel.${channel.id}');
+        initChannel('imMessages.${channel.id}');
+      }
       return;
     }
+    final data = event.eventData['data'];
+    store.im.addChannel(IMChannel.fromMap(data));
+  }
+
+  void onIMChannel(event, context) {
+    if (event.eventData['event'] == 'ready') return;
     final data = event.eventData['data'];
     store.im.addChannel(IMChannel.fromMap(data));
   }

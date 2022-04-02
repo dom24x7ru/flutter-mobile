@@ -1,5 +1,7 @@
 import 'package:dom24x7_flutter/models/im_channel.dart';
+import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class IMInputMessage extends StatefulWidget {
   final IMChannel channel;
@@ -40,11 +42,32 @@ class _IMInputMessageState extends State<IMInputMessage> {
                   )
               ),
               InkWell(
-                onTap: () => {},
+                onTap: () => { _send(context) },
                 child: const Icon(Icons.send),
               )
             ]
         )
     );
+  }
+
+  _send(BuildContext context) {
+    final store = Provider.of<MainStore>(context, listen: false);
+    final client = store.client;
+    final data = { 'channelId': widget.channel.id, 'body': { 'text': _cMessage.text } };
+    client.socket.emit('im.save', data, (String name, dynamic error, dynamic data) {
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+      if (data == null || data['status'] != 'OK') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Произошла неизвестная ошибка. Попробуйте позже...'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+      _cMessage.text = '';
+    });
   }
 }

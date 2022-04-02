@@ -165,6 +165,16 @@ class Utilities {
     return list;
   }
 
+  static List<T>? deleteById<T extends Model>(List<T>? list, T obj) {
+    if (list  == null || list.isEmpty) return list;
+    for (int index = 0; index < list.length; index++) {
+      if (list[index].id == obj.id) {
+        list.removeAt(index);
+      }
+    }
+    return list;
+  }
+
   static List<T> sortById<T extends Model>(List<T> list) {
     list.sort((obj1, obj2) {
       if (obj1.id > obj2.id) return 1;

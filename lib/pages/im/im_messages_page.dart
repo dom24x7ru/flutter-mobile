@@ -1,3 +1,4 @@
+import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/im_message.dart';
 import 'package:dom24x7_flutter/pages/im/widgets/input_message_widget.dart';
@@ -24,13 +25,23 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   late int _currentIndex = 0;
   final ItemScrollController _scrollController = ItemScrollController();
   bool _needsScroll = false;
+  late SocketClient _client;
+  final List<dynamic> _listeners = [];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      _loadMessages(context);
+      _client = _loadMessages(context);
     });
+  }
+
+  @override
+  void dispose() {
+    for (var listener in _listeners) {
+      _client.off(listener);
+    }
+    super.dispose();
   }
 
   @override
@@ -62,9 +73,10 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     );
   }
 
-  _loadMessages(BuildContext context, { int limit = 20, int offset = 0, bool more = false}) {
+  SocketClient _loadMessages(BuildContext context, { int limit = 20, int offset = 0, bool more = false}) {
     final store = Provider.of<MainStore>(context, listen: false);
     final client = store.client;
+
     final data = { 'channelId': widget.channel.id, 'limit': limit, 'offset': offset };
     client.socket.emit('im.load', data, (String name, dynamic error, dynamic data) {
       if (error != null) {
@@ -83,6 +95,20 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         _addMessage(IMMessage.fromMap(msg), more);
       }
     });
+
+    var listener = client.on('imMessages', this, (event, cont) {
+      final eventData = event.eventData! as Map<String, dynamic>;
+      if (eventData['event'] == 'ready') return;
+      final data = eventData['data'];
+      if (eventData['event'] == 'destroy') {
+        _delMessage(IMMessage.fromMap(data), false);
+      } else {
+        _addMessage(IMMessage.fromMap(data), false);
+      }
+    });
+    _listeners.add(listener);
+
+    return client;
   }
 
   _scrollTo(int index) async {
@@ -101,6 +127,19 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         _currentIndex = messages.length - 1;
       } else {
         _currentIndex++;
+      }
+    });
+  }
+
+  _delMessage(IMMessage message, bool more) {
+    setState(() {
+      Utilities.deleteById(messages, message);
+      Utilities.sortById(messages);
+      _needsScroll = true;
+      if (!more) {
+        _currentIndex = messages.length - 1;
+      } else {
+        _currentIndex--;
       }
     });
   }
