@@ -52,6 +52,9 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final store = Provider.of<MainStore>(context);
+    final person = store.user.value!.person;
+
     WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollTo(_currentIndex));
     return Scaffold(
       appBar: Header(context, Utilities.getHeaderTitle(widget.title)),
@@ -79,32 +82,56 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
               },
               child: IMMessageBlock(message, prev: prev, next: next)
           );
-          return PopupMenuButton<IMMessageMenu>(
-            child: msgBlockWidget,
-            itemBuilder: (BuildContext context) => [
+
+          if (message.imPerson != null) {
+            List<PopupMenuItem<IMMessageMenu>> contextMenu = [
               PopupMenuItem<IMMessageMenu>(
                   value: IMMessageMenu.profile,
-                  child: Row(children: const [Icon(Icons.person_outline), Text(' Профиль')])
+                  child: Row(children: const [
+                    Icon(Icons.person_outline),
+                    Text(' Профиль')
+                  ])
               ),
               PopupMenuItem<IMMessageMenu>(
                   value: IMMessageMenu.answer,
-                  child: Row(children: const [Icon(Icons.keyboard_return_outlined), Text(' Ответить')])
+                  child: Row(children: const [
+                    Icon(Icons.keyboard_return_outlined),
+                    Text(' Ответить')
+                  ])
               ),
               PopupMenuItem<IMMessageMenu>(
                   value: IMMessageMenu.copy,
-                  child: Row(children: const [Icon(Icons.copy), Text(' Копировать')])
-              ),
-              PopupMenuItem<IMMessageMenu>(
-                  value: IMMessageMenu.edit,
-                  child: Row(children: const [Icon(Icons.edit_outlined), Text(' Изменить')])
-              ),
-              PopupMenuItem<IMMessageMenu>(
-                  value: IMMessageMenu.delete,
-                  child: Row(children: const [Icon(Icons.delete_outline), Text(' Удалить')])
+                  child: Row(
+                      children: const [Icon(Icons.copy), Text(' Копировать')])
               )
-            ],
-            onSelected: (IMMessageMenu item) => { _onSelected(item, message) }
-          );
+            ];
+            if (message.imPerson!.person.id == person!.id) {
+              contextMenu.add(PopupMenuItem<IMMessageMenu>(
+                  value: IMMessageMenu.edit,
+                  child: Row(children: const [
+                    Icon(Icons.edit_outlined),
+                    Text(' Изменить')
+                  ])
+              ));
+              contextMenu.add(PopupMenuItem<IMMessageMenu>(
+                  value: IMMessageMenu.delete,
+                  child: Row(children: const [
+                    Icon(Icons.delete_outline),
+                    Text(' Удалить')
+                  ])
+              ));
+            }
+            return PopupMenuButton<IMMessageMenu>(
+                child: msgBlockWidget,
+                itemBuilder: (BuildContext context) => contextMenu,
+                onSelected: (IMMessageMenu item) =>
+                {
+                  _onSelected(item, message)
+                }
+            );
+          } else {
+            return msgBlockWidget;
+          }
         }
       )
     );
