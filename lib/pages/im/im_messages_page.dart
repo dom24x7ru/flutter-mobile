@@ -67,6 +67,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
 
     WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollTo(_currentIndex));
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Row(children: [Text(Utilities.getHeaderTitle(widget.title))]),
         actions: [
