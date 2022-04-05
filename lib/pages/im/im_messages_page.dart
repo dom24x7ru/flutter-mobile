@@ -33,12 +33,22 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   final List<dynamic> _listeners = [];
   IMMessage? message;
   MessageAction? action;
+  bool mute = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _client = _loadMessages(context);
+      _client.socket.emit('im.getMute', { 'channelId': widget.channel.id }, (String name, dynamic error, dynamic data) {
+        if (error != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+          );
+          return;
+        }
+        setState(() => { mute = data['mute'] });
+      });
     });
   }
 
@@ -57,7 +67,25 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
 
     WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollTo(_currentIndex));
     return Scaffold(
-      appBar: Header(context, Utilities.getHeaderTitle(widget.title)),
+      appBar: AppBar(
+        title: Row(children: [Text(Utilities.getHeaderTitle(widget.title))]),
+        actions: [
+          IconButton(
+            icon: Icon(mute ? Icons.volume_off : Icons.volume_up),
+            onPressed: () {
+              _client.socket.emit('im.setMute', { 'channelId': widget.channel.id, 'mute': !mute }, (String name, dynamic error, dynamic data) {
+                if (error != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+                  );
+                  return;
+                }
+                setState(() => { mute = data['mute'] });
+              });
+            }
+          )
+        ]
+      ),
       bottomNavigationBar: IMInputMessage(widget.channel, message, action, () {
         setState(() {
           message = null;
