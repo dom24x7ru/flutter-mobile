@@ -27,6 +27,10 @@ class NameAccess {
         break;
     }
   }
+
+  Map<String, dynamic> toMap() {
+    return { 'level': level, 'format': format };
+  }
 }
 
 class ContactAccess {
@@ -46,6 +50,10 @@ class ContactAccess {
         break;
     }
   }
+
+  Map<String, dynamic> toMap() {
+    return { 'level': level };
+  }
 }
 
 
@@ -59,5 +67,13 @@ class PersonAccess {
     name = NameAccess.fromMap(map['name']);
     mobile = ContactAccess.fromMap(map['mobile']);
     telegram = ContactAccess.fromMap(map['telegram']);
+  }
+
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = {};
+    if (name != null) map['name'] = name!.toMap();
+    if (mobile != null) map['mobile'] = mobile!.toMap();
+    if (telegram != null) map['telegram'] = telegram!.toMap();
+    return map;
   }
 }

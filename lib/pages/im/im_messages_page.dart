@@ -1,15 +1,19 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/im_message.dart';
+import 'package:dom24x7_flutter/pages/flat_page.dart';
 import 'package:dom24x7_flutter/pages/im/widgets/input_message_widget.dart';
 import 'package:dom24x7_flutter/pages/im/widgets/message_widget.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:visibility_detector/visibility_detector.dart';
+
+enum IMMessageMenu { profile, answer, copy, edit, delete }
 
 class IMMessagesPage extends StatefulWidget {
   final IMChannel channel;
@@ -27,6 +31,8 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   bool _needsScroll = false;
   late SocketClient _client;
   final List<dynamic> _listeners = [];
+  IMMessage? message;
+  MessageAction? action;
 
   @override
   void initState() {
@@ -49,7 +55,12 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollTo(_currentIndex));
     return Scaffold(
       appBar: Header(context, Utilities.getHeaderTitle(widget.title)),
-      bottomNavigationBar: IMInputMessage(widget.channel),
+      bottomNavigationBar: IMInputMessage(widget.channel, message, action, () {
+        setState(() {
+          message = null;
+          action = null;
+        });
+      }),
       body: ScrollablePositionedList.builder(
         itemScrollController: _scrollController,
         itemCount: messages.length,
@@ -57,16 +68,42 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
           final message = messages[index];
           final prev = index > 0 ? messages[index - 1] : null;
           final next = index < messages.length - 1 ? messages[index + 1] : null;
-          return VisibilityDetector(
-            key: Key(message.id.toString()),
-            onVisibilityChanged: (VisibilityInfo info) {
-              if (prev != null) return;
-              if (info.visibleFraction > 0.5) {
-                _currentIndex = 0;
-                _loadMessages(context, offset: messages.length, more: true);
-              }
-            },
-            child: IMMessageBlock(message, prev: prev, next: next)
+          final msgBlockWidget = VisibilityDetector(
+              key: Key(message.id.toString()),
+              onVisibilityChanged: (VisibilityInfo info) {
+                if (prev != null) return;
+                if (info.visibleFraction > 0.5) {
+                  _currentIndex = 0;
+                  _loadMessages(context, offset: messages.length, more: true);
+                }
+              },
+              child: IMMessageBlock(message, prev: prev, next: next)
+          );
+          return PopupMenuButton<IMMessageMenu>(
+            child: msgBlockWidget,
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem<IMMessageMenu>(
+                  value: IMMessageMenu.profile,
+                  child: Row(children: const [Icon(Icons.person_outline), Text(' Профиль')])
+              ),
+              PopupMenuItem<IMMessageMenu>(
+                  value: IMMessageMenu.answer,
+                  child: Row(children: const [Icon(Icons.keyboard_return_outlined), Text(' Ответить')])
+              ),
+              PopupMenuItem<IMMessageMenu>(
+                  value: IMMessageMenu.copy,
+                  child: Row(children: const [Icon(Icons.copy), Text(' Копировать')])
+              ),
+              PopupMenuItem<IMMessageMenu>(
+                  value: IMMessageMenu.edit,
+                  child: Row(children: const [Icon(Icons.edit_outlined), Text(' Изменить')])
+              ),
+              PopupMenuItem<IMMessageMenu>(
+                  value: IMMessageMenu.delete,
+                  child: Row(children: const [Icon(Icons.delete_outline), Text(' Удалить')])
+              )
+            ],
+            onSelected: (IMMessageMenu item) => { _onSelected(item, message) }
           );
         }
       )
@@ -142,5 +179,44 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         _currentIndex--;
       }
     });
+  }
+
+  _onSelected(IMMessageMenu item, IMMessage message) {
+    switch (item) {
+      case IMMessageMenu.profile:
+        final flat = message.imPerson?.flat;
+        if (flat != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(flat)));
+        }
+        break;
+      case IMMessageMenu.answer:
+        setState(() {
+          this.message = message;
+          action = MessageAction.answer;
+        });
+        break;
+      case IMMessageMenu.copy:
+        final text = message.body!.text;
+        Clipboard.setData(ClipboardData(text: text));
+        break;
+      case IMMessageMenu.edit:
+        setState(() {
+          this.message = message;
+          action = MessageAction.edit;
+        });
+        break;
+      case IMMessageMenu.delete:
+        final store = Provider.of<MainStore>(context, listen: false);
+        final client = store.client;
+        client.socket.emit('im.del', { 'messageId': message.id }, (String name, dynamic error, dynamic data) {
+          if (error != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+            );
+            return;
+          }
+        });
+        break;
+    }
   }
 }

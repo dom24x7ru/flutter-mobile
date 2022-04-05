@@ -24,4 +24,15 @@ class Flat extends Model {
       }
     }
   }
+
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = { 'id': id, 'number': number, 'floor': floor, 'section': section };
+    if (rooms != null) map['rooms'] = rooms;
+    if (square != 0) map['square'] = square;
+    map['residents'] = [];
+    for (var resident in residents) {
+      map['residents'].app(resident.toMap());
+    }
+    return map;
+  }
 }

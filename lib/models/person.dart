@@ -29,4 +29,19 @@ class Person extends Model {
       access = PersonAccess.fromMap(map['access']);
     }
   }
+
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = { 'id': id };
+    if (surname != null) map['surname'] = surname;
+    if (name != null) map['name'] = name;
+    if (midname != null) map['midname'] = midname;
+    if (birthday != null) map['birthday'] = birthday;
+    if (sex != null) map['sex'] = sex;
+    if (biography != null) map['biography'] = biography;
+    if (telegram != null) map['telegram'] = telegram;
+    if (mobile != null) map['mobile'] = mobile;
+    map['deleted'] = deleted;
+    if (access != null) map['access'] = access!.toMap();
+    return map;
+  }
 }

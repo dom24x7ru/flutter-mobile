@@ -13,7 +13,7 @@ class Header extends AppBar {
           actions: [
             PopupMenuButton<AppBarMenu>(
               icon: const Icon(Icons.more_vert),
-              itemBuilder: (context) => [
+              itemBuilder: (BuildContext context) => [
                 const PopupMenuItem<AppBarMenu>(
                     value: AppBarMenu.about, child: Text('О приложении')),
                 const PopupMenuDivider(),

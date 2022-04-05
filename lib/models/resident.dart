@@ -16,4 +16,12 @@ class Resident extends Model {
       flat = Flat.fromMap(map['flat']);
     }
   }
+
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = { 'id': id, 'personId': personId };
+    if (isOwner != null) map['isOwner'] = isOwner;
+    if (deleted != null) map['deleted'] = deleted;
+    if (flat != null) map['flat'] = flat!.toMap();
+    return map;
+  }
 }

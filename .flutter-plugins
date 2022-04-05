@@ -1,5 +1,5 @@
 # This is a generated file; do not edit or check into version control.
-firebase_core=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-1.13.1/
+firebase_core=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-1.14.0/
 firebase_core_web=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.6.1/
 package_info_plus=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/package_info_plus-1.4.0/
 package_info_plus_macos=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/package_info_plus_macos-1.3.0/
@@ -28,5 +28,5 @@ wakelock=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/wak
 wakelock_macos=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock_macos-0.4.0/
 wakelock_web=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock_web-0.4.0/
 webview_flutter=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter-2.8.0/
-webview_flutter_android=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter_android-2.8.3/
+webview_flutter_android=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter_android-2.8.4/
 webview_flutter_wkwebview=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter_wkwebview-2.7.1/

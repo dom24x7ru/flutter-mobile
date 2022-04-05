@@ -6,7 +6,12 @@ import 'package:dom24x7_flutter/models/person.dart';
 class IMPerson {
   final Person person;
   final Flat flat;
+
   IMPerson(this.person, this.flat);
+
+  Map<String, dynamic> toMap() {
+    return { 'person': person.toMap(), 'flat': flat.toMap() };
+  }
 }
 
 class IMChannel extends Model {
