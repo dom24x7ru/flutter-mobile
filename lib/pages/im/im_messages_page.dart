@@ -1,6 +1,7 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/im_message.dart';
+import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/pages/flat_page.dart';
 import 'package:dom24x7_flutter/pages/im/widgets/input_message_widget.dart';
 import 'package:dom24x7_flutter/pages/im/widgets/message_widget.dart';
@@ -67,7 +68,6 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
 
     WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollTo(_currentIndex));
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Row(children: [Text(Utilities.getHeaderTitle(widget.title))]),
         actions: [
@@ -87,14 +87,31 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
           )
         ]
       ),
-      bottomNavigationBar: IMInputMessage(widget.channel, message, action, () {
-        setState(() {
-          message = null;
-          action = null;
-        });
-      }),
-      body: ScrollablePositionedList.builder(
+      body: Stack(
+        children: [
+          _messagesListView(person),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: _inputMessage()
+          )
+        ]
+      )
+    );
+  }
+
+  Widget _inputMessage() {
+    return IMInputMessage(widget.channel, message, action, () {
+      setState(() {
+        message = null;
+        action = null;
+      });
+    });
+  }
+
+  Widget _messagesListView(Person? person) {
+    return ScrollablePositionedList.builder(
         itemScrollController: _scrollController,
+        padding: const EdgeInsets.only(bottom: 70.0),
         itemCount: messages.length,
         itemBuilder: (BuildContext context, int index) {
           final message = messages[index];
@@ -162,7 +179,6 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
             return msgBlockWidget;
           }
         }
-      )
     );
   }
 
@@ -204,14 +220,14 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     return client;
   }
 
-  _scrollTo(int index) async {
+  void _scrollTo(int index) async {
     if (_needsScroll) {
       _needsScroll = false;
       _scrollController.jumpTo(index: index);
     }
   }
 
-  _addMessage(IMMessage message, bool more) {
+  void _addMessage(IMMessage message, bool more) {
     setState(() {
       Utilities.addOrReplaceById(messages, message);
       Utilities.sortById(messages);
@@ -224,7 +240,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     });
   }
 
-  _delMessage(IMMessage message, bool more) {
+  void _delMessage(IMMessage message, bool more) {
     setState(() {
       Utilities.deleteById(messages, message);
       Utilities.sortById(messages);
@@ -237,7 +253,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     });
   }
 
-  _onSelected(IMMessageMenu item, IMMessage message) {
+  void _onSelected(IMMessageMenu item, IMMessage message) {
     switch (item) {
       case IMMessageMenu.profile:
         final flat = message.imPerson?.flat;
