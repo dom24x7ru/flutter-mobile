@@ -1,5 +1,6 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/store/main.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -20,11 +21,22 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
   void initState() {
     super.initState();
     _initPackageInfo();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
 
-      var listener = _client.on('loaded', this, (event, cont) {
+      var listener = _client.on('loaded', this, (event, cont) async {
+        try {
+          String? token = await FirebaseMessaging.instance.getToken();
+          print('TOKEN: $token');
+          if (token != null) {
+            // сохраняем токен для пушей в БД на сервере
+            _client.socket.emit('notification.saveToken', { 'token': token});
+          }
+        } catch (error) {
+          print(error);
+        }
+
         Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
       });
       _listeners.add(listener);
