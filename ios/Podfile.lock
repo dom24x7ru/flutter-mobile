@@ -4,10 +4,10 @@ PODS:
   - Firebase/Messaging (8.14.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 8.14.0)
-  - firebase_core (1.14.0):
+  - firebase_core (1.14.1):
     - Firebase/CoreOnly (= 8.14.0)
     - Flutter
-  - firebase_messaging (11.2.12):
+  - firebase_messaging (11.2.13):
     - Firebase/Messaging (= 8.14.0)
     - firebase_core
     - Flutter
@@ -120,8 +120,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Firebase: 7e8fe528c161b9271d365217a74c16aaf834578e
-  firebase_core: b0b382f1497ab407aceb25e41e3036c8798c1609
-  firebase_messaging: 34dd10d1aa6d8f40d03660eeacd0452d62eec7aa
+  firebase_core: cdef02fcf55872191eb0568d4c31a7a700e38582
+  firebase_messaging: 57f89047ec0084a4049e253ce84cea39becadad4
   FirebaseCore: b84a44ee7ba999e0f9f76d198a9c7f60a797b848
   FirebaseCoreDiagnostics: fd0c8490f34287229c1d6c103d3a55f81ec85712
   FirebaseInstallations: 7d1d967a307c12f1aadd76844fc321cef699b1ce
