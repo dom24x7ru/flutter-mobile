@@ -24,12 +24,37 @@ class IMChannelsPage extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           final channel = channels[channels.length - index - 1];
           List<Widget> channelInfo = [
-            Text(channelTitle(store, channel), style: const TextStyle(fontWeight: FontWeight.bold))
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(channelTitle(store, channel), style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Text(lastMessageDate(channel), style: const TextStyle(color: Colors.black26))
+                ]
+            )
           ];
           if (channel.lastMessage != null) {
-            channelInfo.add(
-              Text(channel.lastMessage!.body!.text)
-            );
+            const maxLen = 50;
+            final lastMessage = channel.lastMessage;
+            if (lastMessage!.imPerson != null) {
+              final person = '${imPersonTitle(lastMessage.imPerson!)}: ';
+              final text = Utilities.getHeaderTitle(lastMessage.body!.text, maxLen - person.length);
+              channelInfo.add(
+                Row(
+                  children: [
+                    Text(person),
+                    Text(text, style: const TextStyle(color: Colors.black26))
+                  ]
+                )
+              );
+            } else {
+              final text = Utilities.getHeaderTitle(lastMessage.body!.text, maxLen);
+              channelInfo.add(
+                  Text(text, style: const TextStyle(color: Colors.black26))
+              );
+            }
           } else {
             channelInfo.add(
                 const Text('нет сообщений', style: TextStyle(color: Colors.black26))
@@ -39,18 +64,9 @@ class IMChannelsPage extends StatelessWidget {
             onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => IMMessagesPage(channel, channelTitle(store, channel)))) },
             child: Container(
                 padding: const EdgeInsets.all(15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: channelInfo
-                      ),
-                    ),
-                    Text(lastMessageDate(channel), style: const TextStyle(color: Colors.black26))
-                  ]
+                  children: channelInfo
                 )
             )
           );
@@ -91,6 +107,6 @@ class IMChannelsPage extends StatelessWidget {
 
   String lastMessageDate(IMChannel channel) {
     if (channel.lastMessage == null) return '';
-    return Utilities.getDateFromNow(channel.lastMessage!.createdAt);
+    return Utilities.getDateIM(channel.lastMessage!.createdAt);
   }
 }

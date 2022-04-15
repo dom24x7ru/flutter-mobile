@@ -2,9 +2,9 @@ import 'package:dom24x7_flutter/models/model.dart';
 import 'package:intl/intl.dart';
 
 class Utilities {
-  static String getHeaderTitle(String title) {
-    if (title.length < 20) return title;
-    return title.substring(0, 20) + '...';
+  static String getHeaderTitle(String title, [int maxLength = 20]) {
+    if (title.length < maxLength) return title;
+    return title.substring(0, maxLength) + '...';
   }
 
   static String getDateFormat(int dt, [String format = 'dd.MM.y HH:mm:ss']) {
@@ -137,6 +137,46 @@ class Utilities {
       }
     }
     return 'некоторое время назад';
+  }
+
+  static String getDateIM(int dt) {
+    final int now = DateTime.now().millisecondsSinceEpoch;
+    double duration = (now - dt) / 1000; // в секундах
+    // меньше суток: показываем только время
+    if (duration < 24 * 60 * 60) return getTimeFormat(dt);
+    // меньше недели: показываем день недели
+    if (duration < 7 * 24 * 60 * 60) {
+      final week = getDateFormat(dt, 'E');
+      switch (week) {
+        case 'Mon': return 'пн';
+        case 'Tue': return 'вт';
+        case 'Wed': return 'ср';
+        case 'Thu': return 'чт';
+        case 'Fri': return 'пт';
+        case 'Sat': return 'сб';
+        case 'Sun': return 'вс';
+      }
+    }
+    // меньше года: показываем день и месяц
+    if (duration < 356 * 24 * 60 * 60) {
+      final day = getDateFormat(dt, 'd');
+      switch (getDateFormat(dt, 'M')) {
+        case '1': return '$day янв.';
+        case '2': return '$day фев.';
+        case '3': return '$day мар.';
+        case '4': return '$day апр.';
+        case '5': return '$day май';
+        case '6': return '$day июн.';
+        case '7': return '$day июл.';
+        case '8': return '$day авг.';
+        case '9': return '$day сен.';
+        case '10': return '$day окт.';
+        case '11': return '$day ноя.';
+        case '12': return '$day дек.';
+      }
+    }
+    // больше года: показываем дату без времени
+    return getDateFormatShort(dt);
   }
 
   static String numberFormat(double value) {
