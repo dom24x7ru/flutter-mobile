@@ -69,7 +69,7 @@ class _VotePageState extends State<VotePage> {
 
     return Scaffold(
       appBar: Header(context, Utilities.getHeaderTitle(widget.vote.title)),
-      bottomNavigationBar: Footer(context, FooterNav.services),
+      bottomNavigationBar: const Footer(FooterNav.services),
       body: Card(
         child: Container(
           padding: const EdgeInsets.all(15.0),

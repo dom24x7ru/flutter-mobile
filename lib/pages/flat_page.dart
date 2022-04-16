@@ -41,7 +41,7 @@ class _FlatPageState extends State<FlatPage> {
 
     return Scaffold(
       appBar: Header(context, 'кв. ${widget.flat.number} эт. ${widget.flat.floor} п. ${widget.flat.section}'),
-      bottomNavigationBar: Footer(context, FooterNav.house),
+      bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
         itemCount: persons.length + 1,
         itemBuilder: (BuildContext context, int index) {

@@ -33,7 +33,7 @@ class _SectionPageState extends State<SectionPage> {
 
     return Scaffold(
       appBar: Header(context, 'Подъезд ${widget.flats[0].section}'),
-      bottomNavigationBar: Footer(context, FooterNav.house),
+      bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
         itemCount: floors.length + 1,
         itemBuilder: (BuildContext context, int index) {

@@ -20,7 +20,7 @@ class _FloorPageState extends State<FloorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Header(context, 'Подъезд ${widget.flats[0].section} этаж ${widget.flats[0].floor}'),
-      bottomNavigationBar: Footer(context, FooterNav.house),
+      bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
         itemCount: widget.flats.length + 1,
         itemBuilder: (BuildContext context, int index) {

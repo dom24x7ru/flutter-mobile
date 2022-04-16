@@ -15,7 +15,7 @@ class InstructionsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: Header(context, 'Инструкции'),
-      bottomNavigationBar: Footer(context, FooterNav.services),
+      bottomNavigationBar: const Footer(FooterNav.services),
       body: ListView.separated(
         itemCount: instructions.length,
         itemBuilder: (BuildContext context, int index) {

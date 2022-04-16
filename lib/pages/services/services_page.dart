@@ -53,7 +53,7 @@ class ServicesPage extends StatelessWidget {
 
     return Scaffold(
         appBar: Header(context, 'Сервисы'),
-        bottomNavigationBar: Footer(context, FooterNav.services),
+        bottomNavigationBar: const Footer(FooterNav.services),
         body: Container(
             padding: const EdgeInsets.all(15.0),
             child: GridView.count(crossAxisCount: 2, children: [

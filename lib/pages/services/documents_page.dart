@@ -15,7 +15,7 @@ class DocumentsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: Header(context, 'Документы'),
-      bottomNavigationBar: Footer(context, FooterNav.services),
+      bottomNavigationBar: const Footer(FooterNav.services),
       body: ListView.builder(
         itemCount: documents.length,
         itemBuilder: (BuildContext context, int index) {

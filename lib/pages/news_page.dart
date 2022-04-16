@@ -55,7 +55,7 @@ class _NewsPageState extends State<NewsPage> {
     if (!store.loaded || store.posts.list == null) {
       return Scaffold(
           appBar: Header(context, 'Новости'),
-          bottomNavigationBar: Footer(context, FooterNav.news)
+          bottomNavigationBar: const Footer(FooterNav.news)
       );
     }
 
@@ -63,7 +63,7 @@ class _NewsPageState extends State<NewsPage> {
 
     return Scaffold(
         appBar: Header(context, 'Новости'),
-        bottomNavigationBar: Footer(context, FooterNav.news),
+        bottomNavigationBar: const Footer(FooterNav.news),
         body: ListView.builder(
             itemCount: itemCount,
             itemBuilder: (BuildContext context, int index) {

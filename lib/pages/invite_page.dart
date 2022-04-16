@@ -28,7 +28,7 @@ class _InvitePage extends State<InvitePage> {
 
     return Scaffold(
       appBar: Header(context, 'Приглашения'),
-      bottomNavigationBar: Footer(context, FooterNav.news),
+      bottomNavigationBar: const Footer(FooterNav.news),
       body: ListView.builder(
           itemCount: invites!.length + 3,
           itemBuilder: (BuildContext context, int index) {

@@ -73,7 +73,7 @@ class _SettingsPage extends State<SettingsPage> {
 
     return Scaffold(
       appBar: Header(context, 'Настройки'),
-      bottomNavigationBar: Footer(context, FooterNav.news),
+      bottomNavigationBar: const Footer(FooterNav.news),
       body: Container(
         padding: const EdgeInsets.all(15.0),
         child: ListView(

@@ -10,7 +10,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Header(context, 'Профиль'),
-      bottomNavigationBar: Footer(context, FooterNav.news),
+      bottomNavigationBar: const Footer(FooterNav.news),
       body: const InDevelopmentInfo()
     );
   }

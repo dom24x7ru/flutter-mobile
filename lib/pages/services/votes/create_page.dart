@@ -51,7 +51,7 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
     final store = Provider.of<MainStore>(context);
     return Scaffold(
       appBar: Header(context, 'Создать голосование'),
-      bottomNavigationBar: Footer(context, FooterNav.services),
+      bottomNavigationBar: const Footer(FooterNav.services),
       body: Container(
         padding: const EdgeInsets.all(15.0),
         child: ListView(

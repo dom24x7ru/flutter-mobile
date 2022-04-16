@@ -30,7 +30,7 @@ class _AboutPage extends State<AboutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Header(context, 'О приложении'),
-      bottomNavigationBar: Footer(context, FooterNav.news),
+      bottomNavigationBar: const Footer(FooterNav.news),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

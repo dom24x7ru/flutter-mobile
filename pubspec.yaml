@@ -28,6 +28,7 @@ dependencies:
   scrollable_positioned_list: ^0.2.3
   firebase_core: ^1.14.0
   firebase_messaging: ^11.2.12
+  badges: ^2.0.2
 
 dev_dependencies:
   flutter_test:

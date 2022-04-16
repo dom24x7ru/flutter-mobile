@@ -64,7 +64,7 @@ class _VotesListPageState extends State<VotesListPage> {
 
     return Scaffold(
         appBar: Header(context, 'Голосования'),
-        bottomNavigationBar: Footer(context, FooterNav.services),
+        bottomNavigationBar: const Footer(FooterNav.services),
         floatingActionButton: floatingActionButton,
         body: ListView.builder(
             itemCount: votes.length,

@@ -30,7 +30,7 @@ class HousePage extends StatelessWidget {
     if (!store.loaded) {
       return Scaffold(
         appBar: Header(context, 'Подъезды'),
-        bottomNavigationBar: Footer(context, FooterNav.house)
+        bottomNavigationBar: const Footer(FooterNav.house)
       );
     }
 
@@ -38,7 +38,7 @@ class HousePage extends StatelessWidget {
 
     return Scaffold(
       appBar: Header(context, 'Подъезды'),
-      bottomNavigationBar: Footer(context, FooterNav.house),
+      bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
           itemCount: sections.length + 1,
           itemBuilder: (BuildContext context, int index) {

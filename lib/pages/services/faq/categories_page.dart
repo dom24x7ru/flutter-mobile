@@ -17,7 +17,7 @@ class FAQCategoriesPage extends StatelessWidget {
 
     return Scaffold(
       appBar: Header(context, 'ЧаВо'),
-      bottomNavigationBar: Footer(context, FooterNav.services),
+      bottomNavigationBar: const Footer(FooterNav.services),
       body: ListView.separated(
         itemCount: categories.length,
         itemBuilder: (BuildContext context, int index) {

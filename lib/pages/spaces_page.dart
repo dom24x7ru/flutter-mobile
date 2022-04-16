@@ -19,7 +19,7 @@ class _SpacesPageState extends State<SpacesPage> {
 
     return Scaffold(
         appBar: Header(context, 'Помещения'),
-        bottomNavigationBar: Footer(context, FooterNav.news),
+        bottomNavigationBar: const Footer(FooterNav.news),
         floatingActionButton: FloatingActionButton(
             onPressed: () => { showAddEditSpace(context) },
             backgroundColor: Colors.blue,

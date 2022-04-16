@@ -18,7 +18,7 @@ class RecommendationsCategoriesPage extends StatelessWidget {
 
     return Scaffold(
       appBar: Header(context, 'Рекомендации'),
-      bottomNavigationBar: Footer(context, FooterNav.services),
+      bottomNavigationBar: const Footer(FooterNav.services),
       body: ListView.builder(
         itemCount: categories.length,
         itemBuilder: (BuildContext context, int index) {

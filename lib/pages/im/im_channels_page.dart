@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/pages/im/im_messages_page.dart';
@@ -18,7 +19,7 @@ class IMChannelsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: Header(context, 'Чаты'),
-      bottomNavigationBar: Footer(context, FooterNav.im),
+      bottomNavigationBar: const Footer(FooterNav.im),
       body: ListView.builder(
         itemCount: channels.length,
         itemBuilder: (BuildContext context, int index) {
@@ -36,23 +37,41 @@ class IMChannelsPage extends StatelessWidget {
             )
           ];
           if (channel.lastMessage != null) {
-            const maxLen = 50;
+            const maxLen = 45;
             final lastMessage = channel.lastMessage;
             if (lastMessage!.imPerson != null) {
               final person = '${imPersonTitle(lastMessage.imPerson!)}: ';
               final text = Utilities.getHeaderTitle(lastMessage.body!.text, maxLen - person.length);
               channelInfo.add(
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(person),
-                    Text(text, style: const TextStyle(color: Colors.black26))
+                    Row(
+                      children: [
+                        Text(person),
+                        Text(text, style: const TextStyle(color: Colors.black26))
+                      ]
+                    ),
+                    Badge(
+                      badgeContent: Text('${channel.count}', style: const TextStyle(color: Colors.white)),
+                      badgeColor: Colors.blue,
+                    )
                   ]
                 )
               );
             } else {
               final text = Utilities.getHeaderTitle(lastMessage.body!.text, maxLen);
               channelInfo.add(
-                  Text(text, style: const TextStyle(color: Colors.black26))
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(text, style: const TextStyle(color: Colors.black26)),
+                    Badge(
+                      badgeContent: Text('${channel.count}', style: const TextStyle(color: Colors.white)),
+                      badgeColor: Colors.blue,
+                    )
+                  ]
+                )
               );
             }
           } else {
