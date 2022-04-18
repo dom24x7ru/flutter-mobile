@@ -7,7 +7,6 @@ import 'package:dom24x7_flutter/pages/im/widgets/input_message_widget.dart';
 import 'package:dom24x7_flutter/pages/im/widgets/message_widget.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
-import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -229,13 +228,16 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
 
   void _addMessage(IMMessage message, bool more) {
     setState(() {
+      final oldMessagesLength = messages.length;
       Utilities.addOrReplaceById(messages, message);
-      Utilities.sortById(messages);
-      _needsScroll = true;
-      if (!more) {
-        _currentIndex = messages.length - 1;
-      } else {
-        _currentIndex++;
+      if (oldMessagesLength != messages.length) {
+        Utilities.sortById(messages);
+        _needsScroll = true;
+        if (!more) {
+          _currentIndex = messages.length - 1;
+        } else {
+          _currentIndex++;
+        }
       }
     });
   }

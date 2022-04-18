@@ -1,7 +1,9 @@
 import 'package:dom24x7_flutter/models/im_message.dart';
 import 'package:dom24x7_flutter/models/person.dart';
+import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class IMMessageBlock extends StatefulWidget {
   final IMMessage message;
@@ -17,6 +19,9 @@ class IMMessageBlock extends StatefulWidget {
 class _IMMessageBlockState extends State<IMMessageBlock> {
   @override
   Widget build(BuildContext context) {
+    final store = Provider.of<MainStore>(context);
+    store.client.socket.emit('im.shown', { 'messageId': widget.message.id });
+
     List<Widget> children = [Text(widget.message.body!.text)];
 
     // добавляем дату создания сообщения
