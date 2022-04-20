@@ -300,9 +300,10 @@ class SocketClient extends BasicListener with EventEmitter {
     if (event.eventData['event'] == 'ready') {
       // подписаться на каналы по каждому доступному чату
       if (store.im.channels == null) return;
+      final user = store.user.value;
       final List<IMChannel> imChannels = store.im.channels!;
       for (IMChannel channel in imChannels) {
-        initChannel('imChannel.${channel.id}');
+        initChannel('imChannel.${channel.id}.${user!.id}');
         initChannel('imMessages.${channel.id}');
       }
       return;

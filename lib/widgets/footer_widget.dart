@@ -30,7 +30,7 @@ class _FooterState extends State<Footer> {
       });
 
       _client = store.client;
-      var listener = _client.on('imMessages', this, (event, cont) {
+      var listener = _client.on('imChannel', this, (event, cont) {
         setState(() {
           _msgCount = getMsgCount(store.im.channels);
         });

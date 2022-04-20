@@ -32,7 +32,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
       });
 
       _client = store.client;
-      var listener = _client.on('imMessages', this, (event, cont) {
+      var listener = _client.on('imChannel', this, (event, cont) {
         setState(() {
           _channels = store.im.channels != null ? store.im.channels! : [];
         });
