@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dom24x7_flutter/models/document.dart';
 import 'package:dom24x7_flutter/models/faq_item.dart';
 import 'package:dom24x7_flutter/models/flat.dart';
@@ -22,6 +24,7 @@ class SocketClient extends BasicListener with EventEmitter {
   MainStore store;
   User? user;
   List<String> channels = [];
+  Timer? _timer;
 
   final ready = {
     'house': true,
@@ -40,16 +43,20 @@ class SocketClient extends BasicListener with EventEmitter {
   SocketClient(this.store);
 
   Future<void> connect([String url = 'node.dom24x7.ru']) async {
-    final prefs = await SharedPreferences.getInstance();
-    final authToken = prefs.getString('authToken');
-    String? lastNodeHost = prefs.getString('lastNodeHost');
-    this.url = lastNodeHost ?? url;
-    await Socket.connect(
-        'ws://${this.url}/socketcluster/',
-        authToken: authToken,
-        listener: this
-    );
-    loadStore();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final authToken = prefs.getString('authToken');
+      String? lastNodeHost = prefs.getString('lastNodeHost');
+      this.url = lastNodeHost ?? url;
+      await Socket.connect(
+          'ws://${this.url}/socketcluster/',
+          authToken: authToken,
+          listener: this
+      );
+      loadStore();
+    } catch (error) {
+      print(error);
+    }
   }
 
   @override
@@ -75,12 +82,13 @@ class SocketClient extends BasicListener with EventEmitter {
   void onConnected(Socket socket) {
     debugPrint('onConnected: socket $socket');
     this.socket = socket;
+    if (_timer != null) _timer!.cancel();
   }
 
   @override
   void onDisconnected(Socket socket) {
     debugPrint('onDisconnected: socket $socket');
-    connect(url);
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) => { connect(url) });
   }
 
   @override
