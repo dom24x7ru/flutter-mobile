@@ -79,10 +79,10 @@ class _SecCodePage extends State<SecCodePage> {
                       ),
                       Container(
                         padding: const EdgeInsets.only(bottom: 10.0),
-                        child: const Text('Мы вам сейчас позвоним. Введите последние 4 цифры номера входящего звонка', style: TextStyle(color: Colors.black45))
+                        child: const Text('Мы вам сейчас отправим смс сообщение с кодом авторизации', style: TextStyle(color: Colors.black45))
                       ),
                       waitSeconds != 0
-                        ? Text('Если звонок не поступил, то можно перезапросить его через $waitSeconds сек.', style: const TextStyle(color: Colors.black45))
+                        ? Text('Если смс сообщение не пришло, то можно перезапросить его через $waitSeconds сек.', style: const TextStyle(color: Colors.black45))
                         : Row(
                         children: [
                           const Text('Теперь вы можете вновь '),
