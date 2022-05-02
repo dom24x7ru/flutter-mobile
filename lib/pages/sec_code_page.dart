@@ -90,7 +90,7 @@ class _SecCodePage extends State<SecCodePage> {
                             child: const Text('запросить', style: TextStyle(color: Colors.blue)),
                             onTap: () => { recall(mobile, context, store) }
                           ),
-                          const Text(' звонок')
+                          const Text(' смс сообщение')
                         ]
                       )
                     ],

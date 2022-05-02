@@ -5,12 +5,15 @@ import 'package:dom24x7_flutter/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+typedef ShownEvent = void Function(IMMessage message);
+
 class IMMessageBlock extends StatefulWidget {
   final IMMessage message;
   final IMMessage? prev;
   final IMMessage? next;
   final bool isAnswer;
-  const IMMessageBlock(this.message, {Key? key, this.prev, this.next, this.isAnswer = false}) : super(key: key);
+  final ShownEvent? shownEvent;
+  const IMMessageBlock(this.message, {Key? key, this.prev, this.next, this.isAnswer = false, this.shownEvent}) : super(key: key);
 
   @override
   State<IMMessageBlock> createState() => _IMMessageBlockState();
@@ -20,7 +23,12 @@ class _IMMessageBlockState extends State<IMMessageBlock> {
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
-    store.client.socket.emit('im.shown', { 'messageId': widget.message.id });
+    final person = store.user.value!.person;
+    if (widget.message.extra!.shown.firstWhere((personId) => personId == person!.id, orElse: () => -1) == -1) {
+      // отправляем запрос только если сообщение еще не было просмотрено
+      store.client.socket.emit('im.shown', { 'messageId': widget.message.id });
+      if (widget.shownEvent != null) widget.shownEvent!(widget.message);
+    }
 
     List<Widget> children = [Text(widget.message.body!.text)];
 

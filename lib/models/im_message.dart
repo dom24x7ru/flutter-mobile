@@ -42,11 +42,26 @@ class IMMessageBody {
   }
 }
 
+class IMMessageExtra {
+  List<int> shown = [];
+
+  IMMessageExtra.fromMap(Map<String, dynamic> map) {
+    for (var personId in map['shown']) {
+      shown.add(personId);
+    }
+  }
+
+  Map<String, dynamic> toMap() {
+    return { 'shown': shown };
+  }
+}
+
 class IMMessage extends Model {
   late int createdAt;
   late int? updatedAt;
   IMPerson? imPerson;
   IMMessageBody? body;
+  IMMessageExtra? extra;
 
   IMMessage.fromMap(Map<String, dynamic> map) : super(map['id']) {
     createdAt = map['createdAt'];
@@ -54,6 +69,7 @@ class IMMessage extends Model {
     final person = map['person'];
     imPerson = person != null ? IMPerson(Person.fromMap(person), Flat.fromMap(person['flat'])) : null;
     body = map['body'] != null ? IMMessageBody.fromMap(map['body']) : null; // не будет в ответе
+    extra = map['extra'] != null ? IMMessageExtra.fromMap(map['extra']) : null;
   }
 
   Map<String, dynamic> toMap() {
@@ -61,6 +77,7 @@ class IMMessage extends Model {
     if (updatedAt != null) map['updatedAt'] = updatedAt;
     if (imPerson != null) map['imPerson'] = imPerson!.toMap();
     if (body != null) map['body'] = body!.toMap();
+    if (extra != null) map['extra'] = extra!.toMap();
     return map;
   }
 }

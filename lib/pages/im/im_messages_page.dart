@@ -108,6 +108,8 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   }
 
   Widget _messagesListView(Person? person) {
+    final store = Provider.of<MainStore>(context);
+    final person = store.user.value!.person;
     return ScrollablePositionedList.builder(
         itemScrollController: _scrollController,
         padding: const EdgeInsets.only(bottom: 70.0),
@@ -125,7 +127,11 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
                   _loadMessages(context, offset: messages.length, more: true);
                 }
               },
-              child: IMMessageBlock(message, prev: prev, next: next)
+              child: IMMessageBlock(
+                message,
+                prev: prev,
+                next: next
+              )
           );
 
           if (message.imPerson != null) {
