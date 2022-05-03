@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dom24x7_flutter/models/document.dart';
 import 'package:dom24x7_flutter/models/faq_item.dart';
@@ -15,6 +16,7 @@ import 'package:dom24x7_flutter/store/main.dart';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:jwt_decode/jwt_decode.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socketcluster_client/socketcluster_client.dart';
 
@@ -171,6 +173,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onLogin(event, context) async {
     store.user.setUser(user);
+
     socket.emit('version.current', {}, (name, error, version) {
       if (version['status'] == 'ERROR') {
         if (version.message == "BANNED" || version.message == "DELETED") {
@@ -181,6 +184,15 @@ class SocketClient extends BasicListener with EventEmitter {
       }
       store.version.setVersion(Version.fromMap(version));
     });
+
+    // передаем данные по используемому мобильному приложению
+    final info = await PackageInfo.fromPlatform();
+    Map<String, String> appInfo = {
+      'version': info.version,
+      'platform': Platform.operatingSystem,
+      'platformVersion': Platform.operatingSystemVersion
+    };
+    socket.emit('service.appInfo', appInfo);
   }
 
   void onLogout(event, context) {
