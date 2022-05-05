@@ -18,7 +18,7 @@ class VotesListPage extends StatefulWidget {
 }
 
 class _VotesListPageState extends State<VotesListPage> {
-  List<Vote> votes = [];
+  List<Vote> _votes = [];
   late SocketClient _client;
   final List<dynamic> _listeners = [];
 
@@ -32,10 +32,10 @@ class _VotesListPageState extends State<VotesListPage> {
 
       setState(() {
         if (store.votes.list == null) return;
-        votes = store.votes.list!;
+        _votes = store.votes.list!;
       });
       var listener = _client.on('vote', this, (event, cont) {
-        setState(() { votes = store.votes.list!; });
+        setState(() { _votes = store.votes.list!; });
       });
       _listeners.add(listener);
     });
@@ -67,12 +67,12 @@ class _VotesListPageState extends State<VotesListPage> {
         bottomNavigationBar: const Footer(FooterNav.services),
         floatingActionButton: floatingActionButton,
         body: ListView.builder(
-            itemCount: votes.length,
+            itemCount: _votes.length,
             itemBuilder: (BuildContext context, int index) {
-              final vote = votes[votes.length - index - 1];
+              final vote = _votes[_votes.length - index - 1];
               final createdAt = Utilities.getDateFormat(vote.createdAt);
               final List<Widget> status = [];
-              if (answered(store, vote)) status.add(const Icon(Icons.done, color: Colors.green, size: 15.0));
+              if (_answered(store, vote)) status.add(const Icon(Icons.done, color: Colors.green, size: 15.0));
               if (vote.closed) status.add(const Icon(Icons.block, color: Colors.red, size: 15.0));
 
               return GestureDetector(
@@ -96,15 +96,15 @@ class _VotesListPageState extends State<VotesListPage> {
                           )
                       )
                   ),
-                  onTap: () => { gotoVote(context, store, vote) },
-                  onLongPress: () => { showMenu(context, store, vote) }
+                  onTap: () => { _gotoVote(context, store, vote) },
+                  onLongPress: () => { _showMenu(context, store, vote) }
               );
             }
         )
     );
   }
 
-  bool answered(MainStore store, Vote vote) {
+  bool _answered(MainStore store, Vote vote) {
     final answers = vote.answers;
     if (answers.isEmpty) return false;
 
@@ -114,15 +114,15 @@ class _VotesListPageState extends State<VotesListPage> {
     return answers.where((answer) => answer.person.id == person.id).isNotEmpty;
   }
 
-  void gotoVote(BuildContext context, MainStore store, Vote vote) {
-    if (vote.closed || answered(store, vote)) {
+  void _gotoVote(BuildContext context, MainStore store, Vote vote) {
+    if (vote.closed || _answered(store, vote)) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => VoteAnsweredPage(vote)));
     } else {
       Navigator.push(context, MaterialPageRoute(builder: (context) => VotePage(vote)));
     }
   }
 
-  void showMenu(BuildContext context, MainStore store, Vote vote) {
+  void _showMenu(BuildContext context, MainStore store, Vote vote) {
     final user = store.user.value!;
     if (user.id != vote.userId) return;
 
