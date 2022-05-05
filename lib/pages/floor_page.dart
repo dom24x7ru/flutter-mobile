@@ -30,6 +30,22 @@ class _FloorPageState extends State<FloorPage> {
 
           final flat = widget.flats[index - 1];
           final Color color = flat.residents.isNotEmpty ? Colors.black : Colors.black12;
+
+          List<Widget> flatInfo = [
+            Text('Квартира №${flat.number}', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: color)),
+            Text('Жильцов: ${flat.residents.length}', style: TextStyle(color: color))
+          ];
+          if (flat.rooms != null) {
+            flatInfo.add(
+              Text('Комнат: ${flat.rooms}', style: TextStyle(color: color))
+            );
+          }
+          if (flat.square != 0) {
+            flatInfo.add(
+              Text('Площадь: ${flat.square} кв.м.', style: TextStyle(color: color))
+            );
+          }
+
           return GestureDetector(
             onTap: () => { goFlat(context, flat) },
             child: Card(
@@ -37,12 +53,7 @@ class _FloorPageState extends State<FloorPage> {
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Квартира №${flat.number}', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: color)),
-                    Text('Жильцов: ${flat.residents.length}', style: TextStyle(color: color)),
-                    Text('Комнат: ${flat.rooms}', style: TextStyle(color: color)),
-                    Text('Площадь: ${flat.square} кв.м.', style: TextStyle(color: color))
-                  ]
+                  children: flatInfo
                 )
               )
             )

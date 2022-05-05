@@ -46,18 +46,28 @@ class _FlatPageState extends State<FlatPage> {
         itemCount: persons.length + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
+            List<Widget> flatInfo = [
+              Text('Квартира №${widget.flat.number}', style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white)),
+              Text('Жильцов: ${widget.flat.residents.length}', style: const TextStyle(color: Colors.white60)),
+            ];
+            if (widget.flat.rooms != null) {
+              flatInfo.add(
+                Text('Комнат: ${widget.flat.rooms}', style: const TextStyle(color: Colors.white60))
+              );
+            }
+            if (widget.flat.square != 0) {
+              flatInfo.add(
+                Text('Площадь: ${widget.flat.square} кв.м.', style: const TextStyle(color: Colors.white60))
+              );
+            }
+
             return Card(
               child: Container(
                 padding: const EdgeInsets.all(15.0),
                 color: Colors.blue,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Квартира №${widget.flat.number}', style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white)),
-                    Text('Жильцов: ${widget.flat.residents.length}', style: const TextStyle(color: Colors.white60)),
-                    Text('Комнат: ${widget.flat.rooms}', style: const TextStyle(color: Colors.white60)),
-                    Text('Площадь: ${widget.flat.square} кв.м.', style: const TextStyle(color: Colors.white60))
-                  ]
+                  children: flatInfo
                 )
               )
             );
