@@ -106,6 +106,7 @@ class _IMInputMessageState extends State<IMInputMessage> {
         data['body'] = { 'text': _cMessage.text, 'aMessage': aMessage };
       }
     }
+    if (_cMessage.text.isEmpty) return;
     client.socket.emit('im.save', data, (String name, dynamic error, dynamic data) {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
