@@ -50,7 +50,7 @@ class RecommendationsListPage extends StatelessWidget {
                   const Icon(Icons.phone),
                   InkWell(
                     child: Text('+${extra.phone!}', style: const TextStyle(color: Colors.blue)),
-                    onTap: () => { launch('tel:${extra.phone}') }
+                    onTap: () => { launchUrl(Uri.parse('tel:${extra.phone}')) }
                   )
                 ]));
               }
@@ -59,16 +59,16 @@ class RecommendationsListPage extends StatelessWidget {
                   const FaIcon(FontAwesomeIcons.instagram),
                   InkWell(
                     child: Text(' ${extra.instagram!}', style: const TextStyle(color: Colors.blue)),
-                    onTap: () => { launch('https://www.instagram.com/${extra.instagram}/') }
+                    onTap: () => { launchUrl(Uri.parse('https://www.instagram.com/${extra.instagram}/')) }
                   )
                 ]));
               }
               if (extra.telegram != null) {
                 infoList.add(Row(children: [
-                  const FaIcon(FontAwesomeIcons.telegramPlane),
+                  const FaIcon(FontAwesomeIcons.telegram),
                   InkWell(
                     child: Text(' ${extra.telegram!}', style: const TextStyle(color: Colors.blue)),
-                    onTap: () => { launch('https://t.me/${extra.telegram}') }
+                    onTap: () => { launchUrl(Uri.parse('https://t.me/${extra.telegram}')) }
                   )
                 ]));
               }
@@ -77,7 +77,7 @@ class RecommendationsListPage extends StatelessWidget {
                   const Icon(Icons.language),
                   InkWell(
                     child: Text(extra.site!, style: const TextStyle(color: Colors.blue)),
-                    onTap: () => { launch('https://${extra.site}') }
+                    onTap: () => { launchUrl(Uri.parse('https://${extra.site}')) }
                   )
                 ]));
                 if (extra.email != null) {
@@ -85,7 +85,7 @@ class RecommendationsListPage extends StatelessWidget {
                     const Icon(Icons.alternate_email),
                     InkWell(
                       child: Text(extra.email!, style: const TextStyle(color: Colors.blue)),
-                      onTap: () => { launch('mailto:${extra.email}') }
+                      onTap: () => { launchUrl(Uri.parse('mailto:${extra.email}')) }
                     )
                   ]));
                 }
@@ -116,7 +116,7 @@ class RecommendationsListPage extends StatelessWidget {
     }
     if (fullName.trim().isEmpty) {
       final flat = recommendation.flat;
-      return 'сосед(ка) из кв. №${flat.number}, этаж ${flat.floor}, подъезд ${flat.section}';
+      return 'сосед(ка) из ${Utilities.getFlatTitle(flat)}';
     }
     return fullName;
   }

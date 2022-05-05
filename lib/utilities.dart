@@ -1,7 +1,16 @@
+import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/model.dart';
 import 'package:intl/intl.dart';
 
 class Utilities {
+  /// Возвращает текстовое представление квартиры
+  static String getFlatTitle(Flat flat) {
+    String title = 'кв. №${flat.number}';
+    if (flat.floor != null) title += ' эт. ${flat.floor}';
+    if (flat.section != null) title += ' п. ${flat.section}';
+    return title;
+  }
+
   static String getHeaderTitle(String title, [int maxLength = 20]) {
     if (title.length < maxLength) return title;
     return title.substring(0, maxLength) + '...';

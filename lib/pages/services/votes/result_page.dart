@@ -2,6 +2,7 @@ import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/models/vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class VoteResultPage extends StatelessWidget {
     }
     if (fullName.trim().isEmpty) {
       final flat = answer.flat;
-      return 'сосед(ка) из кв. №${flat.number}, этаж ${flat.floor}, подъезд ${flat.section}';
+      return 'сосед(ка) из ${Utilities.getFlatTitle(flat)}';
     }
     return fullName.trim();
   }

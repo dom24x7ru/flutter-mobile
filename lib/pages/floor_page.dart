@@ -19,7 +19,7 @@ class _FloorPageState extends State<FloorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(context, 'Подъезд ${widget.flats[0].section} этаж ${widget.flats[0].floor}'),
+      appBar: Header(context, _getFloorTitle(widget.flats[0])),
       bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
         itemCount: widget.flats.length + 1,
@@ -47,7 +47,7 @@ class _FloorPageState extends State<FloorPage> {
           }
 
           return GestureDetector(
-            onTap: () => { goFlat(context, flat) },
+            onTap: () => { _goFlat(context, flat) },
             child: Card(
               child: Container(
                 padding: const EdgeInsets.all(15.0),
@@ -63,7 +63,22 @@ class _FloorPageState extends State<FloorPage> {
     );
   }
 
-  void goFlat(BuildContext context, Flat flat) {
+  String _getFloorTitle(Flat flat) {
+    if (flat.section != null) {
+      String title = 'Подъезд ${flat.section}';
+      if (flat.floor != null) {
+        title += ' этаж ${flat.floor}';
+      } else {
+        title += ' этаж не указан';
+      }
+      return title;
+    } else {
+      // подъезд не указан, в этом случае и этаж не известен
+      return 'Этаж не указан';
+    }
+  }
+
+  void _goFlat(BuildContext context, Flat flat) {
     if (flat.residents.isEmpty) return;
     Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(flat)));
   }

@@ -23,19 +23,24 @@ class _HouseInfoCardState extends State<HouseInfoCard> {
   @override
   Widget build(BuildContext context) {
     var stat = getStat();
+    List<Widget> infoList = [
+      const Text('Статистика', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white)),
+      Text('Квартир: ${stat.flats}', style: const TextStyle(color: Colors.white60)),
+      Text('Заселено: ${stat.flatsWithResidents} (${Utilities.percent(stat.flatsWithResidents / stat.flats)})', style: const TextStyle(color: Colors.white60)),
+      Text('Жильцов: ${stat.residents}', style: const TextStyle(color: Colors.white60))
+    ];
+    if (stat.square != 0) {
+      infoList.add(
+        Text('Площадь: ${Utilities.numberFormat(stat.square)} кв.м. (заселено ${Utilities.percent(stat.squareResidents / stat.square)})', style: const TextStyle(color: Colors.white60))
+      );
+    }
     return Card(
       child: Container(
         padding: const EdgeInsets.all(15.0),
         color: Colors.blue,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Статистика', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white)),
-            Text('Квартир: ${stat.flats}', style: const TextStyle(color: Colors.white60)),
-            Text('Заселено: ${stat.flatsWithResidents} (${Utilities.percent(stat.flatsWithResidents / stat.flats)})', style: const TextStyle(color: Colors.white60)),
-            Text('Жильцов: ${stat.residents}', style: const TextStyle(color: Colors.white60)),
-            Text('Площадь: ${Utilities.numberFormat(stat.square)} кв.м. (заселено ${Utilities.percent(stat.squareResidents / stat.square)})', style: const TextStyle(color: Colors.white60)),
-          ],
+          children: infoList
         ),
       )
     );

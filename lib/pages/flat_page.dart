@@ -1,6 +1,7 @@
 import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/store/main.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _FlatPageState extends State<FlatPage> {
     }
 
     return Scaffold(
-      appBar: Header(context, 'кв. ${widget.flat.number} эт. ${widget.flat.floor} п. ${widget.flat.section}'),
+      appBar: Header(context, Utilities.getFlatTitle(widget.flat)),
       bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
         itemCount: persons.length + 1,
@@ -75,12 +76,12 @@ class _FlatPageState extends State<FlatPage> {
 
           final person = persons[index - 1];
           List<Widget> children = [
-            Text(getFullName(person), style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))
+            Text(_getFullName(person), style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))
           ];
           if (person.mobile != null) {
             children.add(InkWell(
-              child: Text(getMobile(person), style: const TextStyle(color: Colors.blue)),
-              onTap: () => { launch('tel:${person.mobile}') }
+              child: Text(_getMobile(person), style: const TextStyle(color: Colors.blue)),
+              onTap: () => { launchUrl(Uri.parse('tel:${person.mobile}')) }
             ));
           }
           if (person.telegram != null) {
@@ -89,7 +90,7 @@ class _FlatPageState extends State<FlatPage> {
                 padding: const EdgeInsets.only(top: 10.0),
                 child: Text('${person.telegram}', style: const TextStyle(color: Colors.blue))
               ),
-              onTap: () => launch('https://t.me/${person.telegram}'),
+              onTap: () => launchUrl(Uri.parse('https://t.me/${person.telegram}')),
             ));
           }
           return Card(
@@ -106,7 +107,7 @@ class _FlatPageState extends State<FlatPage> {
     );
   }
 
-  String getFullName(Person person) {
+  String _getFullName(Person person) {
     String fullName = '';
     if (person.surname != null) {
       fullName += person.surname!;
@@ -123,7 +124,7 @@ class _FlatPageState extends State<FlatPage> {
     return fullName;
   }
 
-  String getMobile(Person person) {
+  String _getMobile(Person person) {
     if (person.mobile == null) return 'номер скрыт';
     return '+${person.mobile}';
   }

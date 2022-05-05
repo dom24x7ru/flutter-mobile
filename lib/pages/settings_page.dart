@@ -4,6 +4,7 @@ import 'package:dom24x7_flutter/models/person_access.dart';
 import 'package:dom24x7_flutter/models/resident.dart';
 import 'package:dom24x7_flutter/models/user.dart';
 import 'package:dom24x7_flutter/store/main.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
@@ -218,7 +219,7 @@ class _SettingsPage extends State<SettingsPage> {
 
   String getFlatInfo(Flat? flat) {
     if (flat == null) return 'Указанный номер квартиры не найден в доме';
-    return 'кв. №${flat.number}, этаж ${flat.floor}, подъезд ${flat.section}';
+    return Utilities.getFlatTitle(flat);
   }
 
   void logout(BuildContext context, MainStore store) async {

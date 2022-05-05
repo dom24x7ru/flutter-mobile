@@ -3,8 +3,8 @@ import 'package:dom24x7_flutter/models/resident.dart';
 
 class Flat extends Model {
   late int number;
-  late int floor;
-  late int section;
+  int? floor;
+  int? section;
   int? rooms;
   double square = 0;
   List<Resident> residents = [];

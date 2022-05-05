@@ -119,7 +119,7 @@ class _IMMessageBlockState extends State<IMMessageBlock> {
     }
     if (fullName.trim().isEmpty) {
       final flat = message.imPerson!.flat;
-      return 'сосед(ка) из кв. №${flat.number}, этаж ${flat.floor}, подъезд ${flat.section}';
+      return 'сосед(ка) из ${Utilities.getFlatTitle(flat)}';
     }
     return fullName.trim();
   }
