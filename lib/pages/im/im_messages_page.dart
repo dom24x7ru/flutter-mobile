@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
+import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/im_message.dart';
 import 'package:dom24x7_flutter/models/person.dart';
@@ -177,7 +178,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
                 itemBuilder: (BuildContext context) => contextMenu,
                 onSelected: (IMMessageMenu item) =>
                 {
-                  _onSelected(item, message)
+                  _onSelected(store, item, message)
                 }
             );
           } else {
@@ -261,31 +262,31 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     });
   }
 
-  void _onSelected(IMMessageMenu item, IMMessage message) {
+  void _onSelected(MainStore store, IMMessageMenu item, IMMessage message) {
     switch (item) {
-      case IMMessageMenu.profile:
+      case IMMessageMenu.profile: // посмотреть данные по пользователю
         final flat = message.imPerson?.flat;
         if (flat != null) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(flat)));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_getFlat(store, message))));
         }
         break;
-      case IMMessageMenu.answer:
+      case IMMessageMenu.answer: // ответить на сообщение
         setState(() {
           this.message = message;
           action = MessageAction.answer;
         });
         break;
-      case IMMessageMenu.copy:
+      case IMMessageMenu.copy: // скопировать сообщение в буфер
         final text = message.body!.text;
         Clipboard.setData(ClipboardData(text: text));
         break;
-      case IMMessageMenu.edit:
+      case IMMessageMenu.edit: // редактировать сообщение
         setState(() {
           this.message = message;
           action = MessageAction.edit;
         });
         break;
-      case IMMessageMenu.delete:
+      case IMMessageMenu.delete: // удалить сообщение
         final store = Provider.of<MainStore>(context, listen: false);
         final client = store.client;
         client.socket.emit('im.del', { 'messageId': message.id }, (String name, dynamic error, dynamic data) {
@@ -298,5 +299,14 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         });
         break;
     }
+  }
+
+  Flat _getFlat(MainStore store, IMMessage message) {
+    Flat? flat = message.imPerson?.flat;
+    final flats = store.flats.list!;
+    for (Flat item in flats) {
+      if (item.id == flat!.id) return item;
+    }
+    return flat!;
   }
 }
