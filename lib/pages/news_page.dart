@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../models/vote.dart';
 import '../utilities.dart';
-import 'flat_page.dart';
+import 'house/flat_page.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({Key? key}) : super(key: key);

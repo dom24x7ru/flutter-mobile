@@ -10,7 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../flat_page.dart';
+import '../../house/flat_page.dart';
 
 class RecommendationsListPage extends StatelessWidget {
   final List<Recommendation> list;

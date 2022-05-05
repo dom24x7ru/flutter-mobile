@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
 
-import '../../flat_page.dart';
+import '../../house/flat_page.dart';
 
 class VoteResultPage extends StatelessWidget {
   final Vote vote;
