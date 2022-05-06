@@ -5,22 +5,33 @@ class ParallaxListItem extends StatelessWidget {
     Key? key,
     required this.imageUrl,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
+    this.horizontal,
+    this.vertical,
+    this.radius,
+    this.aspectRatio
   }) : super(key: key);
 
   final String imageUrl;
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final GlobalKey _backgroundImageKey = GlobalKey();
+  final double? horizontal;
+  final double? vertical;
+  final double? radius;
+  final double? aspectRatio;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontal != null ? horizontal! : 15,
+        vertical: vertical != null ? vertical! : 5
+      ),
       child: AspectRatio(
-        aspectRatio: 16 / 9,
+        aspectRatio: aspectRatio != null ? aspectRatio! : 16 / 9,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(radius != null ? radius! : 16),
           child: Stack(
             children: [
               _buildParallaxBackground(context),
@@ -66,29 +77,34 @@ class ParallaxListItem extends StatelessWidget {
   }
 
   Widget _buildTitleAndSubtitle() {
+    List<Widget> children = [
+      Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      )
+    ];
+    if (subtitle != null) {
+      children.add(
+          Text(
+            subtitle!,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+          )
+      );
+    }
     return Positioned(
       left: 20,
       bottom: 20,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            subtitle,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
-          ),
-        ],
+        children: children,
       ),
     );
   }

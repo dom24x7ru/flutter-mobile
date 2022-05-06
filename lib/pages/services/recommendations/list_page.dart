@@ -5,6 +5,7 @@ import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
+import 'package:dom24x7_flutter/widgets/parallax_list_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +31,6 @@ class RecommendationsListPage extends StatelessWidget {
               final recommendation = list[index];
               final extra = recommendation.extra;
               List<Widget> infoList = [
-                Text(recommendation.title, style: const TextStyle(fontSize: 18.0)),
                 Row(children: [
                   const Text('Автор: '),
                   InkWell(
@@ -98,7 +98,19 @@ class RecommendationsListPage extends StatelessWidget {
                       padding: const EdgeInsets.all(15.0),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: infoList)));
+                          children: [
+                            ParallaxListItem(
+                              imageUrl: recommendation.category.img,
+                              title: recommendation.title,
+                              horizontal: 0,
+                              radius: 0,
+                              aspectRatio: 16 / 6,
+                            ),
+                            ...infoList
+                          ]
+                      )
+                  )
+              );
             }));
   }
 
