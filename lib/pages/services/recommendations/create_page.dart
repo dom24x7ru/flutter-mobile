@@ -1,4 +1,3 @@
-import 'package:dom24x7_flutter/models/recommendation.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
@@ -20,12 +19,32 @@ class RecommendationCreatePage extends StatefulWidget {
 }
 
 class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
-  late List<RecommendationCategoryItem> _recommendationCategories = [];
+  final List<RecommendationCategoryItem> _recommendationCategories = [];
   RecommendationCategoryItem? _recommendationCategory;
+
+  late TextEditingController _cTitle;
+  late TextEditingController _cBody;
+  late TextEditingController _cPhone;
+  late TextEditingController _cSite;
+  late TextEditingController _cEmail;
+  late TextEditingController _cAddress;
+  late TextEditingController _cInstagram;
+  late TextEditingController _cTelegram;
+
+  bool _btnEnabled = false;
 
   @override
   void initState() {
     super.initState();
+
+    _cTitle = TextEditingController();
+    _cBody = TextEditingController();
+    _cPhone = TextEditingController();
+    _cSite = TextEditingController();
+    _cEmail = TextEditingController();
+    _cAddress = TextEditingController();
+    _cInstagram = TextEditingController();
+    _cTelegram = TextEditingController();
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
@@ -47,11 +66,21 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
 
   @override
   void dispose() {
+    _cTitle.dispose();
+    _cBody.dispose();
+    _cPhone.dispose();
+    _cSite.dispose();
+    _cEmail.dispose();
+    _cAddress.dispose();
+    _cInstagram.dispose();
+    _cTelegram.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final store = Provider.of<MainStore>(context);
     return Scaffold(
       appBar: Header(context, 'Создать рекомендацию'),
       bottomNavigationBar: const Footer(FooterNav.services),
@@ -69,6 +98,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
                 setState(() {
                   _recommendationCategory = value!;
                 });
+                _calcBtnEnabled();
               },
               items: _recommendationCategories.map<DropdownMenuItem<RecommendationCategoryItem>>((RecommendationCategoryItem value) {
                 return DropdownMenuItem<RecommendationCategoryItem>(
@@ -77,61 +107,111 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
                 );
               }).toList(),
             ),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _cTitle,
+              onChanged: (String value) => { _calcBtnEnabled() },
+              decoration: const InputDecoration(
                 labelText: 'Заголовок'
               )
             ),
-            const TextField(
+            TextField(
+              controller: _cBody,
               keyboardType: TextInputType.multiline,
               maxLines: null,
-              decoration: InputDecoration(
+              onChanged: (String value) => { _calcBtnEnabled() },
+              decoration: const InputDecoration(
                 labelText: 'Описание рекомендации'
               ),
             ),
-            const TextField(
+            TextField(
+              controller: _cPhone,
               keyboardType: TextInputType.number,
               maxLength: 10,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 prefix: Text('+7 '),
                 labelText: 'Телефон'
               ),
             ),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _cSite,
+              decoration: const InputDecoration(
                 prefix: Text('https://'),
                 labelText: 'Сайт'
               ),
             ),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _cEmail,
+              decoration: const InputDecoration(
                 labelText: 'Эл. почта'
               ),
             ),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _cAddress,
+              decoration: const InputDecoration(
                 labelText: 'Адрес'
               ),
             ),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _cInstagram,
+              decoration: const InputDecoration(
                 prefix: Text('@'),
                 labelText: 'Инстаграм'
               ),
             ),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _cTelegram,
+              decoration: const InputDecoration(
                 prefix: Text('@'),
                 labelText: 'Телеграм'
               ),
             ),
             ElevatedButton(
-              onPressed: () => { },
+              onPressed: _btnEnabled ? () => { save(context, store) } : null,
               child: Text('Сохранить'.toUpperCase()),
             )
           ]
         )
       )
     );
+  }
+
+  void _calcBtnEnabled() {
+    setState(() {
+      _btnEnabled = _recommendationCategory != null // категория должна быть выбрана
+          && _cTitle.text.trim().isNotEmpty // заголовок должен быть заполнен
+          && _cBody.text.trim().isNotEmpty; // описание должно быть заполнено
+    });
+  }
+
+  void save(BuildContext context, MainStore store) {
+    var data = {
+      'id': null,
+      'title': _cTitle.text.trim(),
+      'body': _cBody.text.trim(),
+      'categoryId': _recommendationCategory!.value,
+      'extra': {
+        'phone': _cPhone.text.trim().isNotEmpty ? '7${_cPhone.text.trim()}' : null,
+        'site': _cSite.text.trim().isNotEmpty ? _cSite.text.trim() : null,
+        'email': _cEmail.text.trim().isNotEmpty ? _cEmail.text.trim() : null,
+        'address': _cAddress.text.trim().isNotEmpty ? _cAddress.text.trim() : null,
+        'instagram': _cInstagram.text.trim().isNotEmpty ? _cInstagram.text.trim() : null,
+        'telegram': _cTelegram.text.trim().isNotEmpty ? _cTelegram.text.trim() : null
+      }
+    };
+    store.client.socket.emit('recommendation.save', data, (String name, dynamic error, dynamic data) {
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+      if (data != null && data['status'] == 'OK') {
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Не удалось сохранить рекомендацию. Попробуйте позже'), backgroundColor: Colors.red)
+        );
+      }
+    });
   }
 }

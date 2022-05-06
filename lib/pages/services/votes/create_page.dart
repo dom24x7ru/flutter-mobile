@@ -129,9 +129,9 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
   }
 
   bool btnEnabled() {
-    return _cQuestion.text.isNotEmpty // вопрос не должен быть пусты
+    return _cQuestion.text.trim().isNotEmpty // вопрос не должен быть пусты
       && checkAnswers() // количество вариантнов ответов больше одного и они должны быть заполнены
-      && _voteType != null; // выброн тип голосования
+      && _voteType != null; // выбран тип голосования
   }
 
   bool checkAnswers() {
