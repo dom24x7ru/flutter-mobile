@@ -16,6 +16,11 @@ abstract class _RecommendationsStore with Store {
   }
 
   @action
+  void delRecommendation(Recommendation recommendation) {
+    list = Utilities.deleteById(list, recommendation);
+  }
+
+  @action
   void setRecommendations(List<Recommendation> recommendations) {
     list = recommendations;
   }

@@ -293,7 +293,11 @@ class SocketClient extends BasicListener with EventEmitter {
   void onRecommendations(event, context) {
     if (event.eventData['event'] == 'ready') return;
     final data = event.eventData['data'];
-    store.recommendations.addRecommendation(Recommendation.fromMap(data));
+    if (event.eventData['event'] != 'destroy') {
+      store.recommendations.addRecommendation(Recommendation.fromMap(data));
+    } else {
+      store.recommendations.delRecommendation(Recommendation.fromMap(data));
+    }
   }
 
   void onVotes(event, context) {

@@ -9,7 +9,7 @@ part of 'posts.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$PostsStore on _PostsStore, Store {
-  final _$listAtom = Atom(name: '_PostsStore.list');
+  late final _$listAtom = Atom(name: '_PostsStore.list', context: context);
 
   @override
   List<Post>? get list {
@@ -24,7 +24,8 @@ mixin _$PostsStore on _PostsStore, Store {
     });
   }
 
-  final _$_PostsStoreActionController = ActionController(name: '_PostsStore');
+  late final _$_PostsStoreActionController =
+      ActionController(name: '_PostsStore', context: context);
 
   @override
   void setPosts(List<Post> posts) {

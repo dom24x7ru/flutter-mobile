@@ -1,3 +1,4 @@
+import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
@@ -14,20 +15,56 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../house/flat_page.dart';
 
-class RecommendationsListPage extends StatelessWidget {
+class RecommendationsListPage extends StatefulWidget {
   final List<Recommendation> list;
   const RecommendationsListPage(this.list, {Key? key}) : super(key: key);
 
   @override
+  State<RecommendationsListPage> createState() => _RecommendationsListPageState();
+}
+
+class _RecommendationsListPageState extends State<RecommendationsListPage> {
+  late List<Recommendation> _list = [];
+  late SocketClient _client;
+  final List<dynamic> _listeners = [];
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() => _list = widget.list);
+
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      final store = Provider.of<MainStore>(context, listen: false);
+      final category = _list.isNotEmpty ? _list[0].category : null;
+      _client = store.client;
+
+      var listener = _client.on('recommendations', this, (event, cont) {
+        setState(() => _list = store.recommendations.list!.where((item) => item.category.id == category!.id).toList());
+      });
+      _listeners.add(listener);
+    });
+  }
+
+  @override
+  void dispose() {
+    for (var listener in _listeners) {
+      _client.off(listener);
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
-    final categoryName = list.isNotEmpty ? list[0].category.name : null;
+    final category = _list.isNotEmpty ? _list[0].category : null;
+    final categoryName = category?.name;
 
     Widget? floatingActionButton;
     if (store.user.value!.residents.isNotEmpty) {
-      final category = list.isNotEmpty ? list[0].category : null;
       floatingActionButton = FloatingActionButton(
-          onPressed: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationCreatePage(null, category: category))) },
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationCreatePage(null, category: category)));
+          },
           backgroundColor: Colors.blue,
           child: const Icon(Icons.add)
       );
@@ -38,9 +75,9 @@ class RecommendationsListPage extends StatelessWidget {
         bottomNavigationBar: const Footer(FooterNav.services),
         floatingActionButton: floatingActionButton,
         body: ListView.builder(
-            itemCount: list.length,
+            itemCount: _list.length,
             itemBuilder: (BuildContext context, int index) {
-              final recommendation = list[index];
+              final recommendation = _list[index];
               final extra = recommendation.extra;
               List<Widget> infoList = [
                 Row(children: [
@@ -61,8 +98,8 @@ class RecommendationsListPage extends StatelessWidget {
                 infoList.add(Row(children: [
                   const Icon(Icons.phone),
                   InkWell(
-                    child: Text('+${extra.phone!}', style: const TextStyle(color: Colors.blue)),
-                    onTap: () => { launchUrl(Uri.parse('tel:${extra.phone}')) }
+                      child: Text('+${extra.phone!}', style: const TextStyle(color: Colors.blue)),
+                      onTap: () => { launchUrl(Uri.parse('tel:${extra.phone}')) }
                   )
                 ]));
               }
@@ -70,8 +107,8 @@ class RecommendationsListPage extends StatelessWidget {
                 infoList.add(Row(children: [
                   const FaIcon(FontAwesomeIcons.instagram),
                   InkWell(
-                    child: Text(' ${extra.instagram!}', style: const TextStyle(color: Colors.blue)),
-                    onTap: () => { launchUrl(Uri.parse('https://www.instagram.com/${extra.instagram}/')) }
+                      child: Text(' ${extra.instagram!}', style: const TextStyle(color: Colors.blue)),
+                      onTap: () => { launchUrl(Uri.parse('https://www.instagram.com/${extra.instagram}/')) }
                   )
                 ]));
               }
@@ -79,8 +116,8 @@ class RecommendationsListPage extends StatelessWidget {
                 infoList.add(Row(children: [
                   const FaIcon(FontAwesomeIcons.telegram),
                   InkWell(
-                    child: Text(' ${extra.telegram!}', style: const TextStyle(color: Colors.blue)),
-                    onTap: () => { launchUrl(Uri.parse('https://t.me/${extra.telegram}')) }
+                      child: Text(' ${extra.telegram!}', style: const TextStyle(color: Colors.blue)),
+                      onTap: () => { launchUrl(Uri.parse('https://t.me/${extra.telegram}')) }
                   )
                 ]));
               }
@@ -88,16 +125,16 @@ class RecommendationsListPage extends StatelessWidget {
                 infoList.add(Row(children: [
                   const Icon(Icons.language),
                   InkWell(
-                    child: Text(extra.site!, style: const TextStyle(color: Colors.blue)),
-                    onTap: () => { launchUrl(Uri.parse('https://${extra.site}')) }
+                      child: Text(extra.site!, style: const TextStyle(color: Colors.blue)),
+                      onTap: () => { launchUrl(Uri.parse('https://${extra.site}')) }
                   )
                 ]));
                 if (extra.email != null) {
                   infoList.add(Row(children: [
                     const Icon(Icons.alternate_email),
                     InkWell(
-                      child: Text(extra.email!, style: const TextStyle(color: Colors.blue)),
-                      onTap: () => { launchUrl(Uri.parse('mailto:${extra.email}')) }
+                        child: Text(extra.email!, style: const TextStyle(color: Colors.blue)),
+                        onTap: () => { launchUrl(Uri.parse('mailto:${extra.email}')) }
                     )
                   ]));
                 }
@@ -107,18 +144,21 @@ class RecommendationsListPage extends StatelessWidget {
 
               if (recommendation.person.id == store.user.value!.person!.id) {
                 infoList.add(
-                    ButtonBar(
-                        children: [
-                          IconButton(
-                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationCreatePage(recommendation))),
-                              icon: const Icon(Icons.edit_outlined)
-                          ),
-                          IconButton(
-                              onPressed: () => _showDialog(context),
-                              icon: const Icon(Icons.delete_outline)
-                          )
-                        ]
-                    )
+                  ButtonBar(
+                    alignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationCreatePage(recommendation)));
+                        },
+                        icon: const Icon(Icons.edit_outlined)
+                      ),
+                      IconButton(
+                        onPressed: () => _showDialog(context, recommendation),
+                        icon: const Icon(Icons.delete_outline)
+                      )
+                    ]
+                  )
                 );
               }
 
@@ -171,23 +211,44 @@ class RecommendationsListPage extends StatelessWidget {
     return flat;
   }
 
-  void _showDialog(BuildContext context) {
+  void _showDialog(BuildContext context, Recommendation recommendation) {
     showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Удаление рекомендации'),
-        content: const Text('Вы действительно хотите удалить свою рекомендацию?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'cancel'),
-            child: const Text('Отмена')
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'ok'),
-            child: const Text('Удалить', style: TextStyle(color: Colors.red))
-          )
-        ]
-      )
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+            title: const Text('Удаление рекомендации'),
+            content: const Text('Вы действительно хотите удалить свою рекомендацию?'),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context, 'cancel'),
+                  child: const Text('Отмена')
+              ),
+              TextButton(
+                  onPressed: () {
+                    _delRecommendation(context, recommendation);
+                    Navigator.pop(context, 'ok');
+                  },
+                  child: const Text('Удалить', style: TextStyle(color: Colors.red))
+              )
+            ]
+        )
     );
+  }
+
+  void _delRecommendation(BuildContext context, Recommendation recommendation) {
+    final store = Provider.of<MainStore>(context, listen: false);
+    store.client.socket.emit('recommendation.del', { 'id': recommendation.id }, (String name, dynamic error, dynamic data) {
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+      if (data['status'] != 'OK') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Что-то пошло не так во время удаления рекомендации. Попробуйте позже.'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+    });
   }
 }

@@ -9,7 +9,7 @@ part of 'documents.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$DocumentsStore on _DocumentsStore, Store {
-  final _$listAtom = Atom(name: '_DocumentsStore.list');
+  late final _$listAtom = Atom(name: '_DocumentsStore.list', context: context);
 
   @override
   List<Document>? get list {
@@ -24,8 +24,8 @@ mixin _$DocumentsStore on _DocumentsStore, Store {
     });
   }
 
-  final _$_DocumentsStoreActionController =
-      ActionController(name: '_DocumentsStore');
+  late final _$_DocumentsStoreActionController =
+      ActionController(name: '_DocumentsStore', context: context);
 
   @override
   void addDocument(Document document) {

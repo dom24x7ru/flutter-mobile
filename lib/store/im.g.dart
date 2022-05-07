@@ -9,7 +9,7 @@ part of 'im.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$IMStore on _IMStore, Store {
-  final _$channelsAtom = Atom(name: '_IMStore.channels');
+  late final _$channelsAtom = Atom(name: '_IMStore.channels', context: context);
 
   @override
   List<IMChannel>? get channels {
@@ -24,7 +24,8 @@ mixin _$IMStore on _IMStore, Store {
     });
   }
 
-  final _$_IMStoreActionController = ActionController(name: '_IMStore');
+  late final _$_IMStoreActionController =
+      ActionController(name: '_IMStore', context: context);
 
   @override
   void addChannel(IMChannel channel) {

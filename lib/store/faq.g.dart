@@ -9,7 +9,7 @@ part of 'faq.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$FAQ on _FAQ, Store {
-  final _$listAtom = Atom(name: '_FAQ.list');
+  late final _$listAtom = Atom(name: '_FAQ.list', context: context);
 
   @override
   List<FAQItem>? get list {
@@ -24,7 +24,8 @@ mixin _$FAQ on _FAQ, Store {
     });
   }
 
-  final _$_FAQActionController = ActionController(name: '_FAQ');
+  late final _$_FAQActionController =
+      ActionController(name: '_FAQ', context: context);
 
   @override
   void addFAQItem(FAQItem item) {

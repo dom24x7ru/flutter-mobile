@@ -9,7 +9,8 @@ part of 'version.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$VersionStore on _VersionStore, Store {
-  final _$currentAtom = Atom(name: '_VersionStore.current');
+  late final _$currentAtom =
+      Atom(name: '_VersionStore.current', context: context);
 
   @override
   Version? get current {
@@ -24,8 +25,8 @@ mixin _$VersionStore on _VersionStore, Store {
     });
   }
 
-  final _$_VersionStoreActionController =
-      ActionController(name: '_VersionStore');
+  late final _$_VersionStoreActionController =
+      ActionController(name: '_VersionStore', context: context);
 
   @override
   void setVersion(Version? version) {

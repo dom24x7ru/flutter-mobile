@@ -9,7 +9,8 @@ part of 'instructions.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$InstructionsStore on _InstructionsStore, Store {
-  final _$listAtom = Atom(name: '_InstructionsStore.list');
+  late final _$listAtom =
+      Atom(name: '_InstructionsStore.list', context: context);
 
   @override
   List<Instruction>? get list {
@@ -24,8 +25,8 @@ mixin _$InstructionsStore on _InstructionsStore, Store {
     });
   }
 
-  final _$_InstructionsStoreActionController =
-      ActionController(name: '_InstructionsStore');
+  late final _$_InstructionsStoreActionController =
+      ActionController(name: '_InstructionsStore', context: context);
 
   @override
   void addInstruction(Instruction instruction) {

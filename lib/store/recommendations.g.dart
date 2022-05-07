@@ -9,7 +9,8 @@ part of 'recommendations.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$RecommendationsStore on _RecommendationsStore, Store {
-  final _$listAtom = Atom(name: '_RecommendationsStore.list');
+  late final _$listAtom =
+      Atom(name: '_RecommendationsStore.list', context: context);
 
   @override
   List<Recommendation>? get list {
@@ -24,8 +25,8 @@ mixin _$RecommendationsStore on _RecommendationsStore, Store {
     });
   }
 
-  final _$_RecommendationsStoreActionController =
-      ActionController(name: '_RecommendationsStore');
+  late final _$_RecommendationsStoreActionController =
+      ActionController(name: '_RecommendationsStore', context: context);
 
   @override
   void addRecommendation(Recommendation recommendation) {
@@ -33,6 +34,17 @@ mixin _$RecommendationsStore on _RecommendationsStore, Store {
         name: '_RecommendationsStore.addRecommendation');
     try {
       return super.addRecommendation(recommendation);
+    } finally {
+      _$_RecommendationsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void delRecommendation(Recommendation recommendation) {
+    final _$actionInfo = _$_RecommendationsStoreActionController.startAction(
+        name: '_RecommendationsStore.delRecommendation');
+    try {
+      return super.delRecommendation(recommendation);
     } finally {
       _$_RecommendationsStoreActionController.endAction(_$actionInfo);
     }

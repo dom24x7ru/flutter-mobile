@@ -240,7 +240,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
         return;
       }
       if (data != null && data['status'] == 'OK') {
-        Navigator.pop(context);
+        Navigator.pop(context, 'save');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Не удалось сохранить рекомендацию. Попробуйте позже'), backgroundColor: Colors.red)

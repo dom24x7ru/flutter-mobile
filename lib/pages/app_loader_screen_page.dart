@@ -28,7 +28,6 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
       var listener = _client.on('loaded', this, (event, cont) async {
         try {
           String? token = await FirebaseMessaging.instance.getToken();
-          print('TOKEN: $token');
           if (token != null) {
             // сохраняем токен для пушей в БД на сервере
             _client.socket.emit('notification.saveToken', { 'token': token});

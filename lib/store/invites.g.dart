@@ -9,7 +9,7 @@ part of 'invites.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$InvitesStore on _InvitesStore, Store {
-  final _$listAtom = Atom(name: '_InvitesStore.list');
+  late final _$listAtom = Atom(name: '_InvitesStore.list', context: context);
 
   @override
   List<Invite>? get list {
@@ -24,8 +24,8 @@ mixin _$InvitesStore on _InvitesStore, Store {
     });
   }
 
-  final _$_InvitesStoreActionController =
-      ActionController(name: '_InvitesStore');
+  late final _$_InvitesStoreActionController =
+      ActionController(name: '_InvitesStore', context: context);
 
   @override
   void setInvites(List<Invite> invites) {

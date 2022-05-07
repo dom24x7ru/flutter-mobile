@@ -9,7 +9,7 @@ part of 'flats.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$FlatsStore on _FlatsStore, Store {
-  final _$listAtom = Atom(name: '_FlatsStore.list');
+  late final _$listAtom = Atom(name: '_FlatsStore.list', context: context);
 
   @override
   List<Flat>? get list {
@@ -24,7 +24,8 @@ mixin _$FlatsStore on _FlatsStore, Store {
     });
   }
 
-  final _$_FlatsStoreActionController = ActionController(name: '_FlatsStore');
+  late final _$_FlatsStoreActionController =
+      ActionController(name: '_FlatsStore', context: context);
 
   @override
   void setFlats(List<Flat> flats) {
