@@ -29,6 +29,7 @@ dependencies:
   firebase_core: ^1.14.0
   firebase_messaging: ^11.2.12
   badges: ^2.0.2
+  new_version: ^0.3.0
 
 dev_dependencies:
   flutter_test:

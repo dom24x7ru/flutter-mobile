@@ -6,6 +6,7 @@ import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
 
 import '../models/vote.dart';
@@ -32,9 +33,11 @@ class _NewsPageState extends State<NewsPage> {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
 
-      setState(() { vote = getVote(store); });
+      _checkNewVersion(context);
+
+      setState(() { vote = _getVote(store); });
       var listener = _client.on('vote', this, (event, cont) {
-        setState(() { vote = getVote(store); });
+        setState(() { vote = _getVote(store); });
       });
       _listeners.add(listener);
     });
@@ -97,9 +100,9 @@ class _NewsPageState extends State<NewsPage> {
 
               final Post post = store.posts.list![index + (vote != null ? 1 : 0)];
               final createdAt = Utilities.getDateFormat(post.createdAt);
-              final icon = getIconStyle(post);
+              final icon = _getIconStyle(post);
               return GestureDetector(
-                  onTap: () => { goPage(context, post, store.flats.list!) },
+                  onTap: () => { _goPage(context, post, store.flats.list!) },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -127,7 +130,7 @@ class _NewsPageState extends State<NewsPage> {
     );
   }
 
-  Map<String, dynamic> getIconStyle(Post post) {
+  Map<String, dynamic> _getIconStyle(Post post) {
     switch (post.type) {
       case 'person': return {'icon': Icons.person, 'color': Colors.green};
       case 'attention': return {'icon': Icons.new_releases_outlined, 'color': Colors.red};
@@ -143,7 +146,7 @@ class _NewsPageState extends State<NewsPage> {
     }
   }
 
-  void goPage(BuildContext context, Post post, List<Flat> flats) {
+  void _goPage(BuildContext context, Post post, List<Flat> flats) {
     if (post.type == 'person') {
       final flatNumber = post.url!.replaceAll('/flat/', '');
       for (var flat in flats) {
@@ -154,17 +157,17 @@ class _NewsPageState extends State<NewsPage> {
     }
   }
 
-  Vote? getVote(MainStore store) {
+  Vote? _getVote(MainStore store) {
     List<Vote>? votes = store.votes.list;
     if (votes == null || votes.isEmpty) return null; // нет доступных голосований
     votes = votes.where((vote) => !vote.closed).toList();
     if (votes.isEmpty) return null; // все голосования уже закрыты
-    votes = votes.where((vote) => !answered(store, vote)).toList();
+    votes = votes.where((vote) => !_answered(store, vote)).toList();
     if (votes.isEmpty) return null; // на все незакрытые голосования уже проголосовал
     return votes[0]; // вернем первое доступное, в котором уже не участвовали
   }
 
-  bool answered(MainStore store, Vote vote) {
+  bool _answered(MainStore store, Vote vote) {
     final answers = vote.answers;
     if (answers.isEmpty) return false;
 
@@ -172,5 +175,24 @@ class _NewsPageState extends State<NewsPage> {
     if (person == null) return false;
 
     return answers.where((answer) => answer.person.id == person.id).isNotEmpty;
+  }
+
+  void _checkNewVersion(BuildContext context) async {
+    final newVersion = NewVersion(
+        iOSAppStoreCountry: 'ru',
+        iOSId: 'ru.dom24x7.flutter',
+        androidId: 'ru.dom24x7.flutter'
+    );
+    final status = await newVersion.getVersionStatus();
+    if (status != null && status.canUpdate) {
+      newVersion.showUpdateDialog(
+        context: context,
+        versionStatus: status,
+        dialogTitle: 'Доступно обновление',
+        dialogText: 'Вы можете обновить приложение с ${status.localVersion} до ${status.storeVersion}',
+        updateButtonText: 'Обновить',
+        dismissButtonText: 'Позже'
+      );
+    }
   }
 }
