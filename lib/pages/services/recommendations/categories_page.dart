@@ -20,7 +20,7 @@ class RecommendationsCategoriesPage extends StatelessWidget {
     Widget? floatingActionButton;
     if (store.user.value!.residents.isNotEmpty) {
       floatingActionButton = FloatingActionButton(
-          onPressed: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const RecommendationCreatePage())) },
+          onPressed: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const RecommendationCreatePage(null))) },
           backgroundColor: Colors.blue,
           child: const Icon(Icons.add)
       );

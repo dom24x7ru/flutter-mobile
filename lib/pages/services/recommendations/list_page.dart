@@ -1,6 +1,7 @@
 import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
+import 'package:dom24x7_flutter/pages/services/recommendations/create_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
@@ -22,9 +23,20 @@ class RecommendationsListPage extends StatelessWidget {
     final store = Provider.of<MainStore>(context);
     final categoryName = list.isNotEmpty ? list[0].category.name : null;
 
+    Widget? floatingActionButton;
+    if (store.user.value!.residents.isNotEmpty) {
+      final category = list.isNotEmpty ? list[0].category : null;
+      floatingActionButton = FloatingActionButton(
+          onPressed: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationCreatePage(null, category: category))) },
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.add)
+      );
+    }
+
     return Scaffold(
         appBar: Header(context, categoryName != null ? Utilities.getHeaderTitle(categoryName) : 'Неизвестная категория'),
         bottomNavigationBar: const Footer(FooterNav.services),
+        floatingActionButton: floatingActionButton,
         body: ListView.builder(
             itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
@@ -34,8 +46,8 @@ class RecommendationsListPage extends StatelessWidget {
                 Row(children: [
                   const Text('Автор: '),
                   InkWell(
-                      child: Text(getAuthorName(recommendation), style: const TextStyle(color: Colors.blue)),
-                      onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(getFlat(store, recommendation)))) })
+                      child: Text(_getAuthorName(recommendation), style: const TextStyle(color: Colors.blue)),
+                      onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_getFlat(store, recommendation)))) })
                 ]),
                 const Divider()
               ];
@@ -93,6 +105,23 @@ class RecommendationsListPage extends StatelessWidget {
               infoList.add(const Divider());
               infoList.add(Text(recommendation.body));
 
+              if (recommendation.person.id == store.user.value!.person!.id) {
+                infoList.add(
+                    ButtonBar(
+                        children: [
+                          IconButton(
+                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationCreatePage(recommendation))),
+                              icon: const Icon(Icons.edit_outlined)
+                          ),
+                          IconButton(
+                              onPressed: () => _showDialog(context),
+                              icon: const Icon(Icons.delete_outline)
+                          )
+                        ]
+                    )
+                );
+              }
+
               return Card(
                   child: Container(
                       padding: const EdgeInsets.all(15.0),
@@ -101,7 +130,7 @@ class RecommendationsListPage extends StatelessWidget {
                           children: [
                             ParallaxListItem(
                               imageUrl: recommendation.category.img,
-                              title: recommendation.title,
+                              title: Utilities.getHeaderTitle(recommendation.title, 25),
                               horizontal: 0,
                               radius: 0,
                               aspectRatio: 16 / 6,
@@ -114,7 +143,7 @@ class RecommendationsListPage extends StatelessWidget {
             }));
   }
 
-  String getAuthorName(Recommendation recommendation) {
+  String _getAuthorName(Recommendation recommendation) {
     Person person = recommendation.person;
     String fullName = '';
     if (person.surname != null) {
@@ -133,12 +162,32 @@ class RecommendationsListPage extends StatelessWidget {
     return fullName;
   }
 
-  Flat getFlat(MainStore store, Recommendation recommendation) {
+  Flat _getFlat(MainStore store, Recommendation recommendation) {
     Flat flat = recommendation.flat;
     final flats = store.flats.list!;
     for (Flat item in flats) {
       if (item.id == flat.id) return item;
     }
     return flat;
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Удаление рекомендации'),
+        content: const Text('Вы действительно хотите удалить свою рекомендацию?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'cancel'),
+            child: const Text('Отмена')
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'ok'),
+            child: const Text('Удалить', style: TextStyle(color: Colors.red))
+          )
+        ]
+      )
+    );
   }
 }

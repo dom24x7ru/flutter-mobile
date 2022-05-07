@@ -1,3 +1,4 @@
+import 'package:dom24x7_flutter/models/recommendation.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
@@ -12,7 +13,9 @@ class RecommendationCategoryItem {
 }
 
 class RecommendationCreatePage extends StatefulWidget {
-  const RecommendationCreatePage({Key? key}) : super(key: key);
+  final Recommendation? recommendation;
+  final RecommendationCategory? category;
+  const RecommendationCreatePage(this.recommendation, {Key? key, this.category}) : super(key: key);
 
   @override
   State<RecommendationCreatePage> createState() => _RecommendationCreatePageState();
@@ -56,9 +59,13 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
           return;
         }
         setState(() {
+          // загружаем список категорий
           for (var item in data) {
             _recommendationCategories.add(RecommendationCategoryItem(item['name'], item['id'].toString()));
           }
+
+          // теперь, если необходимо, можем инициализировать поля редактируемой рекомендацией
+          _initRecommendationFields(widget.recommendation, widget.category);
         });
       });
     });
@@ -81,8 +88,9 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
+    final String title = widget.recommendation != null ? 'Редактировать' : 'Создать рекомендацию';
     return Scaffold(
-      appBar: Header(context, 'Создать рекомендацию'),
+      appBar: Header(context, title),
       bottomNavigationBar: const Footer(FooterNav.services),
       body: Container(
         padding: const EdgeInsets.all(15.0),
@@ -166,7 +174,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
               ),
             ),
             ElevatedButton(
-              onPressed: _btnEnabled ? () => { save(context, store) } : null,
+              onPressed: _btnEnabled ? () => { _save(context, store) } : null,
               child: Text('Сохранить'.toUpperCase()),
             )
           ]
@@ -183,9 +191,35 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
     });
   }
 
-  void save(BuildContext context, MainStore store) {
+  void _initRecommendationFields(Recommendation? recommendation, RecommendationCategory? category) {
+    if (category != null) {
+      setState(() {
+        final dropdownCategory = _recommendationCategories.firstWhere((item) => item.value == category.id.toString());
+        _recommendationCategory = dropdownCategory;
+      });
+    }
+    if (recommendation == null) return;
+    setState(() {
+      final category = recommendation.category;
+      final dropdownCategory = _recommendationCategories.firstWhere((item) => item.value == category.id.toString());
+      _recommendationCategory = dropdownCategory;
+    });
+
+    _cTitle.text = recommendation.title;
+    _cBody.text = recommendation.body;
+
+    final extra = recommendation.extra;
+    if (extra.phone != null) _cPhone.text = extra.phone!.substring(1);
+    if (extra.site != null) _cSite.text = extra.site!;
+    if (extra.email != null) _cEmail.text = extra.email!;
+    if (extra.address != null) _cAddress.text = extra.address!;
+    if (extra.instagram != null) _cInstagram.text = extra.instagram!;
+    if (extra.telegram != null) _cTelegram.text = extra.telegram!;
+  }
+
+  void _save(BuildContext context, MainStore store) {
     var data = {
-      'id': null,
+      'id': widget.recommendation != null ? widget.recommendation!.id : null,
       'title': _cTitle.text.trim(),
       'body': _cBody.text.trim(),
       'categoryId': _recommendationCategory!.value,
