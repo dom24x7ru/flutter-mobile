@@ -89,6 +89,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
     final String title = widget.recommendation != null ? 'Редактировать' : 'Создать рекомендацию';
+
     return Scaffold(
       appBar: Header(context, title),
       bottomNavigationBar: const Footer(FooterNav.services),
@@ -103,9 +104,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
               ),
               value: _recommendationCategory,
               onChanged: (RecommendationCategoryItem? value) {
-                setState(() {
-                  _recommendationCategory = value!;
-                });
+                setState(() => _recommendationCategory = value!);
                 _calcBtnEnabled();
               },
               items: _recommendationCategories.map<DropdownMenuItem<RecommendationCategoryItem>>((RecommendationCategoryItem value) {
@@ -174,7 +173,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
               ),
             ),
             ElevatedButton(
-              onPressed: _btnEnabled ? () => { _save(context, store) } : null,
+              onPressed: _btnEnabled ? () => _save(context, store) : null,
               child: Text('Сохранить'.toUpperCase()),
             )
           ]
@@ -215,6 +214,8 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
     if (extra.address != null) _cAddress.text = extra.address!;
     if (extra.instagram != null) _cInstagram.text = extra.instagram!;
     if (extra.telegram != null) _cTelegram.text = extra.telegram!;
+
+    _calcBtnEnabled();
   }
 
   void _save(BuildContext context, MainStore store) {

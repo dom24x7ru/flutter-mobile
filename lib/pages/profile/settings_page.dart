@@ -3,6 +3,7 @@ import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/models/person_access.dart';
 import 'package:dom24x7_flutter/models/resident.dart';
 import 'package:dom24x7_flutter/models/user.dart';
+import 'package:dom24x7_flutter/pages/profile/space_edit_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
@@ -109,8 +110,12 @@ class _SettingsPage extends State<SettingsPage> {
                   )
                 ),
                 InkWell(
-                  onTap: () => {},
-                  child: const Icon(Icons.edit_outlined)
+                  onTap: () {
+                    if (_flat != null) {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SpaceEditPage(_flat)));
+                    }
+                  },
+                  child: Icon(Icons.edit_outlined, color: _flat != null ? Colors.black54 : Colors.black12)
                 )
               ]
             ),
