@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 enum FooterNav { news, house, im, services }
 
 class Footer extends StatefulWidget {
-  final FooterNav nav;
+  final FooterNav? nav;
   const Footer(this.nav, {Key? key}) : super(key: key);
 
   @override
@@ -26,13 +26,13 @@ class _FooterState extends State<Footer> {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       setState(() {
-        _msgCount = getMsgCount(store.im.channels);
+        _msgCount = _getMsgCount(store.im.channels);
       });
 
       _client = store.client;
       var listener = _client.on('imChannel', this, (event, cont) {
         setState(() {
-          _msgCount = getMsgCount(store.im.channels);
+          _msgCount = _getMsgCount(store.im.channels);
         });
       });
       _listeners.add(listener);
@@ -55,7 +55,6 @@ class _FooterState extends State<Footer> {
     );
     if (_msgCount != 0) {
       barItem = BottomNavigationBarItem(
-        // icon: Icon(Icons.forum),
         icon: Badge(
           badgeContent: Text('$_msgCount'),
           badgeColor: Colors.white54,
@@ -82,11 +81,11 @@ class _FooterState extends State<Footer> {
             label: 'Сервисы',
           ),
         ],
-        currentIndex: widget.nav.index,
+        currentIndex: widget.nav != null ? widget.nav!.index : 0,
         backgroundColor: Colors.blue,
-        selectedItemColor: Colors.white,
+        selectedItemColor: widget.nav != null ? Colors.white : Colors.black54,
         showUnselectedLabels: false,
-        showSelectedLabels: true,
+        showSelectedLabels: widget.nav != null,
         onTap: (int index) {
           switch (index) {
             case 0:
@@ -108,7 +107,7 @@ class _FooterState extends State<Footer> {
     );
   }
 
-  int getMsgCount(List<IMChannel>? channels) {
+  int _getMsgCount(List<IMChannel>? channels) {
     int count = 0;
     if (channels == null || channels.isEmpty) return count;
     for (var channel in channels) {

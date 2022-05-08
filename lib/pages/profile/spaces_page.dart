@@ -21,7 +21,7 @@ class _SpacesPageState extends State<SpacesPage> {
         appBar: Header(context, 'Помещения'),
         bottomNavigationBar: const Footer(FooterNav.news),
         floatingActionButton: FloatingActionButton(
-            onPressed: () => { showAddEditSpace(context) },
+            onPressed: () => _showAddEditSpace(context),
             backgroundColor: Colors.blue,
             child: const Icon(Icons.add)
         ),
@@ -30,7 +30,7 @@ class _SpacesPageState extends State<SpacesPage> {
           itemBuilder: (BuildContext context, int index) {
             final resident = residents[index];
             return GestureDetector(
-              onLongPress: () => { showMenu(context) },
+              onLongPress: () => _showMenu(context),
               child: Container(
                   padding: const EdgeInsets.all(10.0),
                   child: Card(
@@ -46,7 +46,7 @@ class _SpacesPageState extends State<SpacesPage> {
     );
   }
 
-  void showMenu(BuildContext context) {
+  void _showMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -58,7 +58,7 @@ class _SpacesPageState extends State<SpacesPage> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  showAddEditSpace(context);
+                  _showAddEditSpace(context);
                 },
                 child: Text('Редактировать'.toUpperCase())
               ),
@@ -76,7 +76,7 @@ class _SpacesPageState extends State<SpacesPage> {
     );
   }
 
-  void showAddEditSpace(BuildContext context) {
+  void _showAddEditSpace(BuildContext context) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
