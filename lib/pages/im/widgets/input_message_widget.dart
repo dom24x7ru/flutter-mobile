@@ -46,7 +46,7 @@ class _IMInputMessageState extends State<IMInputMessage> {
               )
           ),
           InkWell(
-            onTap: () => { _send(context) },
+            onTap: () => _send(context),
             child: const Icon(Icons.send),
           )
         ]

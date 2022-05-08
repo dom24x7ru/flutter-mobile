@@ -11,8 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../widgets/checkbox_widget.dart';
-import '../widgets/radio_widget.dart';
+import '../../widgets/checkbox_widget.dart';
+import '../../widgets/radio_widget.dart';
 
 enum AccessName { nothing, name, all }
 
@@ -97,12 +97,22 @@ class _SettingsPage extends State<SettingsPage> {
                     hintText: 'Отчество'
                 )
             ),
-            TextField(
-                controller: _cFlat,
-                enabled: _user == null || _user!.residents.isEmpty || _user!.residents[0].flat == null,
-                decoration: const InputDecoration(
-                    hintText: 'Введите номер квартиры'
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                      controller: _cFlat,
+                      enabled: _user == null || _user!.residents.isEmpty || _user!.residents[0].flat == null,
+                      decoration: const InputDecoration(
+                          hintText: 'Введите номер квартиры'
+                      )
+                  )
+                ),
+                InkWell(
+                  onTap: () => {},
+                  child: const Icon(Icons.edit_outlined)
                 )
+              ]
             ),
             Text(_getFlatInfo(_flat), style: const TextStyle(color: Colors.black45)),
             TextField(
