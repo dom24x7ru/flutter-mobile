@@ -47,11 +47,11 @@ class _SettingsPage extends State<SettingsPage> {
     _cTelegram = TextEditingController();
 
     _cFlat = TextEditingController();
-    _cFlat.addListener(findFlat);
+    _cFlat.addListener(_findFlat);
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
-      load(store);
+      _load(store);
     });
   }
 
@@ -62,7 +62,7 @@ class _SettingsPage extends State<SettingsPage> {
     _cMidname.dispose();
     _cTelegram.dispose();
 
-    _cFlat.removeListener(findFlat);
+    _cFlat.removeListener(_findFlat);
     _cFlat.dispose();
 
     super.dispose();
@@ -104,7 +104,7 @@ class _SettingsPage extends State<SettingsPage> {
                     hintText: 'Введите номер квартиры'
                 )
             ),
-            Text(getFlatInfo(_flat), style: const TextStyle(color: Colors.black45)),
+            Text(_getFlatInfo(_flat), style: const TextStyle(color: Colors.black45)),
             TextField(
                 controller: _cTelegram,
                 decoration: const InputDecoration(
@@ -151,14 +151,14 @@ class _SettingsPage extends State<SettingsPage> {
                       const Text('Я хочу '),
                       InkWell(
                         child: const Text('выйти', style: TextStyle(color: Colors.blue)),
-                        onTap: () => { logout(context, store) },
+                        onTap: () => _logout(context, store),
                       ),
                       const Text(' из приложения')
                     ]
                 )
             ),
             ElevatedButton(
-              onPressed: () => { save(store) },
+              onPressed: () => _save(store),
               child: Text('Сохранить'.toUpperCase()),
             )
           ],
@@ -167,7 +167,7 @@ class _SettingsPage extends State<SettingsPage> {
     );
   }
 
-  void load(MainStore store) {
+  void _load(MainStore store) {
     setState(() {
       _user = store.user.value;
       _flats = store.flats.list;
@@ -205,7 +205,7 @@ class _SettingsPage extends State<SettingsPage> {
     }
   }
 
-  void findFlat() {
+  void _findFlat() {
     if (_flats == null) return;
     for (Flat flat in _flats!) {
       if (flat.number.toString() == _cFlat.text) {
@@ -217,12 +217,12 @@ class _SettingsPage extends State<SettingsPage> {
     }
   }
 
-  String getFlatInfo(Flat? flat) {
+  String _getFlatInfo(Flat? flat) {
     if (flat == null) return 'Указанный номер квартиры не найден в доме';
     return Utilities.getFlatTitle(flat);
   }
 
-  void logout(BuildContext context, MainStore store) async {
+  void _logout(BuildContext context, MainStore store) async {
     store.client.socket.emit('user.logout', {});
     store.clear();
     final prefs = await SharedPreferences.getInstance();
@@ -230,7 +230,7 @@ class _SettingsPage extends State<SettingsPage> {
     Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false);
   }
 
-  void save(MainStore store) {
+  void _save(MainStore store) {
     var data = {
       'surname': _cSurname.text.trim(),
       'name': _cName.text.trim(),
