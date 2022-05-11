@@ -97,7 +97,7 @@ class _SpaceEditPageState extends State<SpaceEditPage> {
     final store = Provider.of<MainStore>(context);
 
     return Scaffold(
-      appBar: Header(context, 'Редактировать помещение'),
+      appBar: Header(context, 'Редактировать'),
       body: Container(
         padding: const EdgeInsets.all(15.0),
         child: ListView(
@@ -220,9 +220,12 @@ class _SpaceEditPageState extends State<SpaceEditPage> {
       'square': _cSquare.text.trim().isNotEmpty ? _cSquare.text.trim() : null,
       'typeId': _spaceType!.value,
       'extra': {
-        'typeCode': _residentType!.value
+        'type': _residentType!.value
       }
     };
+    if (data['square'] != null) {
+      data['square'] = data['square'].toString().replaceAll(',', '.');
+    }
     store.client.socket.emit('flat.save', data, (String name, dynamic error, dynamic data) {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(

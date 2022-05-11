@@ -1,3 +1,4 @@
+import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/widgets/checkbox_widget.dart';
 import 'package:dom24x7_flutter/widgets/radio_widget.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
@@ -32,6 +33,8 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
 
   late TextEditingController _cQuestion;
 
+  bool _btnEnabled = false;
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +52,56 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
+    final Flat flat = store.user.value!.residents[0].flat!;
+
+    if (flat.section == null) {
+      setState(() => _voteType = VoteType.house);
+    }
+
+    List<Widget> voteCoverage = [];
+    if (flat.section != null) {
+      voteCoverage.add(
+        Dom24x7Radio<VoteType>(
+          value: VoteType.house,
+          groupValue: _voteType,
+          label: 'весь дом',
+          onChanged: (VoteType? value) {
+            setState(() {
+              _voteType = value;
+              _calcBtnEnabled();
+            });
+          },
+        )
+      );
+      voteCoverage.add(
+        Dom24x7Radio<VoteType>(
+          value: VoteType.section,
+          groupValue: _voteType,
+          label: 'весь подъезд',
+          onChanged: (VoteType? value) {
+            setState(() {
+              _voteType = value;
+              _calcBtnEnabled();
+            });
+          },
+        )
+      );
+    }
+    if (flat.section != null && flat.floor != null) {
+      voteCoverage.add(
+        Dom24x7Radio<VoteType>(
+          value: VoteType.floor,
+          groupValue: _voteType,
+          label: 'весь этаж в подъезде',
+          onChanged: (VoteType? value) {
+            setState(() {
+              _voteType = value;
+              _calcBtnEnabled();
+            });
+          },
+        )
+      );
+    }
     return Scaffold(
       appBar: Header(context, 'Создать голосование'),
       bottomNavigationBar: const Footer(FooterNav.services),
@@ -58,34 +111,18 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
           children: [
             TextField(
               controller: _cQuestion,
+              onChanged: (String value) => _calcBtnEnabled(),
               decoration: const InputDecoration(
                 labelText: 'Задайте вопрос'
               )
             ),
-            Column(children: getAnswerWidgets()),
-            TextButton(onPressed: () => { addAnswer() }, child: Text('Добавить ответ'.toUpperCase())),
+            Column(children: _getAnswerWidgets()),
+            TextButton(onPressed: () => { _addAnswer() }, child: Text('Добавить ответ'.toUpperCase())),
             Dom24x7Checkbox(value: _anonymous, label: 'анонимно', onChanged: (bool? value) => { setState(() => { _anonymous = value! }) }),
             Dom24x7Checkbox(value: _multi, label: 'несколько ответов', onChanged: (bool? value) => { setState(() => { _multi = value! }) }),
-            Dom24x7Radio<VoteType>(
-              value: VoteType.house,
-              groupValue: _voteType,
-              label: 'весь дом',
-              onChanged: (VoteType? value) { setState(() { _voteType = value; }); },
-            ),
-            Dom24x7Radio<VoteType>(
-              value: VoteType.section,
-              groupValue: _voteType,
-              label: 'весь подъезд',
-              onChanged: (VoteType? value) { setState(() { _voteType = value; }); },
-            ),
-            Dom24x7Radio<VoteType>(
-              value: VoteType.floor,
-              groupValue: _voteType,
-              label: 'весь этаж в подъезде',
-              onChanged: (VoteType? value) { setState(() { _voteType = value; }); },
-            ),
+            ...voteCoverage,
             ElevatedButton(
-              onPressed: btnEnabled() ? () => { save(context, store) } : null,
+              onPressed: _btnEnabled ? () => _save(context, store) : null,
               child: Text('Сохранить'.toUpperCase()),
             )
           ]
@@ -94,15 +131,16 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
     );
   }
 
-  List<Widget> getAnswerWidgets() {
+  List<Widget> _getAnswerWidgets() {
     return _answers.map((answer) {
       return TextField(
           controller: answer.controller,
+          onChanged: (String value) => _calcBtnEnabled(),
           decoration: InputDecoration(
               labelText: 'Ответ',
               hintText: 'Укажите вариант ответа',
               suffixIcon: InkWell(
-                onTap: () => { delAnswer(answer.id) },
+                onTap: () => { _delAnswer(answer.id) },
                 child: const Icon(Icons.delete_outline)
               )
           )
@@ -110,13 +148,13 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
     }).toList();
   }
 
-  void addAnswer() {
+  void _addAnswer() {
     setState(() {
       _answers.add(Answer(DateTime.now().millisecondsSinceEpoch));
     });
   }
 
-  void delAnswer(int id) {
+  void _delAnswer(int id) {
     Answer? removeObj;
     for (Answer answer in _answers) {
       if (answer.id == id) removeObj = answer;
@@ -128,13 +166,15 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
     }
   }
 
-  bool btnEnabled() {
-    return _cQuestion.text.trim().isNotEmpty // вопрос не должен быть пусты
-      && checkAnswers() // количество вариантнов ответов больше одного и они должны быть заполнены
-      && _voteType != null; // выбран тип голосования
+  void _calcBtnEnabled() {
+    setState(() {
+      _btnEnabled = _cQuestion.text.trim().isNotEmpty // вопрос не должен быть пусты
+          && _checkAnswers() // количество вариантнов ответов больше одного и они должны быть заполнены
+          && _voteType != null; // выбран тип голосования
+    });
   }
 
-  bool checkAnswers() {
+  bool _checkAnswers() {
     // не менее двух ответов
     if (_answers.length < 2) return false;
     // все ответы должны быть заполнены
@@ -144,7 +184,7 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
     return true;
   }
 
-  void save(BuildContext context, MainStore store) {
+  void _save(BuildContext context, MainStore store) {
     var data = {
       'title': _cQuestion.text.trim(),
       'questions': _answers.map((answer) { return { 'body': answer.controller.text.trim() }; }).toList(),

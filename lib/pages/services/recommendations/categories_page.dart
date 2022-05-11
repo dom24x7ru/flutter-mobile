@@ -18,6 +18,7 @@ class RecommendationsCategoriesPage extends StatefulWidget {
 
 class _RecommendationsCategoriesPageState extends State<RecommendationsCategoriesPage> {
   late List<RecommendationCategory> _categories = [];
+  late List<Recommendation> _recommendations = [];
   late SocketClient _client;
   final List<dynamic> _listeners = [];
 
@@ -27,12 +28,12 @@ class _RecommendationsCategoriesPageState extends State<RecommendationsCategorie
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
-      final recommendations = store.recommendations.list!;
+      _recommendations = store.recommendations.list != null ? store.recommendations.list! : [];
       _client = store.client;
 
-      setState(() => _categories = _getCategories(recommendations));
+      setState(() => _categories = _getCategories(_recommendations));
       var listener = _client.on('recommendations', this, (event, cont) {
-        setState(() => _categories = _getCategories(recommendations));
+        setState(() => _categories = _getCategories(_recommendations));
       });
       _listeners.add(listener);
     });
@@ -49,14 +50,13 @@ class _RecommendationsCategoriesPageState extends State<RecommendationsCategorie
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
-    final recommendations = store.recommendations.list!;
 
     Widget? floatingActionButton;
     if (store.user.value!.residents.isNotEmpty) {
       floatingActionButton = FloatingActionButton(
           onPressed: () async {
             final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => const RecommendationCreatePage(null)));
-            if (result == 'save') setState(() => _categories = _getCategories(recommendations));
+            if (result == 'save') setState(() => _categories = _getCategories(_recommendations));
           },
           backgroundColor: Colors.blue,
           child: const Icon(Icons.add)
@@ -72,7 +72,7 @@ class _RecommendationsCategoriesPageState extends State<RecommendationsCategorie
             itemBuilder: (BuildContext context, int index) {
               final category = _categories[index];
               return GestureDetector(
-                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationsListPage(_getRecommendationsList(recommendations, category)))) },
+                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationsListPage(_getRecommendationsList(_recommendations, category)))) },
                   child: ParallaxListItem(imageUrl: category.img, title: category.name, subtitle: 'Доступно: ${category.count}')
               );
             }

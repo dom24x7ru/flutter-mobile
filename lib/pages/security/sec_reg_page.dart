@@ -14,9 +14,11 @@ class _SecRegPage extends State<SecRegPage> {
   late TextEditingController _cMobile;
   late TextEditingController _cMobileRepeat;
   late TextEditingController _cInviteCode;
+  late TextEditingController _cAddress;
   String? _mobileError;
   String? _mobileRepeatError;
   String? _inviteError;
+  String? _addressError;
 
   @override
   void initState() {
@@ -24,6 +26,7 @@ class _SecRegPage extends State<SecRegPage> {
     _cMobile = TextEditingController();
     _cMobileRepeat = TextEditingController();
     _cInviteCode = TextEditingController();
+    _cAddress = TextEditingController();
   }
 
   @override
@@ -31,6 +34,7 @@ class _SecRegPage extends State<SecRegPage> {
     _cMobile.dispose();
     _cMobileRepeat.dispose();
     _cInviteCode.dispose();
+    _cAddress.dispose();
     super.dispose();
   }
 
@@ -52,7 +56,7 @@ class _SecRegPage extends State<SecRegPage> {
                         controller: _cMobile,
                         keyboardType: TextInputType.number,
                         maxLength: 10,
-                        onChanged: (String value) => { setState(() => { _mobileError = null }) },
+                        onChanged: (String value) => setState(() => _mobileError = null),
                         decoration: InputDecoration(
                           prefix: const Text('+7 '),
                           labelText: 'Ваш номер телефона',
@@ -63,7 +67,7 @@ class _SecRegPage extends State<SecRegPage> {
                         controller: _cMobileRepeat,
                         keyboardType: TextInputType.number,
                         maxLength: 10,
-                        onChanged: (String value) => { setState(() => { _mobileRepeatError = null }) },
+                        onChanged: (String value) => setState(() => _mobileRepeatError = null),
                         decoration: InputDecoration(
                           prefix: const Text('+7 '),
                           labelText: 'Повторить ваш номер телефона',
@@ -74,16 +78,31 @@ class _SecRegPage extends State<SecRegPage> {
                         controller: _cInviteCode,
                         keyboardType: TextInputType.number,
                         maxLength: 6,
-                        onChanged: (String value) => { setState(() => { _inviteError = null }) },
+                        onChanged: (String value) => setState(() {
+                          _inviteError = null;
+                          _addressError = null;
+                        }),
                         decoration: InputDecoration(
                           labelText: 'Введите код приглашения',
                           errorText: _inviteError
                         ),
                       ),
+                      const Text('- или -', style: TextStyle(color: Colors.black45)),
+                      TextField(
+                        controller: _cAddress,
+                        onChanged: (String value) => setState(() {
+                          _inviteError = null;
+                          _addressError = null;
+                        }),
+                        decoration: InputDecoration(
+                          labelText: 'Введите свой адрес',
+                          errorText: _addressError
+                        ),
+                      )
                     ],
                   )
               ),
-              ElevatedButton(onPressed: () => { sendReg(context, store) }, child: Text('Зарегистрироваться'.toUpperCase())),
+              ElevatedButton(onPressed: () => _sendReg(context, store), child: Text('Зарегистрироваться'.toUpperCase())),
               const Text('- или -', style: TextStyle(color: Colors.black45)),
               TextButton(
                   onPressed: () => Navigator.pushNamedAndRemoveUntil(
@@ -94,29 +113,37 @@ class _SecRegPage extends State<SecRegPage> {
     );
   }
 
-  void sendReg(BuildContext context, MainStore store) {
+  void _sendReg(BuildContext context, MainStore store) {
     final mobile = '7${_cMobile.text}';
     final invite = _cInviteCode.text;
+    final address = _cAddress.text.trim();
 
     // валидация номера телефона
     if (mobile.length == 1) {
-      setState(() => { _mobileError = 'Необходимо указать номер телефона' });
+      setState(() => _mobileError = 'Необходимо указать номер телефона');
       return;
     } else if (mobile.length < 11) {
-      setState(() => { _mobileError = 'Номер должен состоять из 10 цифр' });
+      setState(() => _mobileError = 'Номер должен состоять из 10 цифр');
       return;
     } else if (mobile != '7${_cMobileRepeat.text}') {
-      setState(() => { _mobileRepeatError = 'Номера должны совпадать' });
+      setState(() => _mobileRepeatError = 'Номера должны совпадать');
       return;
-    } else if (invite.isEmpty) {
-      setState(() => { _inviteError = 'Необходимо указать код приглашения' });
+    } else if (invite.isEmpty && address.isEmpty) {
+      setState(() => _inviteError = 'Необходимо указать код приглашения');
+      setState(() => _addressError = 'или указать свой адрес');
       return;
-    } else if(invite.length < 6) {
-      setState(() => { _inviteError = 'Код приглашения должен состоять из 6 цифр' });
+    } else if(address.isEmpty && invite.length < 6) {
+      setState(() => _inviteError = 'Код приглашения должен состоять из 6 цифр');
+      setState(() => _addressError = null);
       return;
     }
 
-    store.client.socket.emit('user.auth', { 'mobile': mobile, 'invite': invite }, (String name, dynamic error, dynamic data) {
+    var data = {
+      'mobile': mobile,
+      'invite': invite.isNotEmpty ? invite : null,
+      'address': address.isNotEmpty ? address : null
+    };
+    store.client.socket.emit('user.auth', data, (String name, dynamic error, dynamic data) {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)

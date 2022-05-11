@@ -219,7 +219,8 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onUser(event, context) {
     if (event.eventData['event'] == 'ready') return;
-    store.user.setUser(User.fromMap(event.eventData['data']));
+    final data = event.eventData['data'];
+    store.user.setUser(User.fromMap(data));
     final houseId = store.user.value!.houseId;
     final channels = [
       'all.$houseId.flats', 'all.$houseId.posts', 'all.$houseId.invites', // начальная инициализация

@@ -116,7 +116,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
             ),
             TextField(
               controller: _cTitle,
-              onChanged: (String value) => { _calcBtnEnabled() },
+              onChanged: (String value) => _calcBtnEnabled(),
               decoration: const InputDecoration(
                 labelText: 'Заголовок'
               )
@@ -125,7 +125,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
               controller: _cBody,
               keyboardType: TextInputType.multiline,
               maxLines: null,
-              onChanged: (String value) => { _calcBtnEnabled() },
+              onChanged: (String value) => _calcBtnEnabled(),
               decoration: const InputDecoration(
                 labelText: 'Описание рекомендации'
               ),

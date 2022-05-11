@@ -51,32 +51,53 @@ class ServicesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
 
+    List<Widget> widgets = [
+      ServiceCard('Голосования',
+          count: store.votes.list != null ? store.votes.list!.length : 0,
+          color: Colors.green,
+          onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const VotesListPage())) }),
+      ServiceCard('Рекомендации',
+          count: store.recommendations.list != null ? store.recommendations.list!.length : 0,
+          color: Colors.purpleAccent,
+          onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const RecommendationsCategoriesPage())) }),
+    ];
+
+    final instructionsCount = store.instructions.list != null ? store.instructions.list!.length : 0;
+    if (instructionsCount > 0) {
+      widgets.add(
+        ServiceCard('Инструкции',
+            count: instructionsCount,
+            color: Colors.blue,
+            onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const InstructionsPage())) })
+      );
+    }
+    final documentsCount = store.documents.list != null ? store.documents.list!.length : 0;
+    if (documentsCount > 0) {
+      widgets.add(
+        ServiceCard('Документы',
+            count: documentsCount,
+            color: Colors.red,
+            onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const DocumentsPage())) })
+      );
+    }
+
+    final faqCount = store.faq.list != null ? store.faq.list!.length : 0;
+    if (faqCount > 0) {
+      widgets.add(
+        ServiceCard('ЧаВо',
+            count: faqCount,
+            color: Colors.deepPurple,
+            onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const FAQCategoriesPage())) })
+      );
+    }
+
     return Scaffold(
         appBar: Header(context, 'Сервисы'),
         bottomNavigationBar: const Footer(FooterNav.services),
         body: Container(
             padding: const EdgeInsets.all(15.0),
-            child: GridView.count(crossAxisCount: 2, children: [
-              ServiceCard('Инструкции',
-                  count: store.instructions.list != null ? store.instructions.list!.length : 0,
-                  color: Colors.blue,
-                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const InstructionsPage())) }),
-              ServiceCard('Документы',
-                  count: store.documents.list != null ? store.documents.list!.length : 0,
-                  color: Colors.red,
-                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const DocumentsPage())) }),
-              ServiceCard('Голосования',
-                  count: store.votes.list != null ? store.votes.list!.length : 0,
-                  color: Colors.green,
-                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const VotesListPage())) }),
-              ServiceCard('ЧаВо',
-                  count: store.faq.list != null ? store.faq.list!.length : 0,
-                  color: Colors.deepPurple,
-                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const FAQCategoriesPage())) }),
-              ServiceCard('Рекомендации',
-                  count: store.recommendations.list != null ? store.recommendations.list!.length : 0,
-                  color: Colors.purpleAccent,
-                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const RecommendationsCategoriesPage())) }),
-            ])));
+            child: GridView.count(crossAxisCount: 2, children: widgets)
+        )
+    );
   }
 }
