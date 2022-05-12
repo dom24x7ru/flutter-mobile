@@ -13,6 +13,7 @@ class SecAuthPage extends StatefulWidget {
 class _SecAuthPage extends State<SecAuthPage> {
   late TextEditingController _cMobile;
   String? _errorText;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -58,7 +59,7 @@ class _SecAuthPage extends State<SecAuthPage> {
                 ),
               )),
           ElevatedButton(
-              onPressed: () => sendMobile(context, store),
+              onPressed: _isLoading ? null : () => _sendMobile(context, store),
               child: Text('Войти'.toUpperCase())),
           const Text('- или -', style: TextStyle(color: Colors.black45)),
           TextButton(
@@ -70,7 +71,7 @@ class _SecAuthPage extends State<SecAuthPage> {
     );
   }
 
-  void sendMobile(BuildContext context, MainStore store) {
+  void _sendMobile(BuildContext context, MainStore store) {
     final mobile = '7${_cMobile.text}';
 
     // валидация номера телефона
@@ -88,7 +89,9 @@ class _SecAuthPage extends State<SecAuthPage> {
       return;
     }
 
+    setState(() => _isLoading = true);
     store.client.socket.emit('user.auth', { 'mobile': mobile }, (String name, dynamic error, dynamic data) {
+      setState(() => _isLoading = false);
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)

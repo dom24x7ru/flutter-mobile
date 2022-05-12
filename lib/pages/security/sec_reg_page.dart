@@ -20,6 +20,8 @@ class _SecRegPage extends State<SecRegPage> {
   String? _inviteError;
   String? _addressError;
 
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -102,7 +104,10 @@ class _SecRegPage extends State<SecRegPage> {
                     ],
                   )
               ),
-              ElevatedButton(onPressed: () => _sendReg(context, store), child: Text('Зарегистрироваться'.toUpperCase())),
+              ElevatedButton(
+                  onPressed: _isLoading ? null : () => _sendReg(context, store),
+                  child: Text('Зарегистрироваться'.toUpperCase())
+              ),
               const Text('- или -', style: TextStyle(color: Colors.black45)),
               TextButton(
                   onPressed: () => Navigator.pushNamedAndRemoveUntil(
@@ -143,7 +148,9 @@ class _SecRegPage extends State<SecRegPage> {
       'invite': invite.isNotEmpty ? invite : null,
       'address': address.isNotEmpty ? address : null
     };
+    setState(() => _isLoading = true);
     store.client.socket.emit('user.auth', data, (String name, dynamic error, dynamic data) {
+      setState(() => _isLoading = false);
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)

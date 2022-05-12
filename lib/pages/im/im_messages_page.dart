@@ -50,6 +50,19 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         }
         setState(() => { mute = data['mute'] });
       });
+
+      var listener = _client.on('imMessages', this, (event, cont) {
+        final eventData = event.eventData! as Map<String, dynamic>;
+        if (eventData['event'] == 'ready') return;
+        final data = eventData['data'];
+        print(data);
+        if (eventData['event'] == 'destroy') {
+          _delMessage(IMMessage.fromMap(data), false);
+        } else {
+          _addMessage(IMMessage.fromMap(data), false);
+        }
+      });
+      _listeners.add(listener);
     });
   }
 
@@ -112,6 +125,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     final store = Provider.of<MainStore>(context);
     final person = store.user.value!.person;
     return ScrollablePositionedList.builder(
+        physics: const BouncingScrollPhysics(),
         itemScrollController: _scrollController,
         padding: const EdgeInsets.only(bottom: 70.0),
         itemCount: messages.length,
@@ -210,18 +224,6 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         _addMessage(IMMessage.fromMap(msg), more);
       }
     });
-
-    var listener = client.on('imMessages', this, (event, cont) {
-      final eventData = event.eventData! as Map<String, dynamic>;
-      if (eventData['event'] == 'ready') return;
-      final data = eventData['data'];
-      if (eventData['event'] == 'destroy') {
-        _delMessage(IMMessage.fromMap(data), false);
-      } else {
-        _addMessage(IMMessage.fromMap(data), false);
-      }
-    });
-    _listeners.add(listener);
 
     return client;
   }

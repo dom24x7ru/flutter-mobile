@@ -35,6 +35,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
   late TextEditingController _cTelegram;
 
   bool _btnEnabled = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -173,7 +174,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
               ),
             ),
             ElevatedButton(
-              onPressed: _btnEnabled ? () => _save(context, store) : null,
+              onPressed: _btnEnabled && !_isLoading ? () => _save(context, store) : null,
               child: Text('Сохранить'.toUpperCase()),
             )
           ]
@@ -233,7 +234,9 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
         'telegram': _cTelegram.text.trim().isNotEmpty ? _cTelegram.text.trim() : null
       }
     };
+    setState(() => _isLoading = true);
     store.client.socket.emit('recommendation.save', data, (String name, dynamic error, dynamic data) {
+      setState(() => _isLoading = false);
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)

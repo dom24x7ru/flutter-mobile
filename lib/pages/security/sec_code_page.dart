@@ -14,24 +14,24 @@ class SecCodePage extends StatefulWidget {
 }
 
 class _SecCodePage extends State<SecCodePage> {
-  final maxWait = 60;
+  final _maxWait = 60;
   late TextEditingController _cMobileCode;
-  late var listeners = [];
-  late SocketClient client;
-  late int waitSeconds ;
-  late Timer timer;
+  final _listeners = [];
+  late SocketClient _client;
+  late int _waitSeconds ;
+  late Timer _timer;
+
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    waitSeconds = maxWait;
+    _waitSeconds = _maxWait;
     _cMobileCode = TextEditingController();
     
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (waitSeconds > 0) {
-        setState(() {
-          waitSeconds--;
-        });
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_waitSeconds > 0) {
+        setState(() => _waitSeconds--);
       }
     });
   }
@@ -39,10 +39,10 @@ class _SecCodePage extends State<SecCodePage> {
   @override
   void dispose() {
     _cMobileCode.dispose();
-    for (var listener in listeners) {
-      client.off(listener);
+    for (var listener in _listeners) {
+      _client.off(listener);
     }
-    if (timer.isActive) timer.cancel();
+    if (_timer.isActive) _timer.cancel();
     super.dispose();
   }
 
@@ -51,12 +51,12 @@ class _SecCodePage extends State<SecCodePage> {
     final store = Provider.of<MainStore>(context);
     final args = ModalRoute.of(context)!.settings.arguments as MobileType;
     final mobile = args.mobile;
-    client = store.client;
+    _client = store.client;
 
-    final listener = client.on('loaded', this, (event, cont) {
+    final listener = _client.on('loaded', this, (event, cont) {
       Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
     });
-    listeners.add(listener);
+    _listeners.add(listener);
 
     return Scaffold(
       body: Center(
@@ -81,14 +81,14 @@ class _SecCodePage extends State<SecCodePage> {
                         padding: const EdgeInsets.only(bottom: 10.0),
                         child: const Text('Мы вам сейчас отправим смс сообщение с кодом авторизации', style: TextStyle(color: Colors.black45))
                       ),
-                      waitSeconds != 0
-                        ? Text('Если смс сообщение не пришло, то можно перезапросить его через $waitSeconds сек.', style: const TextStyle(color: Colors.black45))
+                      _waitSeconds != 0
+                        ? Text('Если смс сообщение не пришло, то можно перезапросить его через $_waitSeconds сек.', style: const TextStyle(color: Colors.black45))
                         : Row(
                         children: [
                           const Text('Теперь вы можете вновь '),
                           InkWell(
                             child: const Text('запросить', style: TextStyle(color: Colors.blue)),
-                            onTap: () => { recall(mobile, context, store) }
+                            onTap: () => _recall(mobile, context, store)
                           ),
                           const Text(' смс сообщение')
                         ]
@@ -96,7 +96,10 @@ class _SecCodePage extends State<SecCodePage> {
                     ],
                   )
               ),
-              ElevatedButton(onPressed: () => sendCode(mobile, context, store), child: Text('Отправить'.toUpperCase())),
+              ElevatedButton(
+                  onPressed: _isLoading ? null : () => _sendCode(mobile, context, store),
+                  child: Text('Отправить'.toUpperCase())
+              ),
               Container(
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
@@ -115,15 +118,17 @@ class _SecCodePage extends State<SecCodePage> {
     );
   }
 
-  void sendCode(String mobile, BuildContext context, MainStore store) {
+  void _sendCode(String mobile, BuildContext context, MainStore store) {
     final code = _cMobileCode.text;
+    setState(() => _isLoading = true);
     store.client.socket.emit('user.auth', { 'mobile': mobile, 'code': code }, (String name, dynamic error, dynamic data) async {
+      setState(() => _isLoading = false);
       if (error != null) {
         if (error['code'] == 'USER.005') {
           // пользователь находится на другой ноде
           final url = error['extra']['url'];
           await store.client.connect(url);
-          sendCode(mobile, context, store);
+          _sendCode(mobile, context, store);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('${error['code']}: ${error['message']}'),
@@ -135,10 +140,8 @@ class _SecCodePage extends State<SecCodePage> {
     });
   }
 
-  void recall(String mobile, BuildContext context, MainStore store) {
-    setState(() {
-      waitSeconds = maxWait;
-    });
+  void _recall(String mobile, BuildContext context, MainStore store) {
+    setState(() => _waitSeconds = _maxWait);
     if (mobile == '70000000000') return;
 
     store.client.socket.emit('user.auth', { 'mobile': mobile }, (String name, dynamic error, dynamic data) {
