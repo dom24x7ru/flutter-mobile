@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/im_channel.dart';
@@ -40,7 +42,9 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      _client = _loadMessages(context);
+      final store = Provider.of<MainStore>(context, listen: false);
+      _client = store.client;
+      _loadMessages(context);
       _client.socket.emit('im.getMute', { 'channelId': widget.channel.id }, (String name, dynamic error, dynamic data) {
         if (error != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -55,7 +59,6 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         final eventData = event.eventData! as Map<String, dynamic>;
         if (eventData['event'] == 'ready') return;
         final data = eventData['data'];
-        print(data);
         if (eventData['event'] == 'destroy') {
           _delMessage(IMMessage.fromMap(data), false);
         } else {
@@ -202,12 +205,9 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     );
   }
 
-  SocketClient _loadMessages(BuildContext context, { int limit = 20, int offset = 0, bool more = false}) {
-    final store = Provider.of<MainStore>(context, listen: false);
-    final client = store.client;
-
+  void _loadMessages(BuildContext context, { int limit = 20, int offset = 0, bool more = false}) {
     final data = { 'channelId': widget.channel.id, 'limit': limit, 'offset': offset };
-    client.socket.emit('im.load', data, (String name, dynamic error, dynamic data) {
+    _client.socket.emit('im.load', data, (String name, dynamic error, dynamic data) {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
@@ -224,8 +224,27 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         _addMessage(IMMessage.fromMap(msg), more);
       }
     });
+  }
 
-    return client;
+  Future<List<IMMessage>> _getMessages({ int limit = 20, int offset = 0}) async {
+    final Completer<List<IMMessage>> completer = Completer();
+    final data = { 'channelId': widget.channel.id, 'limit': limit, 'offset': offset };
+    _client.socket.emit('im.load', data, (String name, dynamic error, dynamic data) {
+      if (error != null) {
+        completer.completeError(error);
+        return;
+      }
+      if (data == null) {
+        completer.completeError('Не удалось загрузить список сообщений');
+        return;
+      }
+      List<IMMessage> list = [];
+      for (var msg in data) {
+        list.add(IMMessage.fromMap(msg));
+      }
+      completer.complete(list);
+    });
+    return completer.future;
   }
 
   void _scrollTo(int index) async {
