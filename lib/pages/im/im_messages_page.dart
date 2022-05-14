@@ -242,7 +242,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
       for (var msg in data) {
         list.add(IMMessage.fromMap(msg));
       }
-      completer.complete(list);
+      completer.complete(list.reversed.toList());
     });
     return completer.future;
   }
