@@ -33,7 +33,9 @@ class _FlatPageState extends State<FlatPage> {
           for (var item in data) {
             final person = Person.fromMap(item);
             if (!person.deleted) {
-              setState(() => persons.add(Person.fromMap(item)));
+              if (person.mobile == null || person.mobile!.substring(0, 4) != '7000') {
+                setState(() => persons.add(Person.fromMap(item)));
+              }
             }
           }
         }

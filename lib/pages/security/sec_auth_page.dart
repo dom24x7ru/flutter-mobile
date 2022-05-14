@@ -83,7 +83,8 @@ class _SecAuthPage extends State<SecAuthPage> {
       return;
     }
 
-    if (mobile == '70000000000') {
+    print(mobile.substring(0, 4));
+    if (mobile.substring(0, 4) == '7000') {
       // тестовый пользователь
       Navigator.pushNamedAndRemoveUntil(context, '/security/code', (route) => false, arguments: MobileType(mobile));
       return;
