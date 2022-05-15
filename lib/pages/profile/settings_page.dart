@@ -50,7 +50,7 @@ class _SettingsPage extends State<SettingsPage> {
     _cFlat = TextEditingController();
     _cFlat.addListener(_findFlat);
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       _load(store);
     });

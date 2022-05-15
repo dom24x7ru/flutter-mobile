@@ -59,7 +59,7 @@ class _SpaceEditPageState extends State<SpaceEditPage> {
     _cRooms = TextEditingController();
     _cSquare = TextEditingController();
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       store.client.socket.emit('flat.types', {}, (String name, dynamic error, dynamic data) {
         if (error != null) {

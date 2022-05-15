@@ -50,7 +50,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
     _cInstagram = TextEditingController();
     _cTelegram = TextEditingController();
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       store.client.socket.emit('recommendation.categories', {}, (String name, dynamic error, dynamic data) {
         if (error != null) {

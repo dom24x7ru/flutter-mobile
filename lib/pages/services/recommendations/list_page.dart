@@ -33,7 +33,7 @@ class _RecommendationsListPageState extends State<RecommendationsListPage> {
     super.initState();
     setState(() => _list = widget.list);
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       final category = _list.isNotEmpty ? _list[0].category : null;
       _client = store.client;

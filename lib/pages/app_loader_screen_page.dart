@@ -21,7 +21,7 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
   void initState() {
     super.initState();
     _initPackageInfo();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
 

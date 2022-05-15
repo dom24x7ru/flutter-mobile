@@ -26,7 +26,7 @@ class _RecommendationsCategoriesPageState extends State<RecommendationsCategorie
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       _recommendations = store.recommendations.list != null ? store.recommendations.list! : [];
       _client = store.client;

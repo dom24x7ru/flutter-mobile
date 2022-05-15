@@ -23,7 +23,7 @@ class _FooterState extends State<Footer> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       setState(() {
         _msgCount = _getMsgCount(store.im.channels);

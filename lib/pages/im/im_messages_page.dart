@@ -41,7 +41,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
       _loadMessages(context);
@@ -82,7 +82,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     final store = Provider.of<MainStore>(context);
     final person = store.user.value!.person;
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) => _scrollTo(_currentIndex));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollTo(_currentIndex));
     return Scaffold(
       appBar: AppBar(
         title: Row(children: [Text(Utilities.getHeaderTitle(widget.title))]),

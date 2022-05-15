@@ -25,7 +25,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       setState(() {
         _channels = store.im.channels != null ? store.im.channels! : [];

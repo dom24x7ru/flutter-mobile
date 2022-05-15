@@ -35,7 +35,7 @@ class _VotePageState extends State<VotePage> {
     super.initState();
     questions = createQuestionsList(widget.vote);
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
 
