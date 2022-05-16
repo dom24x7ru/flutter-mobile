@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/im_channel.dart';
@@ -224,27 +222,6 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         _addMessage(IMMessage.fromMap(msg), more);
       }
     });
-  }
-
-  Future<List<IMMessage>> _getMessages({ int limit = 20, int offset = 0}) async {
-    final Completer<List<IMMessage>> completer = Completer();
-    final data = { 'channelId': widget.channel.id, 'limit': limit, 'offset': offset };
-    _client.socket.emit('im.load', data, (String name, dynamic error, dynamic data) {
-      if (error != null) {
-        completer.completeError(error);
-        return;
-      }
-      if (data == null) {
-        completer.completeError('Не удалось загрузить список сообщений');
-        return;
-      }
-      List<IMMessage> list = [];
-      for (var msg in data) {
-        list.add(IMMessage.fromMap(msg));
-      }
-      completer.complete(list.reversed.toList());
-    });
-    return completer.future;
   }
 
   void _scrollTo(int index) async {
