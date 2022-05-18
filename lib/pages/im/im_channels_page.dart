@@ -39,9 +39,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
       });
       _listeners.add(listener);
       listener = _client.on('imChannel', this, (event, cont) {
-        setState(() {
-          _channels = store.im.channels != null ? store.im.channels! : [];
-        });
+        setState(() => _channels = store.im.channels != null ? store.im.channels! : []);
       });
       _listeners.add(listener);
     });
@@ -72,9 +70,9 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: Text(channelTitle(store, channel), style: const TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(_channelTitle(store, channel), style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
-                      Text(lastMessageDate(channel), style: const TextStyle(color: Colors.black26))
+                      Text(_lastMessageDate(channel), style: const TextStyle(color: Colors.black26))
                     ]
                 )
               ];
@@ -82,7 +80,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
                 const maxLen = 45;
                 final lastMessage = channel.lastMessage;
                 if (lastMessage!.imPerson != null) {
-                  final person = '${imPersonTitle(lastMessage.imPerson!, store, true)}: ';
+                  final person = '${_imPersonTitle(lastMessage.imPerson!, store, true)}: ';
                   final text = Utilities.getHeaderTitle(lastMessage.body!.text, maxLen - person.length);
                   channelInfo.add(
                       Row(
@@ -122,7 +120,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
                 );
               }
               return GestureDetector(
-                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => IMMessagesPage(channel, channelTitle(store, channel)))) },
+                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => IMMessagesPage(channel, _channelTitle(store, channel)))) },
                   child: Container(
                       padding: const EdgeInsets.all(15.0),
                       child: Column(
@@ -136,7 +134,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
     );
   }
 
-  String channelTitle(MainStore store, IMChannel channel) {
+  String _channelTitle(MainStore store, IMChannel channel) {
     if (channel.title != null) return channel.title!;
     // раз нет заголовка, то это приватный чат с соседом, нужно указать его имя, либо квартиру
     final List<IMPerson> imPersons = channel.persons;
@@ -144,10 +142,10 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
     for (var item in imPersons) {
       if (item.person.id != store.user.value!.person!.id) imPerson = item;
     }
-    return imPersonTitle(imPerson, store);
+    return _imPersonTitle(imPerson, store);
   }
 
-  String imPersonTitle(IMPerson imPerson, MainStore store, [bool you = false]) {
+  String _imPersonTitle(IMPerson imPerson, MainStore store, [bool you = false]) {
     Person person = imPerson.person;
     if (you) {
       if (person.id == store.user.value!.person!.id) return 'Вы';
@@ -170,7 +168,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
     return fullName.trim();
   }
 
-  String lastMessageDate(IMChannel channel) {
+  String _lastMessageDate(IMChannel channel) {
     if (channel.lastMessage == null) return '';
     return Utilities.getDateIM(channel.lastMessage!.createdAt);
   }

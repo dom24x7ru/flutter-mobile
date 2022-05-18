@@ -328,8 +328,7 @@ class SocketClient extends BasicListener with EventEmitter {
       final user = store.user.value;
       final List<IMChannel> imChannels = store.im.channels!;
       for (IMChannel channel in imChannels) {
-        initChannel('imChannel.${channel.id}.${user!.id}');
-        initChannel('imMessages.${channel.id}');
+        initChannel('imChannel.${channel.id}');
       }
       return;
     }
