@@ -32,4 +32,17 @@ class IMChannel extends Model {
       }
     }
   }
+
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = { 'id': id };
+    if (title != null) map['title'] = title;
+    map['private'] = private;
+    if (lastMessage != null) map['lastMessage'] = lastMessage!.toMap();
+    map['count'] = count;
+    map['persons'] = [];
+    for (var person in persons) {
+      map['persons'].add(person.toMap());
+    }
+    return map;
+  }
 }

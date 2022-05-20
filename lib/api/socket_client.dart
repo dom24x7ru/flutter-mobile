@@ -90,7 +90,7 @@ class SocketClient extends BasicListener with EventEmitter {
   @override
   void onDisconnected(Socket socket) {
     debugPrint('onDisconnected: socket $socket');
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) => { connect(url) });
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) => connect(url));
   }
 
   @override

@@ -60,6 +60,7 @@ class IMMessage extends Model {
   late int createdAt;
   late int? updatedAt;
   IMPerson? imPerson;
+  IMChannel? channel;
   IMMessageBody? body;
   IMMessageExtra? extra;
 
@@ -68,6 +69,7 @@ class IMMessage extends Model {
     updatedAt = map['updatedAt'];
     final person = map['person'];
     imPerson = person != null ? IMPerson(Person.fromMap(person), Flat.fromMap(person['flat'])) : null;
+    channel = map['channel'] != null ? IMChannel.fromMap(map['channel']) : null;
     body = map['body'] != null ? IMMessageBody.fromMap(map['body']) : null; // не будет в ответе
     extra = map['extra'] != null ? IMMessageExtra.fromMap(map['extra']) : null;
   }
@@ -76,6 +78,7 @@ class IMMessage extends Model {
     Map<String, dynamic> map = { 'id': id, 'createdAt': createdAt  };
     if (updatedAt != null) map['updatedAt'] = updatedAt;
     if (imPerson != null) map['imPerson'] = imPerson!.toMap();
+    if (channel != null) map['channel'] = channel!.toMap();
     if (body != null) map['body'] = body!.toMap();
     if (extra != null) map['extra'] = extra!.toMap();
     return map;

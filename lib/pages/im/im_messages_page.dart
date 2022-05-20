@@ -4,7 +4,6 @@ import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/im_message.dart';
 import 'package:dom24x7_flutter/models/person.dart';
 import 'package:dom24x7_flutter/pages/house/flat_page.dart';
-import 'package:dom24x7_flutter/pages/im/widgets/input_message_widget.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +28,6 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   List<types.Message> _messages = [];
   late SocketClient _client;
   final List<dynamic> _listeners = [];
-  MessageAction? _action;
   bool _mute = false;
   Offset? _tapPosition;
 
@@ -121,7 +119,9 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
 
       final List<types.Message> newMessagesList = List.from(_messages);
       for (var msg in data) {
-        final message = _convert(IMMessage.fromMap(msg));
+        final imMessage = IMMessage.fromMap(msg);
+        if (imMessage.channel!.id != widget.channel.id) continue;
+        final message = _convert(imMessage);
         if (newMessagesList.where((item) => item.id == message.id).isEmpty) {
           newMessagesList.add(message);
         } else {
@@ -139,10 +139,12 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   }
 
   void _addMessage(IMMessage message) {
+    if (message.channel!.id != widget.channel.id) return;
     setState(() => _messages.insert(0, _convert(message)));
   }
 
   void _delMessage(IMMessage message) {
+    if (message.channel!.id != widget.channel.id) return;
     final index = _messages.indexWhere((msg) => msg.id == message.id.toString());
     if (index == -1) return;
     setState(() => _messages.removeAt(index));
