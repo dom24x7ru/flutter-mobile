@@ -1,5 +1,8 @@
 import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/model.dart';
+import 'package:dom24x7_flutter/models/person.dart';
+import 'package:dom24x7_flutter/store/main.dart';
 import 'package:intl/intl.dart';
 
 class Utilities {
@@ -9,6 +12,40 @@ class Utilities {
     if (flat.floor != null) title += ' эт. ${flat.floor}';
     if (flat.section != null) title += ' п. ${flat.section}';
     return title;
+  }
+
+  static String getPersonTitle(IMPerson imPerson, Person owner, [bool you = false]) {
+    Person person = imPerson.person;
+    if (you) {
+      if (person.id == owner.id) return 'Вы';
+    }
+
+    String fullName = '';
+    if (person.surname != null) {
+      fullName += person.surname!;
+    }
+    if (person.name != null) {
+      fullName += ' ${person.name!}';
+    }
+    if (person.midname != null) {
+      fullName += ' ${person.midname!}';
+    }
+    if (fullName.trim().isEmpty) {
+      final flat = imPerson.flat;
+      return 'сосед(ка) из ${Utilities.getFlatTitle(flat)}';
+    }
+    return fullName.trim();
+  }
+
+  static String getChannelTitle(Person owner, IMChannel channel) {
+    if (channel.title != null) return channel.title!;
+    // раз нет заголовка, то это приватный чат с соседом, нужно указать его имя, либо квартиру
+    final List<IMPerson> imPersons = channel.persons;
+    late IMPerson imPerson;
+    for (var item in imPersons) {
+      if (item.person.id != owner.id) imPerson = item;
+    }
+    return getPersonTitle(imPerson, owner);
   }
 
   static String getHeaderTitle(String title, [int maxLength = 20]) {

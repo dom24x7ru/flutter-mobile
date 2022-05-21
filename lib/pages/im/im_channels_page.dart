@@ -70,7 +70,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: Text(_channelTitle(store, channel), style: const TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(Utilities.getChannelTitle(store.user.value!.person!, channel), style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                       Text(_lastMessageDate(channel), style: const TextStyle(color: Colors.black26))
                     ]
@@ -80,7 +80,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
                 const maxLen = 45;
                 final lastMessage = channel.lastMessage;
                 if (lastMessage!.imPerson != null) {
-                  final person = '${_imPersonTitle(lastMessage.imPerson!, store, true)}: ';
+                  final person = '${Utilities.getPersonTitle(lastMessage.imPerson!, store.user.value!.person!, true)}: ';
                   final text = Utilities.getHeaderTitle(lastMessage.body!.text, maxLen - person.length);
                   channelInfo.add(
                       Row(
@@ -120,7 +120,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
                 );
               }
               return GestureDetector(
-                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => IMMessagesPage(channel, _channelTitle(store, channel)))) },
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => IMMessagesPage(channel, Utilities.getChannelTitle(store.user.value!.person!, channel)))),
                   child: Container(
                       padding: const EdgeInsets.all(15.0),
                       child: Column(
@@ -132,40 +132,6 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
             }
         )
     );
-  }
-
-  String _channelTitle(MainStore store, IMChannel channel) {
-    if (channel.title != null) return channel.title!;
-    // раз нет заголовка, то это приватный чат с соседом, нужно указать его имя, либо квартиру
-    final List<IMPerson> imPersons = channel.persons;
-    late IMPerson imPerson;
-    for (var item in imPersons) {
-      if (item.person.id != store.user.value!.person!.id) imPerson = item;
-    }
-    return _imPersonTitle(imPerson, store);
-  }
-
-  String _imPersonTitle(IMPerson imPerson, MainStore store, [bool you = false]) {
-    Person person = imPerson.person;
-    if (you) {
-      if (person.id == store.user.value!.person!.id) return 'Вы';
-    }
-
-    String fullName = '';
-    if (person.surname != null) {
-      fullName += person.surname!;
-    }
-    if (person.name != null) {
-      fullName += ' ${person.name!}';
-    }
-    if (person.midname != null) {
-      fullName += ' ${person.midname!}';
-    }
-    if (fullName.trim().isEmpty) {
-      final flat = imPerson.flat;
-      return 'сосед(ка) из ${Utilities.getFlatTitle(flat)}';
-    }
-    return fullName.trim();
   }
 
   String _lastMessageDate(IMChannel channel) {

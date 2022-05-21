@@ -1,5 +1,7 @@
 import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/person.dart';
+import 'package:dom24x7_flutter/pages/im/im_messages_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
@@ -18,23 +20,23 @@ class FlatPage extends StatefulWidget {
 }
 
 class _FlatPageState extends State<FlatPage> {
-  bool loaded = false;
-  List<Person> persons = [];
+  bool _loaded = false;
+  final List<Person> _persons = [];
 
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
     final client = store.client;
-    if (!loaded) {
+    if (!_loaded) {
       client.socket.emit('flat.info', { 'flatNumber': widget.flat.number}, (String name, dynamic error, dynamic data) {
-        loaded = true;
+        _loaded = true;
         if (mounted) {
-          setState(() => persons.clear());
+          setState(() => _persons.clear());
           for (var item in data) {
             final person = Person.fromMap(item);
             if (!person.deleted) {
               if (person.mobile == null || person.mobile!.substring(0, 4) != '7000') {
-                setState(() => persons.add(Person.fromMap(item)));
+                setState(() => _persons.add(Person.fromMap(item)));
               }
             }
           }
@@ -46,7 +48,7 @@ class _FlatPageState extends State<FlatPage> {
       appBar: Header(context, Utilities.getFlatTitle(widget.flat)),
       bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
-        itemCount: persons.length + 1,
+        itemCount: _persons.length + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
             List<Widget> flatInfo = [
@@ -76,7 +78,7 @@ class _FlatPageState extends State<FlatPage> {
             );
           }
 
-          final person = persons[index - 1];
+          final person = _persons[index - 1];
           List<Widget> children = [
             Text(_getFullName(person), style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))
           ];
@@ -94,6 +96,18 @@ class _FlatPageState extends State<FlatPage> {
               ),
               onTap: () => launchUrl(Uri.parse('https://t.me/${person.telegram}')),
             ));
+          }
+          if (person.id != store.user.value!.person!.id) {
+            children.add(
+              ButtonBar(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.chat_bubble_outline),
+                    onPressed: () => _privateChat(context, store, person),
+                  )
+                ]
+              )
+            );
           }
           return Card(
             child: Container(
@@ -129,5 +143,21 @@ class _FlatPageState extends State<FlatPage> {
   String _getMobile(Person person) {
     if (person.mobile == null) return 'номер скрыт';
     return '+${person.mobile}';
+  }
+
+  void _privateChat(BuildContext context, MainStore store, Person person) {
+    store.client.socket.emit('im.createPrivateChannel', { 'personId': person.id }, (String name, dynamic error, dynamic data) {
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+
+      if (data['channel'] != null) {
+        final channel = IMChannel.fromMap(data['channel']);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => IMMessagesPage(channel, Utilities.getChannelTitle(store.user.value!.person!, channel))));
+      }
+    });
   }
 }

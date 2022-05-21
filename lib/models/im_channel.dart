@@ -16,16 +16,17 @@ class IMPerson {
 
 class IMChannel extends Model {
   String? title;
-  late bool private;
+  bool? private;
   IMMessage? lastMessage;
   late int count;
   List<IMPerson> persons = [];
 
   IMChannel.fromMap(Map<String, dynamic> map) : super(map['id']) {
+
     title = map['title'];
     private = map['private'];
     lastMessage = map['lastMessage'] != null ? IMMessage.fromMap(map['lastMessage']) : null;
-    count = map['count'];
+    count = map['count'] ?? 0;
     if (map['persons'] != null) {
       for (var person in map['persons']) {
         persons.add(IMPerson(Person.fromMap(person), Flat.fromMap(person['flat'])));

@@ -360,7 +360,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
               inputBackgroundColor: Colors.blue,
               inputTextCursorColor: Colors.white
           ),
-          showUserNames: !widget.channel.private,
+          showUserNames: !widget.channel.private!,
           showUserAvatars: true,
           usePreviewData: true,
           customDateHeaderText: _customDateHeaderText,
