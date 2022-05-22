@@ -11,24 +11,99 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FlatPage extends StatefulWidget {
-  final Flat flat;
+  Flat? flat;
+  bool owner = false;
+  bool top = false;
+  bool bottom = false;
 
-  const FlatPage(this.flat, {Key? key}) : super(key: key);
+  FlatPage(this.flat, {Key? key}) : super(key: key);
+  FlatPage.owner({Key? key}) : super(key: key) { owner = true; }
+  FlatPage.top({Key? key}) : super(key: key) { top = true; }
+  FlatPage.bottom({Key? key}) : super(key: key) { bottom = true; }
 
   @override
   _FlatPageState createState() => _FlatPageState();
 }
 
 class _FlatPageState extends State<FlatPage> {
+  Flat? _flat;
   bool _loaded = false;
   final List<Person> _persons = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.flat != null) {
+      setState(() => _flat = widget.flat!);
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+        final store = Provider.of<MainStore>(context, listen: false);
+        final List<Flat> flats = store.flats.list!;
+        final Flat ownerFlat = store.user.value!.residents[0].flat!;
+        if (widget.owner) {
+          // показать свою квартиру
+          setState(() => _flat = ownerFlat);
+        } else {
+          final ownerFloorFlats = flats.where((flat) => flat.section == ownerFlat.section && flat.floor == ownerFlat.floor).toList();
+          ownerFloorFlats.sort((flat1, flat2) {
+            if (flat1.number > flat2.number) return 1;
+            if (flat1.number < flat2.number) return -1;
+            return 0;
+          });
+          final offset = ownerFloorFlats.where((flat) => flat.number == ownerFlat.number).toList().length - 1;
+
+          final badFlats = flats.where((flat) => flat.section == null || flat.floor == null).toList();
+          if (badFlats.isNotEmpty) {
+            // данных не достаточно и можем не правильно отобраить соседа
+            Navigator.pop(context, { 'error': 'Не у всех квартир указан подъезд и этаж. Нет возможности корректно определить соседа сверху и снизу' });
+          } else if (widget.top) {
+            // показать соседей сверху
+            final topFlats = flats.where((flat) => flat.section == ownerFlat.section && flat.floor == ownerFlat.floor! + 1).toList();
+            if (topFlats.isEmpty || topFlats.length < offset + 1) {
+              Navigator.pop(context, { 'error': 'Нет соседей сверху' });
+              return;
+            }
+            topFlats.sort((flat1, flat2) {
+              if (flat1.number > flat2.number) return 1;
+              if (flat1.number < flat2.number) return -1;
+              return 0;
+            });
+            final topFlat = topFlats[offset];
+            setState(() => _flat = topFlat);
+          } else if (widget.bottom) {
+            // показать соседей снизу
+            final bottomFlats = flats.where((flat) => flat.section == ownerFlat.section && flat.floor == ownerFlat.floor! - 1).toList();
+            if (bottomFlats.isEmpty || bottomFlats.length < offset + 1) {
+              Navigator.pop(context, { 'error': 'Нет соседей снизу' });
+              return;
+            }
+            bottomFlats.sort((flat1, flat2) {
+              if (flat1.number > flat2.number) return 1;
+              if (flat1.number < flat2.number) return -1;
+              return 0;
+            });
+            final bottomFlat = bottomFlats[offset];
+            setState(() => _flat = bottomFlat);
+          } else {
+            // нестандартная ситуация, ничего не показываем
+            Navigator.pop(context);
+          }
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
     final client = store.client;
-    if (!_loaded) {
-      client.socket.emit('flat.info', { 'flatNumber': widget.flat.number}, (String name, dynamic error, dynamic data) {
+    if (_flat == null) {
+      return Scaffold(
+        appBar: Header(context, ''),
+        bottomNavigationBar: const Footer(FooterNav.house),
+      );
+    } else if (!_loaded) {
+      client.socket.emit('flat.info', { 'flatNumber': _flat!.number}, (String name, dynamic error, dynamic data) {
         _loaded = true;
         if (mounted) {
           setState(() => _persons.clear());
@@ -45,24 +120,24 @@ class _FlatPageState extends State<FlatPage> {
     }
 
     return Scaffold(
-      appBar: Header(context, Utilities.getFlatTitle(widget.flat)),
+      appBar: Header(context, Utilities.getFlatTitle(_flat!)),
       bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
         itemCount: _persons.length + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
             List<Widget> flatInfo = [
-              Text('Квартира №${widget.flat.number}', style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white)),
-              Text('Жильцов: ${widget.flat.residents.length}', style: const TextStyle(color: Colors.white60)),
+              Text('Квартира №${_flat!.number}', style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white)),
+              Text('Жильцов: ${_persons.length}', style: const TextStyle(color: Colors.white60)),
             ];
-            if (widget.flat.rooms != null) {
+            if (_flat!.rooms != null) {
               flatInfo.add(
-                Text('Комнат: ${widget.flat.rooms}', style: const TextStyle(color: Colors.white60))
+                Text('Комнат: ${_flat!.rooms}', style: const TextStyle(color: Colors.white60))
               );
             }
-            if (widget.flat.square != 0) {
+            if (_flat!.square != 0) {
               flatInfo.add(
-                Text('Площадь: ${widget.flat.square} кв.м.', style: const TextStyle(color: Colors.white60))
+                Text('Площадь: ${_flat!.square} кв.м.', style: const TextStyle(color: Colors.white60))
               );
             }
 

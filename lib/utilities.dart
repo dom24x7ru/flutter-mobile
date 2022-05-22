@@ -2,7 +2,6 @@ import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/person.dart';
-import 'package:dom24x7_flutter/store/main.dart';
 import 'package:intl/intl.dart';
 
 class Utilities {

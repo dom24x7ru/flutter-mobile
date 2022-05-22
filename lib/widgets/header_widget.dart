@@ -1,7 +1,9 @@
+import 'package:dom24x7_flutter/pages/house/flat_page.dart';
 import 'package:flutter/material.dart';
 
 // enum AppBarMenu { about, profile, invite, settings, spaces }
 enum AppBarMenu { about, profile, invite, settings }
+enum FlatSearchMenu { ownerFlat, topFlat, bottomFlat }
 
 class Header extends AppBar {
   Header(BuildContext context, String title, {Key? key})
@@ -11,6 +13,43 @@ class Header extends AppBar {
             children: [Text(title)],
           ),
           actions: [
+            PopupMenuButton<FlatSearchMenu>(
+              icon: const Icon(Icons.search),
+              itemBuilder: (BuildContext context) => [
+                const PopupMenuItem<FlatSearchMenu>(
+                  value: FlatSearchMenu.ownerFlat, child: Text('Моя квартира')),
+                const PopupMenuItem<FlatSearchMenu>(
+                    value: FlatSearchMenu.topFlat, child: Text('Квартира сверху')),
+                const PopupMenuItem<FlatSearchMenu>(
+                    value: FlatSearchMenu.bottomFlat, child: Text('Квартира снизу'))
+              ],
+              onSelected: (FlatSearchMenu item) async {
+                switch (item) {
+                  case FlatSearchMenu.ownerFlat:
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage.owner()));
+                    break;
+                  case FlatSearchMenu.topFlat:
+                    final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage.top()));
+                    if (result != null && result['error'] != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(result['error']), backgroundColor: Colors.red)
+                      );
+                    }
+                    break;
+                  case FlatSearchMenu.bottomFlat:
+                    final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage.bottom()));
+                    if (result != null && result['error'] != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(result['error']), backgroundColor: Colors.red)
+                      );
+                    }
+                    break;
+                  default:
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/', (route) => false);
+                }
+              }
+            ),
             PopupMenuButton<AppBarMenu>(
               icon: const Icon(Icons.more_vert),
               itemBuilder: (BuildContext context) => [
