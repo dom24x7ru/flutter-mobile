@@ -37,7 +37,7 @@ class _SpaceEditPageState extends State<SpaceEditPage> {
   final List<ResidentType> _residentTypes = [
     ResidentType('Собственник', 'owner'),
     ResidentType('Арендатор', 'tenant'),
-    ResidentType('Жилец', 'user')
+    ResidentType('Не указан', 'user')
   ];
   ResidentType? _residentType;
 

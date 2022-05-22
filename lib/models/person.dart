@@ -1,5 +1,6 @@
 import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/person_access.dart';
+import 'package:dom24x7_flutter/models/resident.dart';
 
 class Person extends Model {
   String? surname;
@@ -12,6 +13,7 @@ class Person extends Model {
   String? mobile;
   bool deleted = false;
   PersonAccess? access;
+  ResidentExtra? extra;
 
   Person(id, this.surname, this.name, this.midname) : super(id);
   Person.fromMap(Map<String, dynamic> map) : super(map['id']) {
@@ -25,9 +27,8 @@ class Person extends Model {
     } else {
       deleted = false;
     }
-    if (map['access'] != null) {
-      access = PersonAccess.fromMap(map['access']);
-    }
+    if (map['access'] != null) access = PersonAccess.fromMap(map['access']);
+    if (map['extra'] != null) extra = ResidentExtra.fromMap(map['extra']);
   }
 
   Map<String, dynamic> toMap() {
@@ -42,6 +43,7 @@ class Person extends Model {
     if (mobile != null) map['mobile'] = mobile;
     map['deleted'] = deleted;
     if (access != null) map['access'] = access!.toMap();
+    if (extra != null) map['extra'] = extra!.toMap();
     return map;
   }
 }

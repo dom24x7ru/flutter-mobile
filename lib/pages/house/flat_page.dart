@@ -153,46 +153,7 @@ class _FlatPageState extends State<FlatPage> {
             );
           }
 
-          final person = _persons[index - 1];
-          List<Widget> children = [
-            Text(_getFullName(person), style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))
-          ];
-          if (person.mobile != null) {
-            children.add(InkWell(
-              child: Text(_getMobile(person), style: const TextStyle(color: Colors.blue)),
-              onTap: () => { launchUrl(Uri.parse('tel:${person.mobile}')) }
-            ));
-          }
-          if (person.telegram != null) {
-            children.add(InkWell(
-              child: Container(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: Text('${person.telegram}', style: const TextStyle(color: Colors.blue))
-              ),
-              onTap: () => launchUrl(Uri.parse('https://t.me/${person.telegram}')),
-            ));
-          }
-          if (person.id != store.user.value!.person!.id) {
-            children.add(
-              ButtonBar(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.chat_bubble_outline),
-                    onPressed: () => _privateChat(context, store, person),
-                  )
-                ]
-              )
-            );
-          }
-          return Card(
-            child: Container(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: children
-              )
-            )
-          );
+          return _residentCard(_persons[index - 1], store);
         }
       )
     );
@@ -234,5 +195,83 @@ class _FlatPageState extends State<FlatPage> {
         Navigator.push(context, MaterialPageRoute(builder: (context) => IMMessagesPage(channel, Utilities.getChannelTitle(store.user.value!.person!, channel))));
       }
     });
+  }
+
+  Widget _residentStatus(Person person) {
+    final type = person.extra!.type!;
+    if (type == 'user') return Container(padding: const EdgeInsets.all(5.0));
+
+    late String label;
+    late Color color;
+    late Color backgroundColor;
+    if (type == 'owner') {
+      label = 'собственник';
+      color = Colors.white;
+      backgroundColor = Colors.blue;
+    } else if (type == 'tenant') {
+      label = 'арендатор';
+      color = Colors.white;
+      backgroundColor = Colors.green;
+    } else {
+      label = 'некорректный';
+      color = Colors.white;
+      backgroundColor = Colors.red;
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+          child: Text(label, style: TextStyle(fontSize: 12.0, color: color)),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: const BorderRadius.all(Radius.circular(20.0))
+          ),
+        )
+      ]
+    );
+  }
+
+  Widget _residentCard(Person person, MainStore store) {
+    List<Widget> children = [
+      _residentStatus(person),
+      Text(_getFullName(person), style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold))
+    ];
+    if (person.mobile != null) {
+      children.add(InkWell(
+          child: Text(_getMobile(person), style: const TextStyle(color: Colors.blue)),
+          onTap: () => { launchUrl(Uri.parse('tel:${person.mobile}')) }
+      ));
+    }
+    if (person.telegram != null) {
+      children.add(InkWell(
+        child: Container(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Text('${person.telegram}', style: const TextStyle(color: Colors.blue))
+        ),
+        onTap: () => launchUrl(Uri.parse('https://t.me/${person.telegram}')),
+      ));
+    }
+    if (person.id != store.user.value!.person!.id) {
+      children.add(
+          ButtonBar(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.chat_bubble_outline),
+                  onPressed: () => _privateChat(context, store, person),
+                )
+              ]
+          )
+      );
+    }
+    return Card(
+        child: Container(
+            padding: const EdgeInsets.only(left: 15.0, right: 5.0, top: 5.0, bottom: 5.0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: children
+            )
+        )
+    );
   }
 }
