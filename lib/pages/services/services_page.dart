@@ -1,5 +1,8 @@
 import 'package:dom24x7_flutter/pages/services/documents_page.dart';
 import 'package:dom24x7_flutter/pages/services/faq/categories_page.dart';
+import 'package:dom24x7_flutter/pages/services/miniapps/a3_miniapp.dart';
+import 'package:dom24x7_flutter/pages/services/miniapps/dobrodel_miniapp.dart';
+import 'package:dom24x7_flutter/pages/services/miniapps/pik_comfort_miniapp.dart';
 import 'package:dom24x7_flutter/pages/services/recommendations/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/votes/list_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -22,25 +25,32 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final children = [
+      Text(title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold
+        )
+      )
+    ];
+    if (count > 0) {
+      children.add(Text('Доступно: $count', style: const TextStyle(color: Colors.white)));
+    }
     return GestureDetector(
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.all(5.0),
           child: Container(
-              padding: const EdgeInsets.all(15.0),
-              color: color,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold)),
-                    Text('Доступно: $count',
-                        style: const TextStyle(color: Colors.white))
-                  ])),
-        ));
+            padding: const EdgeInsets.all(15.0),
+            color: color,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: children
+            )
+          ),
+        )
+    );
   }
 }
 
@@ -53,31 +63,47 @@ class ServicesPage extends StatelessWidget {
 
     List<Widget> widgets = [
       ServiceCard('Голосования',
-          count: store.votes.list != null ? store.votes.list!.length : 0,
-          color: Colors.green,
-          onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const VotesListPage())) }),
+        count: store.votes.list != null ? store.votes.list!.length : 0,
+        color: Colors.green,
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VotesListPage()))
+      ),
       ServiceCard('Рекомендации',
-          count: store.recommendations.list != null ? store.recommendations.list!.length : 0,
-          color: Colors.purpleAccent,
-          onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const RecommendationsCategoriesPage())) }),
+        count: store.recommendations.list != null ? store.recommendations.list!.length : 0,
+        color: Colors.purpleAccent,
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RecommendationsCategoriesPage()))
+      ),
+      ServiceCard('Добродел',
+        color: Colors.cyan,
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DobrodelMiniApp()))
+      ),
+      ServiceCard('Коммунальные платежи',
+        color: Colors.deepPurple,
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const A3MiniApp()))
+      ),
+      ServiceCard('ПИК-Комфорт',
+        color: Colors.green,
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PIKComfortMiniApp()))
+      ),
     ];
 
     final instructionsCount = store.instructions.list != null ? store.instructions.list!.length : 0;
     if (instructionsCount > 0) {
       widgets.add(
         ServiceCard('Инструкции',
-            count: instructionsCount,
-            color: Colors.blue,
-            onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const InstructionsPage())) })
+          count: instructionsCount,
+          color: Colors.blue,
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const InstructionsPage()))
+        )
       );
     }
     final documentsCount = store.documents.list != null ? store.documents.list!.length : 0;
     if (documentsCount > 0) {
       widgets.add(
         ServiceCard('Документы',
-            count: documentsCount,
-            color: Colors.red,
-            onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const DocumentsPage())) })
+          count: documentsCount,
+          color: Colors.red,
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DocumentsPage()))
+        )
       );
     }
 
@@ -85,9 +111,9 @@ class ServicesPage extends StatelessWidget {
     if (faqCount > 0) {
       widgets.add(
         ServiceCard('ЧаВо',
-            count: faqCount,
-            color: Colors.deepPurple,
-            onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const FAQCategoriesPage())) })
+          count: faqCount,
+          color: Colors.deepPurple,
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FAQCategoriesPage())))
       );
     }
 

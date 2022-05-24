@@ -198,7 +198,7 @@ class _FlatPageState extends State<FlatPage> {
   }
 
   Widget _residentStatus(Person person) {
-    final type = person.extra!.type!;
+    final type = person.extra!.type;
     if (type == 'user') return Container(padding: const EdgeInsets.all(5.0));
 
     late String label;

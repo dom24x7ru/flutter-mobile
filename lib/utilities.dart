@@ -47,7 +47,7 @@ class Utilities {
     return getPersonTitle(imPerson, owner);
   }
 
-  static String getHeaderTitle(String title, [int maxLength = 20]) {
+  static String getHeaderTitle(String title, [int maxLength = 17]) {
     if (title.length < maxLength) return title;
     return title.substring(0, maxLength) + '...';
   }
