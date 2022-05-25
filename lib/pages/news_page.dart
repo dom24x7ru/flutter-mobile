@@ -5,6 +5,7 @@ import 'package:dom24x7_flutter/pages/services/votes/vote_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,7 @@ class NewsPage extends StatefulWidget {
   const NewsPage({Key? key}) : super(key: key);
 
   @override
-  _NewsPageState createState() => _NewsPageState();
+  State<NewsPage> createState() => _NewsPageState();
 }
 
 class _NewsPageState extends State<NewsPage> {
@@ -28,6 +29,7 @@ class _NewsPageState extends State<NewsPage> {
   @override
   void initState() {
     super.initState();
+    _initDynamicLinks();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
@@ -128,6 +130,15 @@ class _NewsPageState extends State<NewsPage> {
             }
         )
     );
+  }
+
+  Future<void> _initDynamicLinks() async {
+    FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+      Navigator.pushNamedAndRemoveUntil(context, dynamicLinkData.link.path, (route) => false);
+    }).onError((error) {
+      print('onLink error');
+      print(error.message);
+    });
   }
 
   Map<String, dynamic> _getIconStyle(Post post) {

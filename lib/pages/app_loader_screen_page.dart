@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/store/main.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -9,7 +12,7 @@ class AppLoaderScreenPage extends StatefulWidget {
   const AppLoaderScreenPage({Key? key}) : super(key: key);
 
   @override
-  _AppLoaderScreenPage createState() => _AppLoaderScreenPage();
+  State<AppLoaderScreenPage> createState() => _AppLoaderScreenPage();
 }
 
 class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
@@ -21,6 +24,7 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
   void initState() {
     super.initState();
     _initPackageInfo();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
@@ -36,7 +40,10 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
           print(error);
         }
 
-        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
+
+        if (!mounted) return;
+        Navigator.pushNamedAndRemoveUntil(context, initialLink != null ? initialLink.link.path : '/', (route) => false);
       });
       _listeners.add(listener);
       listener = _client.on('logout', this, (event, cont) {
@@ -56,9 +63,7 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
 
   Future<void> _initPackageInfo() async {
     final info = await PackageInfo.fromPlatform();
-    setState(() {
-      _version = info.version;
-    });
+    setState(() => _version = info.version);
   }
 
   @override
