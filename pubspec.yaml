@@ -32,6 +32,7 @@ dependencies:
   new_version: ^0.3.0
   flutter_chat_ui: ^1.5.8
   webview_flutter: ^2.8.0
+  firebase_dynamic_links: ^4.2.4
 
 dev_dependencies:
   flutter_test:
