@@ -7,6 +7,7 @@ import 'package:dom24x7_flutter/models/flat.dart';
 import 'package:dom24x7_flutter/models/im_channel.dart';
 import 'package:dom24x7_flutter/models/instruction.dart';
 import 'package:dom24x7_flutter/models/invite.dart';
+import 'package:dom24x7_flutter/models/miniapp.dart';
 import 'package:dom24x7_flutter/models/post.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
 import 'package:dom24x7_flutter/models/user.dart';
@@ -233,6 +234,12 @@ class SocketClient extends BasicListener with EventEmitter {
     for (String channel in channels) {
       initChannel(channel);
     }
+
+    socket.emit('miniapp.list', {}, (String name, dynamic error, dynamic data) {
+      for (var miniApp in data) {
+        store.miniApps.addMiniApp(MiniApp.fromMap(miniApp));
+      }
+    });
   }
 
   void onAll(event, context) {

@@ -4,22 +4,22 @@ import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 
-class DobrodelMiniApp extends StatefulWidget {
-  const DobrodelMiniApp({Key? key}) : super(key: key);
+class UrlMiniAppPage extends StatefulWidget {
+  final String title;
+  final String url;
+  const UrlMiniAppPage(this.title, this.url, {Key? key}) : super(key: key);
 
   @override
-  State<DobrodelMiniApp> createState() => _DobrodelMiniAppState();
+  State<UrlMiniAppPage> createState() => _UrlMiniAppPageState();
 }
 
-class _DobrodelMiniAppState extends State<DobrodelMiniApp> {
+class _UrlMiniAppPageState extends State<UrlMiniAppPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(context, Utilities.getHeaderTitle('Добродел')),
+      appBar: Header(context, Utilities.getHeaderTitle(widget.title)),
       bottomNavigationBar: const Footer(FooterNav.services),
-      body: const UrlMiniApp(
-        url: 'https://dobrodel.mosreg.ru/'
-      )
+      body: UrlMiniApp(url: widget.url)
     );
   }
 }

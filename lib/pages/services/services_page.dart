@@ -1,8 +1,6 @@
 import 'package:dom24x7_flutter/pages/services/documents_page.dart';
 import 'package:dom24x7_flutter/pages/services/faq/categories_page.dart';
-import 'package:dom24x7_flutter/pages/services/miniapps/a3_miniapp.dart';
-import 'package:dom24x7_flutter/pages/services/miniapps/dobrodel_miniapp.dart';
-import 'package:dom24x7_flutter/pages/services/miniapps/pik_comfort_miniapp.dart';
+import 'package:dom24x7_flutter/pages/services/miniapps/url_miniapp_page.dart';
 import 'package:dom24x7_flutter/pages/services/recommendations/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/votes/list_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -57,64 +55,51 @@ class ServiceCard extends StatelessWidget {
 class ServicesPage extends StatelessWidget {
   const ServicesPage({Key? key}) : super(key: key);
 
+  Color _getColor(String color) {
+    switch (color) {
+      case 'green': return Colors.green;
+      case 'purpleAccent': return Colors.purpleAccent;
+      case 'cyan': return Colors.cyan;
+      case 'deepPurple': return Colors.deepPurple;
+      case 'blue': return Colors.blue;
+      case 'red': return Colors.red;
+    }
+    return Colors.black12;
+  }
+
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
 
-    List<Widget> widgets = [
-      ServiceCard('Голосования',
-        count: store.votes.list != null ? store.votes.list!.length : 0,
-        color: Colors.green,
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VotesListPage()))
-      ),
-      ServiceCard('Рекомендации',
-        count: store.recommendations.list != null ? store.recommendations.list!.length : 0,
-        color: Colors.purpleAccent,
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RecommendationsCategoriesPage()))
-      ),
-      ServiceCard('Добродел',
-        color: Colors.cyan,
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DobrodelMiniApp()))
-      ),
-      ServiceCard('Коммунальные платежи',
-        color: Colors.deepPurple,
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const A3MiniApp()))
-      ),
-      ServiceCard('ПИК-Комфорт',
-        color: Colors.green,
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PIKComfortMiniApp()))
-      ),
-    ];
+    final Map<String, dynamic> inlineMiniApps = {
+      'votes': { 'page': const VotesListPage(), 'count': store.votes.list != null ? store.votes.list!.length : 0 },
+      'recommendations': { 'page': const RecommendationsCategoriesPage(), 'count': store.recommendations.list != null ? store.recommendations.list!.length : 0 },
+      'instructions': { 'page': const InstructionsPage(), 'count': store.instructions.list != null ? store.instructions.list!.length : 0 },
+      'documents': { 'page': const DocumentsPage(), 'count': store.documents.list != null ? store.documents.list!.length : 0 },
+      'faq': { 'page': const FAQCategoriesPage(), 'count': store.faq.list != null ? store.faq.list!.length : 0 }
+    };
 
-    final instructionsCount = store.instructions.list != null ? store.instructions.list!.length : 0;
-    if (instructionsCount > 0) {
-      widgets.add(
-        ServiceCard('Инструкции',
-          count: instructionsCount,
-          color: Colors.blue,
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const InstructionsPage()))
-        )
-      );
-    }
-    final documentsCount = store.documents.list != null ? store.documents.list!.length : 0;
-    if (documentsCount > 0) {
-      widgets.add(
-        ServiceCard('Документы',
-          count: documentsCount,
-          color: Colors.red,
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DocumentsPage()))
-        )
-      );
-    }
-
-    final faqCount = store.faq.list != null ? store.faq.list!.length : 0;
-    if (faqCount > 0) {
-      widgets.add(
-        ServiceCard('ЧаВо',
-          count: faqCount,
-          color: Colors.deepPurple,
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const FAQCategoriesPage())))
-      );
+    List<Widget> miniapps = [];
+    final miniApps = store.miniApps.list != null ? store.miniApps.list! : [];
+    for (var miniapp in miniApps) {
+      if (miniapp.type.code == 'inline') {
+        miniapps.add(
+          ServiceCard(miniapp.title,
+            count: inlineMiniApps[miniapp.extra.code]['count'],
+            color: _getColor(miniapp.extra.color),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => inlineMiniApps[miniapp.extra.code]['page']))
+          )
+        );
+      } else if (miniapp.type.code == 'external') {
+        // TODO: доработать когда появятся такие миниприложения
+      } else if (miniapp.type.code == 'url') {
+        miniapps.add(
+          ServiceCard(miniapp.title,
+            color: _getColor(miniapp.extra.color),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UrlMiniAppPage(miniapp.title, miniapp.extra.url!)))
+          )
+        );
+      }
     }
 
     return Scaffold(
@@ -122,7 +107,7 @@ class ServicesPage extends StatelessWidget {
         bottomNavigationBar: const Footer(FooterNav.services),
         body: Container(
             padding: const EdgeInsets.all(15.0),
-            child: GridView.count(crossAxisCount: 2, children: widgets)
+            child: GridView.count(crossAxisCount: 2, children: miniapps)
         )
     );
   }
