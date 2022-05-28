@@ -14,7 +14,7 @@ class VotesListPage extends StatefulWidget {
   const VotesListPage({Key? key}) : super(key: key);
 
   @override
-  _VotesListPageState createState() => _VotesListPageState();
+  State<VotesListPage> createState() => _VotesListPageState();
 }
 
 class _VotesListPageState extends State<VotesListPage> {

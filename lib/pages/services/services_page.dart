@@ -1,3 +1,4 @@
+import 'package:dom24x7_flutter/models/miniapp.dart';
 import 'package:dom24x7_flutter/pages/services/documents_page.dart';
 import 'package:dom24x7_flutter/pages/services/faq/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/miniapps/url_miniapp_page.dart';
@@ -63,6 +64,8 @@ class ServicesPage extends StatelessWidget {
       case 'deepPurple': return Colors.deepPurple;
       case 'blue': return Colors.blue;
       case 'red': return Colors.red;
+      case 'teal': return Colors.teal;
+      case 'deepOrangeAccent': return Colors.deepOrangeAccent;
     }
     return Colors.black12;
   }
@@ -76,18 +79,24 @@ class ServicesPage extends StatelessWidget {
       'recommendations': { 'page': const RecommendationsCategoriesPage(), 'count': store.recommendations.list != null ? store.recommendations.list!.length : 0 },
       'instructions': { 'page': const InstructionsPage(), 'count': store.instructions.list != null ? store.instructions.list!.length : 0 },
       'documents': { 'page': const DocumentsPage(), 'count': store.documents.list != null ? store.documents.list!.length : 0 },
-      'faq': { 'page': const FAQCategoriesPage(), 'count': store.faq.list != null ? store.faq.list!.length : 0 }
+      'faq': { 'page': const FAQCategoriesPage(), 'count': store.faq.list != null ? store.faq.list!.length : 0 },
+      'apartments': { 'page': const FAQCategoriesPage(), 'count': 0 },
+      'market': { 'page': const FAQCategoriesPage(), 'count': 0 },
+      'mutual-help': { 'page': const FAQCategoriesPage(), 'count': 0 },
     };
 
     List<Widget> miniapps = [];
-    final miniApps = store.miniApps.list != null ? store.miniApps.list! : [];
+    final List<MiniApp> miniApps = store.miniApps.list != null ? store.miniApps.list! : [];
     for (var miniapp in miniApps) {
       if (miniapp.type.code == 'inline') {
         miniapps.add(
           ServiceCard(miniapp.title,
             count: inlineMiniApps[miniapp.extra.code]['count'],
             color: _getColor(miniapp.extra.color),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => inlineMiniApps[miniapp.extra.code]['page']))
+            onTap: () {
+              store.client.socket.emit('miniapp.setAction', { 'miniappId': miniapp.id, 'action': 'open' });
+              Navigator.push(context, MaterialPageRoute(builder: (context) => inlineMiniApps[miniapp.extra.code]['page']));
+            }
           )
         );
       } else if (miniapp.type.code == 'external') {
@@ -96,7 +105,10 @@ class ServicesPage extends StatelessWidget {
         miniapps.add(
           ServiceCard(miniapp.title,
             color: _getColor(miniapp.extra.color),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UrlMiniAppPage(miniapp.title, miniapp.extra.url!)))
+            onTap: () {
+              store.client.socket.emit('miniapp.setAction', { 'miniappId': miniapp.id, 'action': 'open' });
+              Navigator.push(context, MaterialPageRoute(builder: (context) => UrlMiniAppPage(miniapp.id, miniapp.title, miniapp.extra.url!)));
+            }
           )
         );
       }
