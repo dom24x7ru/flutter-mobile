@@ -1,8 +1,8 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
-import 'package:dom24x7_flutter/models/flat.dart';
-import 'package:dom24x7_flutter/models/im_channel.dart';
-import 'package:dom24x7_flutter/models/im_message.dart';
-import 'package:dom24x7_flutter/models/person.dart';
+import 'package:dom24x7_flutter/models/house/flat.dart';
+import 'package:dom24x7_flutter/models/im/im_channel.dart';
+import 'package:dom24x7_flutter/models/im/im_message.dart';
+import 'package:dom24x7_flutter/models/user/person.dart';
 import 'package:dom24x7_flutter/pages/house/flat_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';

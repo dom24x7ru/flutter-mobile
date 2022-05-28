@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/models/im_channel.dart';
+import 'package:dom24x7_flutter/models/im/im_channel.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:mobx/mobx.dart';
 

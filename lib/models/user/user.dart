@@ -1,7 +1,7 @@
 import 'package:dom24x7_flutter/models/model.dart';
-import 'package:dom24x7_flutter/models/person.dart';
-import 'package:dom24x7_flutter/models/resident.dart';
-import 'package:dom24x7_flutter/models/role.dart';
+import 'package:dom24x7_flutter/models/user/person.dart';
+import 'package:dom24x7_flutter/models/house/resident.dart';
+import 'package:dom24x7_flutter/models/user/role.dart';
 
 class User extends Model {
   late String mobile;

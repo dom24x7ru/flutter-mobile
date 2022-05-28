@@ -1,6 +1,6 @@
-import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/model.dart';
-import 'package:dom24x7_flutter/models/person.dart';
+import 'package:dom24x7_flutter/models/user/person.dart';
 
 class RecommendationExtra {
   String? phone;

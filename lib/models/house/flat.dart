@@ -1,5 +1,5 @@
 import 'package:dom24x7_flutter/models/model.dart';
-import 'package:dom24x7_flutter/models/resident.dart';
+import 'package:dom24x7_flutter/models/house/resident.dart';
 
 class FlatType extends Model {
   late String code;

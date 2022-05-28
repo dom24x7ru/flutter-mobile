@@ -1,6 +1,6 @@
 import 'package:dom24x7_flutter/models/model.dart';
-import 'package:dom24x7_flutter/models/person_access.dart';
-import 'package:dom24x7_flutter/models/resident.dart';
+import 'package:dom24x7_flutter/models/user/person_access.dart';
+import 'package:dom24x7_flutter/models/house/resident.dart';
 
 class Person extends Model {
   String? surname;

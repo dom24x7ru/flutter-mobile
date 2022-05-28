@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/models/invite.dart';
+import 'package:dom24x7_flutter/models/house/invite.dart';
 import 'package:mobx/mobx.dart';
 
 part 'invites.g.dart';

@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:flutter/material.dart';
 

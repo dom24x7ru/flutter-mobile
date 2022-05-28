@@ -1,5 +1,5 @@
-import 'package:dom24x7_flutter/models/im_channel.dart';
-import 'package:dom24x7_flutter/models/im_message.dart';
+import 'package:dom24x7_flutter/models/im/im_channel.dart';
+import 'package:dom24x7_flutter/models/im/im_message.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

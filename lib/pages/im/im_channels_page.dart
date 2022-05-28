@@ -1,6 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:dom24x7_flutter/api/socket_client.dart';
-import 'package:dom24x7_flutter/models/im_channel.dart';
+import 'package:dom24x7_flutter/models/im/im_channel.dart';
 import 'package:dom24x7_flutter/pages/im/im_messages_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';

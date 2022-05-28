@@ -2,6 +2,7 @@ import 'package:dom24x7_flutter/models/miniapp.dart';
 import 'package:dom24x7_flutter/pages/services/documents_page.dart';
 import 'package:dom24x7_flutter/pages/services/faq/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/miniapps/url_miniapp_page.dart';
+import 'package:dom24x7_flutter/pages/services/mutual_help/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/recommendations/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/votes/list_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -82,7 +83,7 @@ class ServicesPage extends StatelessWidget {
       'faq': { 'page': const FAQCategoriesPage(), 'count': store.faq.list != null ? store.faq.list!.length : 0 },
       'apartments': { 'page': const FAQCategoriesPage(), 'count': 0 },
       'market': { 'page': const FAQCategoriesPage(), 'count': 0 },
-      'mutual-help': { 'page': const FAQCategoriesPage(), 'count': 0 },
+      'mutual-help': { 'page': const MutualHelpCategoriesPage(), 'count': 0 },
     };
 
     List<Widget> miniapps = [];

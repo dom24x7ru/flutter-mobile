@@ -3,14 +3,14 @@ import 'dart:io';
 
 import 'package:dom24x7_flutter/models/document.dart';
 import 'package:dom24x7_flutter/models/faq_item.dart';
-import 'package:dom24x7_flutter/models/flat.dart';
-import 'package:dom24x7_flutter/models/im_channel.dart';
+import 'package:dom24x7_flutter/models/house/flat.dart';
+import 'package:dom24x7_flutter/models/im/im_channel.dart';
 import 'package:dom24x7_flutter/models/instruction.dart';
-import 'package:dom24x7_flutter/models/invite.dart';
+import 'package:dom24x7_flutter/models/house/invite.dart';
 import 'package:dom24x7_flutter/models/miniapp.dart';
 import 'package:dom24x7_flutter/models/post.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
-import 'package:dom24x7_flutter/models/user.dart';
+import 'package:dom24x7_flutter/models/user/user.dart';
 import 'package:dom24x7_flutter/models/version.dart';
 import 'package:dom24x7_flutter/models/vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';

@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/models/flat.dart';
+import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:dom24x7_flutter/widgets/house_info_card_widget.dart';

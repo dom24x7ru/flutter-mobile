@@ -1,8 +1,8 @@
-import 'package:dom24x7_flutter/models/flat.dart';
-import 'package:dom24x7_flutter/models/person.dart';
-import 'package:dom24x7_flutter/models/person_access.dart';
-import 'package:dom24x7_flutter/models/resident.dart';
-import 'package:dom24x7_flutter/models/user.dart';
+import 'package:dom24x7_flutter/models/house/flat.dart';
+import 'package:dom24x7_flutter/models/user/person.dart';
+import 'package:dom24x7_flutter/models/user/person_access.dart';
+import 'package:dom24x7_flutter/models/house/resident.dart';
+import 'package:dom24x7_flutter/models/user/user.dart';
 import 'package:dom24x7_flutter/pages/profile/space_edit_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
