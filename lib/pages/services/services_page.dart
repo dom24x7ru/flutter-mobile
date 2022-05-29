@@ -83,7 +83,7 @@ class ServicesPage extends StatelessWidget {
       'faq': { 'page': const FAQCategoriesPage(), 'count': store.faq.list != null ? store.faq.list!.length : 0 },
       'apartments': { 'page': const FAQCategoriesPage(), 'count': 0 },
       'market': { 'page': const FAQCategoriesPage(), 'count': 0 },
-      'mutual-help': { 'page': const MutualHelpCategoriesPage(), 'count': 0 },
+      'mutual-help': { 'page': const MutualHelpCategoriesPage(), 'count': store.mutualHelp.list != null ? store.mutualHelp.list!.length : 0 },
     };
 
     List<Widget> miniapps = [];
