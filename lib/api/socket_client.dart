@@ -8,6 +8,7 @@ import 'package:dom24x7_flutter/models/im/im_channel.dart';
 import 'package:dom24x7_flutter/models/instruction.dart';
 import 'package:dom24x7_flutter/models/house/invite.dart';
 import 'package:dom24x7_flutter/models/miniapp.dart';
+import 'package:dom24x7_flutter/models/mutual_help_item.dart';
 import 'package:dom24x7_flutter/models/post.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
 import 'package:dom24x7_flutter/models/user/user.dart';
@@ -39,6 +40,7 @@ class SocketClient extends BasicListener with EventEmitter {
     'documents': true,
     'faq': true,
     'recommendations': true,
+    'mutualHelp': true,
     'votes': true,
     'imChannels': true,
   };
@@ -160,6 +162,7 @@ class SocketClient extends BasicListener with EventEmitter {
     on('documents', this, onDocuments);
     on('faq', this, onFAQ);
     on('recommendations', this, onRecommendations);
+    on('mutualHelp', this, onMutualHelp);
     on('votes', this, onVotes);
     on('vote', this, onVote);
     on('imChannels', this, onIMChannels);
@@ -209,7 +212,8 @@ class SocketClient extends BasicListener with EventEmitter {
         'invites.$userId',
         'documents.$houseId',
         'faq.$houseId',
-        'recommendations.$houseId'
+        'recommendations.$houseId',
+        'mutualHelp.$houseId',
       ];
       for (String channel in channels) {
         closeChannel(channel);
@@ -229,7 +233,8 @@ class SocketClient extends BasicListener with EventEmitter {
       'instructions.$houseId',
       'documents.$houseId',
       'faq.$houseId',
-      'recommendations.$houseId'
+      'recommendations.$houseId',
+      'mutualHelp.$houseId',
     ];
     for (String channel in channels) {
       initChannel(channel);
@@ -308,6 +313,16 @@ class SocketClient extends BasicListener with EventEmitter {
     }
   }
 
+  void onMutualHelp(event, context) {
+    if (event.eventData['event'] == 'ready') return;
+    final data = event.eventData['data'];
+    if (event.eventData['event'] != 'destroy') {
+      store.mutualHelp.addMutualHelpItem(MutualHelpItem.fromMap(data));
+    } else {
+      store.mutualHelp.delMutualHelpItem(MutualHelpItem.fromMap(data));
+    }
+  }
+
   void onVotes(event, context) {
     if (event.eventData['event'] == 'ready') {
       // подписаться на каналы по каждому пришедшему голосованию
@@ -332,7 +347,6 @@ class SocketClient extends BasicListener with EventEmitter {
     if (event.eventData['event'] == 'ready') {
       // подписаться на каналы по каждому доступному чату
       if (store.im.channels == null) return;
-      final user = store.user.value;
       final List<IMChannel> imChannels = store.im.channels!;
       for (IMChannel channel in imChannels) {
         initChannel('imChannel.${channel.id}');

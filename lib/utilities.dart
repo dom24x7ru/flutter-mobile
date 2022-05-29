@@ -49,7 +49,7 @@ class Utilities {
 
   static String getHeaderTitle(String title, [int maxLength = 17]) {
     if (title.length < maxLength) return title;
-    return title.substring(0, maxLength) + '...';
+    return '${title.substring(0, maxLength)}...';
   }
 
   static String getDateFormat(int dt, [String format = 'dd.MM.y HH:mm:ss']) {

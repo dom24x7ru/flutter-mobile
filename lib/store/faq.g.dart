@@ -8,8 +8,8 @@ part of 'faq.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$FAQ on _FAQ, Store {
-  late final _$listAtom = Atom(name: '_FAQ.list', context: context);
+mixin _$FAQStore on _FAQStore, Store {
+  late final _$listAtom = Atom(name: '_FAQStore.list', context: context);
 
   @override
   List<FAQItem>? get list {
@@ -24,38 +24,39 @@ mixin _$FAQ on _FAQ, Store {
     });
   }
 
-  late final _$_FAQActionController =
-      ActionController(name: '_FAQ', context: context);
+  late final _$_FAQStoreActionController =
+      ActionController(name: '_FAQStore', context: context);
 
   @override
   void addFAQItem(FAQItem item) {
     final _$actionInfo =
-        _$_FAQActionController.startAction(name: '_FAQ.addFAQItem');
+        _$_FAQStoreActionController.startAction(name: '_FAQStore.addFAQItem');
     try {
       return super.addFAQItem(item);
     } finally {
-      _$_FAQActionController.endAction(_$actionInfo);
+      _$_FAQStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void setFAQItems(List<FAQItem> items) {
     final _$actionInfo =
-        _$_FAQActionController.startAction(name: '_FAQ.setFAQItems');
+        _$_FAQStoreActionController.startAction(name: '_FAQStore.setFAQItems');
     try {
       return super.setFAQItems(items);
     } finally {
-      _$_FAQActionController.endAction(_$actionInfo);
+      _$_FAQStoreActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void clear() {
-    final _$actionInfo = _$_FAQActionController.startAction(name: '_FAQ.clear');
+    final _$actionInfo =
+        _$_FAQStoreActionController.startAction(name: '_FAQStore.clear');
     try {
       return super.clear();
     } finally {
-      _$_FAQActionController.endAction(_$actionInfo);
+      _$_FAQStoreActionController.endAction(_$actionInfo);
     }
   }
 

@@ -4,9 +4,9 @@ import 'package:mobx/mobx.dart';
 
 part 'faq.g.dart';
 
-class FAQ = _FAQ with _$FAQ;
+class FAQStore = _FAQStore with _$FAQStore;
 
-abstract class _FAQ with Store {
+abstract class _FAQStore with Store {
   @observable
   List<FAQItem>? list;
 

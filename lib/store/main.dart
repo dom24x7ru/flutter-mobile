@@ -5,6 +5,7 @@ import 'package:dom24x7_flutter/store/flats.dart';
 import 'package:dom24x7_flutter/store/im.dart';
 import 'package:dom24x7_flutter/store/invites.dart';
 import 'package:dom24x7_flutter/store/miniapps.dart';
+import 'package:dom24x7_flutter/store/mutual_help.dart';
 import 'package:dom24x7_flutter/store/posts.dart';
 import 'package:dom24x7_flutter/store/recommendations.dart';
 import 'package:dom24x7_flutter/store/user.dart';
@@ -28,11 +29,12 @@ abstract class _MainStore with Store {
   final invites = InvitesStore();
   final instructions = InstructionsStore();
   final documents = DocumentsStore();
-  final faq = FAQ();
+  final faq = FAQStore();
   final recommendations = RecommendationsStore();
   final votes = VotesStore();
   final im = IMStore();
   final miniApps = MiniAppsStore();
+  final mutualHelp = MutualHelpStore();
 
   bool loaded = false;
 
@@ -60,6 +62,7 @@ abstract class _MainStore with Store {
     votes.clear();
     im.clear();
     miniApps.clear();
+    mutualHelp.clear();
 
     loaded = false;
   }
