@@ -68,9 +68,18 @@ class _MutualHelpCategoriesPageState extends State<MutualHelpCategoriesPage> {
         bottomNavigationBar: const Footer(FooterNav.services),
         floatingActionButton: floatingActionButton,
         body: ListView.builder(
-            itemCount: _categories.length,
+            itemCount: _categories.length + 1,
             itemBuilder: (BuildContext context, int index) {
-              final category = _categories[index];
+              if (index == 0) {
+                return Card(
+                  child: Container(
+                    padding: const EdgeInsets.all(15.0),
+                    color: Colors.blue,
+                    child: const Text('Сервис для безвозмездной помощи соседей друг другу', style: TextStyle(color: Colors.white)),
+                  )
+                );
+              }
+              final category = _categories[index - 1];
               return GestureDetector(
                   onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => MutualHelpListPage(_getMutualHelpList(_items, category)))) },
                   child: ParallaxListItem(imageUrl: category.img, title: category.name, subtitle: 'Доступно: ${category.count}')
