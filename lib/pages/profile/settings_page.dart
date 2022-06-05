@@ -21,7 +21,7 @@ class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
   @override
-  _SettingsPage createState() => _SettingsPage();
+  State<SettingsPage> createState() => _SettingsPage();
 }
 
 class _SettingsPage extends State<SettingsPage> {
@@ -242,7 +242,9 @@ class _SettingsPage extends State<SettingsPage> {
     store.clear();
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('authToken');
-    Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false);
+    });
   }
 
   void _save(MainStore store) {

@@ -12,7 +12,7 @@ class FloorPage extends StatefulWidget {
   const FloorPage(this.flats, {Key? key}) : super(key: key);
 
   @override
-  _FloorPageState createState() => _FloorPageState();
+  State<FloorPage> createState() => _FloorPageState();
 }
 
 class _FloorPageState extends State<FloorPage> {

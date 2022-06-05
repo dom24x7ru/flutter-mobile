@@ -8,7 +8,7 @@ class SpacesPage extends StatefulWidget {
   const SpacesPage({Key? key}) : super(key: key);
 
   @override
-  _SpacesPageState createState() => _SpacesPageState();
+  State<SpacesPage> createState() => _SpacesPageState();
 }
 
 class _SpacesPageState extends State<SpacesPage> {

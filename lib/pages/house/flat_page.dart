@@ -22,7 +22,7 @@ class FlatPage extends StatefulWidget {
   FlatPage.bottom({Key? key}) : super(key: key) { bottom = true; }
 
   @override
-  _FlatPageState createState() => _FlatPageState();
+  State<FlatPage> createState() => _FlatPageState();
 }
 
 class _FlatPageState extends State<FlatPage> {
@@ -222,11 +222,11 @@ class _FlatPageState extends State<FlatPage> {
       children: [
         Container(
           padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-          child: Text(label, style: TextStyle(fontSize: 12.0, color: color)),
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: const BorderRadius.all(Radius.circular(20.0))
           ),
+          child: Text(label, style: TextStyle(fontSize: 12.0, color: color)),
         )
       ]
     );

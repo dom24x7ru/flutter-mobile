@@ -136,8 +136,8 @@ class _NewsPageState extends State<NewsPage> {
     FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
       Navigator.pushNamedAndRemoveUntil(context, dynamicLinkData.link.path, (route) => false);
     }).onError((error) {
-      print('onLink error');
-      print(error.message);
+      debugPrint('onLink error');
+      debugPrint(error.message);
     });
   }
 

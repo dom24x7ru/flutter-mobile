@@ -22,7 +22,7 @@ class VoteCreatePage extends StatefulWidget {
   const VoteCreatePage({Key? key}) : super(key: key);
 
   @override
-  _VoteCreatePageState createState() => _VoteCreatePageState();
+  State<VoteCreatePage> createState() => _VoteCreatePageState();
 }
 
 class _VoteCreatePageState extends State<VoteCreatePage> {

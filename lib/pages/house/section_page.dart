@@ -24,7 +24,7 @@ class SectionPage extends StatefulWidget {
   const SectionPage(this.flats, {Key? key}) : super(key: key);
 
   @override
-  _SectionPageState createState() => _SectionPageState();
+  State<SectionPage> createState() => _SectionPageState();
 }
 
 class _SectionPageState extends State<SectionPage> {

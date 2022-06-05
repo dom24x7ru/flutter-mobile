@@ -107,8 +107,8 @@ class _SecCodePage extends State<SecCodePage> {
                     const Text('Также можете вернуться на страницу ввода мобильного номера'),
                     ElevatedButton(
                       onPressed: () => { Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false, arguments: MobileType(mobile)) },
-                      child: Text('Вернуться'.toUpperCase()),
                       style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
+                      child: Text('Вернуться'.toUpperCase()),
                     )
                   ]
                 ),
@@ -128,7 +128,9 @@ class _SecCodePage extends State<SecCodePage> {
           // пользователь находится на другой ноде
           final url = error['extra']['url'];
           await store.client.connect(url);
-          _sendCode(mobile, context, store);
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            _sendCode(mobile, context, store);
+          });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('${error['code']}: ${error['message']}'),

@@ -24,7 +24,7 @@ class DocumentsPage extends StatelessWidget {
             leading: const Icon(Icons.description),
             title: Text(document.title),
             subtitle: document.annotation != null ? Text(document.annotation!) : null,
-            onTap: () => { launch(document.url) }
+            onTap: () => { launchUrl(Uri.parse(document.url)) }
           );
         }
       )

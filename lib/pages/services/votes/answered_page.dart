@@ -22,7 +22,7 @@ class VoteAnsweredPage extends StatefulWidget {
   const VoteAnsweredPage(this.vote, {Key? key}) : super(key: key);
 
   @override
-  _VoteAnsweredPageState createState() => _VoteAnsweredPageState();
+  State<VoteAnsweredPage> createState() => _VoteAnsweredPageState();
 }
 
 class _VoteAnsweredPageState extends State<VoteAnsweredPage> {

@@ -31,17 +31,21 @@ class Header extends AppBar {
                   case FlatSearchMenu.topFlat:
                     final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage.top()));
                     if (result != null && result['error'] != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(result['error']), backgroundColor: Colors.red)
-                      );
+                      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(result['error']), backgroundColor: Colors.red)
+                        );
+                      });
                     }
                     break;
                   case FlatSearchMenu.bottomFlat:
                     final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage.bottom()));
                     if (result != null && result['error'] != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(result['error']), backgroundColor: Colors.red)
-                      );
+                      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(result['error']), backgroundColor: Colors.red)
+                        );
+                      });
                     }
                     break;
                   default:

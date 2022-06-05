@@ -7,7 +7,7 @@ class AboutPage extends StatefulWidget {
   const AboutPage({Key? key}) : super(key: key);
 
   @override
-  _AboutPage createState() => _AboutPage();
+  State<AboutPage> createState() => _AboutPage();
 }
 
 class _AboutPage extends State<AboutPage> {

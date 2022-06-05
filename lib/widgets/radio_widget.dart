@@ -8,7 +8,7 @@ class Dom24x7Radio<T> extends StatefulWidget {
   const Dom24x7Radio({Key? key, required this.value, required this.groupValue, required this.label, required this.onChanged}) : super(key: key);
 
   @override
-  _Dom24x7RadioState<T> createState() => _Dom24x7RadioState<T>();
+  State<Dom24x7Radio<T>> createState() => _Dom24x7RadioState<T>();
 }
 
 class _Dom24x7RadioState<T> extends State<Dom24x7Radio<T>> {

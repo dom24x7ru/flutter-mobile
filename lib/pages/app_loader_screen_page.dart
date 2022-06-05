@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -37,7 +35,7 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
             _client.socket.emit('notification.saveToken', { 'token': token});
           }
         } catch (error) {
-          print(error);
+          debugPrint(error.toString());
         }
 
         final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();

@@ -47,7 +47,7 @@ class FAQListPage extends StatelessWidget {
                 ),
                 Text(item.title, style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
                 Html(data: item.body, onLinkTap: (String? url, RenderContext context,  Map<String, String> attributes, dynamic element) {
-                  if (url != null) launch(url);
+                  if (url != null) launchUrl(Uri.parse(url));
                 })
               ]
           )
