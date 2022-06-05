@@ -90,7 +90,7 @@ class _VotePageState extends State<VotePage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                    onPressed: btnEnabled() ? () => { send(context, store, widget.vote) } : null,
+                    onPressed: btnEnabled() ? () => send(context, store, widget.vote) : null,
                     child: Text('Проголосовать'.toUpperCase())
                 )
               )
@@ -122,7 +122,7 @@ class _VotePageState extends State<VotePage> {
       return Dom24x7Checkbox(
         value: question.selected,
         label: question.body,
-        onChanged: (bool? value) => { selectQuestion(widget.vote, question, value) },
+        onChanged: (bool? value) => selectQuestion(widget.vote, question, value),
       );
     }).toList();
   }

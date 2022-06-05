@@ -47,7 +47,7 @@ class _FloorPageState extends State<FloorPage> {
           }
 
           return GestureDetector(
-            onTap: () => { _goFlat(context, flat) },
+            onTap: () => _goFlat(context, flat),
             child: Card(
               child: Container(
                 padding: const EdgeInsets.all(15.0),

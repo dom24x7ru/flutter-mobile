@@ -117,9 +117,9 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
               )
             ),
             Column(children: _getAnswerWidgets()),
-            TextButton(onPressed: () => { _addAnswer() }, child: Text('Добавить ответ'.toUpperCase())),
-            Dom24x7Checkbox(value: _anonymous, label: 'анонимно', onChanged: (bool? value) => { setState(() => { _anonymous = value! }) }),
-            Dom24x7Checkbox(value: _multi, label: 'несколько ответов', onChanged: (bool? value) => { setState(() => { _multi = value! }) }),
+            TextButton(onPressed: () => _addAnswer(), child: Text('Добавить ответ'.toUpperCase())),
+            Dom24x7Checkbox(value: _anonymous, label: 'анонимно', onChanged: (bool? value) => setState(() => _anonymous = value!)),
+            Dom24x7Checkbox(value: _multi, label: 'несколько ответов', onChanged: (bool? value) => setState(() => _multi = value!)),
             ...voteCoverage,
             ElevatedButton(
               onPressed: _btnEnabled ? () => _save(context, store) : null,
@@ -140,7 +140,7 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
               labelText: 'Ответ',
               hintText: 'Укажите вариант ответа',
               suffixIcon: InkWell(
-                onTap: () => { _delAnswer(answer.id) },
+                onTap: () => _delAnswer(answer.id),
                 child: const Icon(Icons.delete_outline)
               )
           )

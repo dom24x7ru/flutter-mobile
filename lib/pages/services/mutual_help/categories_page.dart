@@ -81,7 +81,7 @@ class _MutualHelpCategoriesPageState extends State<MutualHelpCategoriesPage> {
               }
               final category = _categories[index - 1];
               return GestureDetector(
-                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => MutualHelpListPage(_getMutualHelpList(_items, category)))) },
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MutualHelpListPage(_getMutualHelpList(_items, category)))),
                   child: ParallaxListItem(imageUrl: category.img, title: category.name, subtitle: 'Доступно: ${category.count}')
               );
             }

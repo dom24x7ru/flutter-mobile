@@ -145,8 +145,8 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
           },
           children: rows
       ),
-      onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => VoteResultPage(vote))) },
-      onLongPress: () => { showMenu(context, store, vote) }
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VoteResultPage(vote))),
+      onLongPress: () => showMenu(context, store, vote)
     );
   }
 

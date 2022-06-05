@@ -68,7 +68,7 @@ class HousePage extends StatelessWidget {
             }
 
             return GestureDetector(
-              onTap: () => { _goSection(context, store.flats.list!, section) },
+              onTap: () => _goSection(context, store.flats.list!, section),
               child: Card(
                   child: Container(
                     padding: const EdgeInsets.all(15.0),

@@ -240,7 +240,7 @@ class _FlatPageState extends State<FlatPage> {
     if (person.mobile != null) {
       children.add(InkWell(
           child: Text(_getMobile(person), style: const TextStyle(color: Colors.blue)),
-          onTap: () => { launchUrl(Uri.parse('tel:${person.mobile}')) }
+          onTap: () => launchUrl(Uri.parse('tel:${person.mobile}'))
       ));
     }
     if (person.telegram != null) {

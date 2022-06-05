@@ -81,7 +81,8 @@ class _MutualHelpListPageState extends State<MutualHelpListPage> {
                   const Text('Автор: '),
                   InkWell(
                       child: Text(_getAuthorName(item), style: const TextStyle(color: Colors.blue)),
-                      onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_getFlat(store, item)))) })
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_getFlat(store, item))))
+                  )
                 ]),
                 const Divider()
               ];

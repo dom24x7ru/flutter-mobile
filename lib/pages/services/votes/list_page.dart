@@ -56,7 +56,7 @@ class _VotesListPageState extends State<VotesListPage> {
     Widget? floatingActionButton;
     if (store.user.value!.residents.isNotEmpty) {
       floatingActionButton = FloatingActionButton(
-          onPressed: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => const VoteCreatePage())) },
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VoteCreatePage())),
           backgroundColor: Colors.blue,
           child: const Icon(Icons.add)
       );
@@ -96,8 +96,8 @@ class _VotesListPageState extends State<VotesListPage> {
                           )
                       )
                   ),
-                  onTap: () => { _gotoVote(context, store, vote) },
-                  onLongPress: () => { _showMenu(context, store, vote) }
+                  onTap: () => _gotoVote(context, store, vote),
+                  onLongPress: () => _showMenu(context, store, vote)
               );
             }
         )

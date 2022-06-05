@@ -36,7 +36,7 @@ class VoteResultPage extends StatelessWidget {
             groupComparator: (String group1, String group2) => questionCompare(getQuestionByBody(vote, group1)!, getQuestionByBody(vote, group2)!),
             itemBuilder: (BuildContext context, VoteAnswer answer) {
               return GestureDetector(
-                onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(getFlat(store, answer)))) },
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(getFlat(store, answer)))),
                 child: Container(
                   padding: const EdgeInsets.all(5.0),
                   child: Text(getPersonOrFlatName(answer), style: const TextStyle(color: Colors.blue))

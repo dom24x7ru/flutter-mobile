@@ -84,7 +84,8 @@ class _RecommendationsListPageState extends State<RecommendationsListPage> {
                   const Text('Автор: '),
                   InkWell(
                       child: Text(_getAuthorName(recommendation), style: const TextStyle(color: Colors.blue)),
-                      onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_getFlat(store, recommendation)))) })
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_getFlat(store, recommendation))))
+                  )
                 ]),
                 const Divider()
               ];
@@ -99,7 +100,7 @@ class _RecommendationsListPageState extends State<RecommendationsListPage> {
                   const Icon(Icons.phone),
                   InkWell(
                       child: Text('+${extra.phone!}', style: const TextStyle(color: Colors.blue)),
-                      onTap: () => { launchUrl(Uri.parse('tel:${extra.phone}')) }
+                      onTap: () => launchUrl(Uri.parse('tel:${extra.phone}'))
                   )
                 ]));
               }
@@ -108,7 +109,7 @@ class _RecommendationsListPageState extends State<RecommendationsListPage> {
                   const FaIcon(FontAwesomeIcons.instagram),
                   InkWell(
                       child: Text(' ${extra.instagram!}', style: const TextStyle(color: Colors.blue)),
-                      onTap: () => { launchUrl(Uri.parse('https://www.instagram.com/${extra.instagram}/')) }
+                      onTap: () => launchUrl(Uri.parse('https://www.instagram.com/${extra.instagram}/'))
                   )
                 ]));
               }
@@ -117,7 +118,7 @@ class _RecommendationsListPageState extends State<RecommendationsListPage> {
                   const FaIcon(FontAwesomeIcons.telegram),
                   InkWell(
                       child: Text(' ${extra.telegram!}', style: const TextStyle(color: Colors.blue)),
-                      onTap: () => { launchUrl(Uri.parse('https://t.me/${extra.telegram}')) }
+                      onTap: () => launchUrl(Uri.parse('https://t.me/${extra.telegram}'))
                   )
                 ]));
               }
@@ -126,7 +127,7 @@ class _RecommendationsListPageState extends State<RecommendationsListPage> {
                   const Icon(Icons.language),
                   InkWell(
                       child: Text(extra.site!, style: const TextStyle(color: Colors.blue)),
-                      onTap: () => { launchUrl(Uri.parse('https://${extra.site}')) }
+                      onTap: () => launchUrl(Uri.parse('https://${extra.site}'))
                   )
                 ]));
                 if (extra.email != null) {
@@ -134,7 +135,7 @@ class _RecommendationsListPageState extends State<RecommendationsListPage> {
                     const Icon(Icons.alternate_email),
                     InkWell(
                         child: Text(extra.email!, style: const TextStyle(color: Colors.blue)),
-                        onTap: () => { launchUrl(Uri.parse('mailto:${extra.email}')) }
+                        onTap: () => launchUrl(Uri.parse('mailto:${extra.email}'))
                     )
                   ]));
                 }

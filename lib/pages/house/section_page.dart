@@ -52,7 +52,7 @@ class _SectionPageState extends State<SectionPage> {
           });
           final floor = floorsList[index - 1];
           return GestureDetector(
-            onTap: () => { _goFloor(context, widget.flats, widget.flats[0].section, floor) },
+            onTap: () => _goFloor(context, widget.flats, widget.flats[0].section, floor),
             child: Card(
               child: Container(
                 padding: const EdgeInsets.all(15.0),

@@ -24,7 +24,7 @@ class FAQListPage extends StatelessWidget {
           final FAQItem item = list[index];
           return ListTile(
             title: Text(item.title),
-            onTap: () => { showFAQItem(context, item) }
+            onTap: () => showFAQItem(context, item)
           );
         },
         separatorBuilder: (BuildContext context, int index) {

@@ -21,7 +21,7 @@ class InstructionsPage extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           final instruction = instructions[index];
           return GestureDetector(
-            onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => InstructionPage(instruction))) },
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => InstructionPage(instruction))),
             child: ListTile(
               title: Text(instruction.title),
               subtitle: instruction.subtitle.isNotEmpty ? Text(instruction.subtitle) : null

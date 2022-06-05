@@ -25,7 +25,7 @@ class FAQCategoriesPage extends StatelessWidget {
           return ListTile(
             title: Text(category.name),
             subtitle: category.description != null ? Text(category.description!) : null,
-            onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => FAQListPage(getFAQList(faq, category)))) }
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FAQListPage(getFAQList(faq, category))))
           );
         },
         separatorBuilder: (BuildContext context, int index) {

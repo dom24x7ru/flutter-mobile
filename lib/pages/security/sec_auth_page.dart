@@ -51,7 +51,7 @@ class _SecAuthPage extends State<SecAuthPage> {
                 controller: _cMobile,
                 keyboardType: TextInputType.number,
                 maxLength: 10,
-                onChanged: (String value) => { setState(() => { _errorText = null }) },
+                onChanged: (String value) => setState(() => _errorText = null),
                 decoration: InputDecoration(
                   prefix: const Text('+7 '),
                   labelText: 'Ваш номер телефона',
@@ -76,10 +76,10 @@ class _SecAuthPage extends State<SecAuthPage> {
 
     // валидация номера телефона
     if (mobile.length == 1) {
-      setState(() => { _errorText = 'Необходимо указать номер телефона' });
+      setState(() => _errorText = 'Необходимо указать номер телефона');
       return;
     } else if (mobile.length < 11) {
-      setState(() => { _errorText = 'Номер должен состоять из 10 цифр' });
+      setState(() => _errorText = 'Номер должен состоять из 10 цифр');
       return;
     }
 

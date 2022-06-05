@@ -72,7 +72,7 @@ class _RecommendationsCategoriesPageState extends State<RecommendationsCategorie
             itemBuilder: (BuildContext context, int index) {
               final category = _categories[index];
               return GestureDetector(
-                  onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationsListPage(_getRecommendationsList(_recommendations, category)))) },
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => RecommendationsListPage(_getRecommendationsList(_recommendations, category)))),
                   child: ParallaxListItem(imageUrl: category.img, title: category.name, subtitle: 'Доступно: ${category.count}')
               );
             }

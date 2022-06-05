@@ -154,8 +154,8 @@ class _SettingsPage extends State<SettingsPage> {
                         onChanged: (AccessName? value) { setState(() { _accessName = value; }); }
                       ),
                       const Text('Отображение контактов', style: TextStyle(fontSize: 18.0)),
-                      Dom24x7Checkbox(value: _mobileLevel, label: 'Показывать телефон', onChanged: (bool? value) => { setState(() => { _mobileLevel = value! }) }),
-                      Dom24x7Checkbox(value: _telegramLevel, label: 'Показывать аккаунт телеграм (если указан)', onChanged: (bool? value) => { setState(() => { _telegramLevel = value! }) })
+                      Dom24x7Checkbox(value: _mobileLevel, label: 'Показывать телефон', onChanged: (bool? value) => setState(() => _mobileLevel = value!)),
+                      Dom24x7Checkbox(value: _telegramLevel, label: 'Показывать аккаунт телеграм (если указан)', onChanged: (bool? value) => setState(() => _telegramLevel = value!))
                     ]
                 )
             ),

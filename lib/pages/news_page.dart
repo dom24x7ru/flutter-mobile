@@ -76,7 +76,7 @@ class _NewsPageState extends State<NewsPage> {
                 // отображаем карточку голосования
                 final createdAt = Utilities.getDateFormat(vote!.createdAt);
                 return GestureDetector(
-                    onTap: () => { Navigator.push(context, MaterialPageRoute(builder: (context) => VotePage(vote!))) },
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VotePage(vote!))),
                     child: Card(
                         color: Colors.green,
                         child: Container(
@@ -104,7 +104,7 @@ class _NewsPageState extends State<NewsPage> {
               final createdAt = Utilities.getDateFormat(post.createdAt);
               final icon = _getIconStyle(post);
               return GestureDetector(
-                  onTap: () => { _goPage(context, post, store.flats.list!) },
+                  onTap: () => _goPage(context, post, store.flats.list!),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
