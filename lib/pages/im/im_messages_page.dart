@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/house/flat.dart';
@@ -56,10 +58,13 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         final eventData = event.eventData! as Map<String, dynamic>;
         if (eventData['event'] == 'ready') return;
         final data = eventData['data'];
+
+        final message = IMMessage.fromMap(data);
+        if (message.channel!.id != widget.channel.id) return;
         if (eventData['event'] == 'destroy') {
-          _delMessage(IMMessage.fromMap(data));
+          _delMessage(message);
         } else {
-          _addMessage(IMMessage.fromMap(data));
+          _addMessage(_convert(message));
         }
       });
       _listeners.add(listener);
@@ -88,19 +93,20 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     }
 
     return types.TextMessage(
-        author: types.User(
-          id: message.imPerson != null ? message.imPerson!.person.id.toString() : '0',
-          firstName: firstName,
-          lastName: message.imPerson != null ? message.imPerson!.person.surname : null,
-          imageUrl: message.imPerson == null ? 'https://dom24x7-static.ru.yapahost.ru/img/im/bot.png' : null,
-          metadata: message.imPerson != null ? message.imPerson!.toMap() : null
-        ),
-        id: message.id.toString(),
-        createdAt: message.createdAt,
-        updatedAt: message.updatedAt,
-        roomId: widget.channel.id.toString(),
-        text: message.body!.text,
-        status: status
+      author: types.User(
+        id: message.imPerson != null ? message.imPerson!.person.id.toString() : '0',
+        firstName: firstName,
+        lastName: message.imPerson != null ? message.imPerson!.person.surname : null,
+        imageUrl: message.imPerson == null ? 'https://dom24x7-static.ru.yapahost.ru/img/im/bot.png' : null,
+        metadata: message.imPerson != null ? message.imPerson!.toMap() : null
+      ),
+      id: message.guid,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
+      roomId: widget.channel.id.toString(),
+      text: message.body!.text,
+      status: status,
+      metadata: { 'messageId': message.id }
     );
   }
 
@@ -141,14 +147,13 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     });
   }
 
-  void _addMessage(IMMessage message) {
-    if (message.channel!.id != widget.channel.id) return;
-    setState(() => _messages.insert(0, _convert(message)));
+  void _addMessage(types.Message message) {
+    setState(() => _messages.insert(0, message));
   }
 
   void _delMessage(IMMessage message) {
     if (message.channel!.id != widget.channel.id) return;
-    final index = _messages.indexWhere((msg) => msg.id == message.id.toString());
+    final index = _messages.indexWhere((msg) => msg.id == message.guid);
     if (index == -1) return;
     setState(() => _messages.removeAt(index));
   }
@@ -178,7 +183,26 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   }
 
   void _handleImageSelection() async {
-    await ImagePicker().pickImage(source: ImageSource.gallery);
+    final result = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (result != null) {
+      final bytes = await result.readAsBytes();
+      final image = await decodeImageFromList(bytes);
+
+      final message = types.ImageMessage(
+        author: _user,
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        updatedAt: DateTime.now().millisecondsSinceEpoch,
+        roomId: widget.channel.id.toString(),
+        height: image.height.toDouble(),
+        name: result.name,
+        size: bytes.length,
+        uri: result.path,
+        width: image.width.toDouble(),
+        status: types.Status.sending
+      );
+      _addMessage(message);
+    }
   }
 
   Flat _getFlat(MainStore store, Flat flat) {
@@ -203,13 +227,14 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     return title;
   }
 
-  Widget _textMessageBuilder(types.TextMessage message, { required int messageWidth, required bool showName }) {
-    // виджет для отображения времени создания сообщения
-    final timeWidget = Text(
-        Utilities.getDateFormat(message.createdAt!, 'HH:mm'),
-        style: TextStyle(color: message.author.id == _user.id ? Colors.white54 : Colors.black38)
+  Widget _getMessageTimeWidget(types.Message message) {
+    return Text(
+      Utilities.getDateFormat(message.createdAt!, 'HH:mm'),
+      style: TextStyle(color: message.author.id == _user.id ? Colors.white54 : Colors.black38)
     );
+  }
 
+  Widget _textMessageBuilder(types.TextMessage message, { required int messageWidth, required bool showName }) {
     // виджет с именем автора
     Widget authorTitleWidget = Text(_getAuthorTitle(message.author), style: const TextStyle(fontWeight: FontWeight.bold));
 
@@ -232,7 +257,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     }
 
     // контайнер сообщения
-    final messageColumns = [messageWidget, timeWidget];
+    final messageColumns = [messageWidget, _getMessageTimeWidget(message)];
     if (message.author.id != _user.id && showName) {
       messageColumns.insert(0, const SizedBox(height: 5.0));
       messageColumns.insert(0, authorTitleWidget);
@@ -246,6 +271,19 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     );
 
     return messageContainer;
+  }
+
+  Widget _imageMessageBuilder(types.ImageMessage message, { required int messageWidth }) {
+    return Container(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image(image: FileImage(File(message.uri))),
+          _getMessageTimeWidget(message)
+        ]
+      ),
+    );
   }
 
   void _showMenu(BuildContext context, types.Message message) async {
@@ -315,7 +353,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         case IMMessageMenu.edit: // редактировать сообщение
           break;
         case IMMessageMenu.delete: // удалить сообщение
-          _client.socket.emit('im.del', { 'messageId': message.id }, (String name, dynamic error, dynamic data) {
+          _client.socket.emit('im.del', { 'messageId': message.metadata!['messageId'] }, (String name, dynamic error, dynamic data) {
             if (error != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
@@ -377,6 +415,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
           sendButtonVisibilityMode: SendButtonVisibilityMode.always,
           customDateHeaderText: _customDateHeaderText,
           textMessageBuilder: _textMessageBuilder,
+          imageMessageBuilder: _imageMessageBuilder,
           user: _user,
           messages: _messages,
           onEndReached: () async => _loadMessages(offset: _messages.length),

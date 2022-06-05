@@ -57,6 +57,7 @@ class IMMessageExtra {
 }
 
 class IMMessage extends Model {
+  late String guid;
   late int createdAt;
   late int? updatedAt;
   IMPerson? imPerson;
@@ -65,6 +66,7 @@ class IMMessage extends Model {
   IMMessageExtra? extra;
 
   IMMessage.fromMap(Map<String, dynamic> map) : super(map['id']) {
+    guid = map['guid'];
     createdAt = map['createdAt'];
     updatedAt = map['updatedAt'];
     final person = map['person'];
