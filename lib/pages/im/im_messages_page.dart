@@ -148,7 +148,12 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   }
 
   void _addMessage(types.Message message) {
-    setState(() => _messages.insert(0, message));
+    final index = _messages.indexWhere((msg) => msg.id == message.id);
+    if (index == -1) {
+      setState(() => _messages.insert(0, message));
+    } else {
+      setState(() => _messages[index] = message);
+    }
   }
 
   void _delMessage(IMMessage message) {
@@ -161,6 +166,16 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   void _send(types.PartialText message) {
     final channelId = widget.channel.id;
     final guid = '$channelId-${DateTime.now().millisecondsSinceEpoch}';
+    final newMessage = types.TextMessage(
+      author: types.User(id: _user.id),
+      id: guid,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      updatedAt: DateTime.now().millisecondsSinceEpoch,
+      roomId: widget.channel.id.toString(),
+      text: message.text,
+      status: types.Status.sending
+    );
+    _addMessage(newMessage);
     Map<String, dynamic> data = { 'guid': guid, 'channelId': channelId, 'body': { 'text': message.text } };
     _client.socket.emit('im.save', data, (String name, dynamic error, dynamic data) {
       if (error != null) {
