@@ -159,7 +159,9 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   }
 
   void _send(types.PartialText message) {
-    Map<String, dynamic> data = { 'channelId': widget.channel.id, 'body': { 'text': message.text } };
+    final channelId = widget.channel.id;
+    final guid = '$channelId-${DateTime.now().millisecondsSinceEpoch}';
+    Map<String, dynamic> data = { 'guid': guid, 'channelId': channelId, 'body': { 'text': message.text } };
     _client.socket.emit('im.save', data, (String name, dynamic error, dynamic data) {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
