@@ -218,8 +218,6 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     if (isURL(message.text)) {
       String url = message.text;
       if (!url.contains('https://')) url = 'https://$url';
-      Future<Metadata?> meta = AnyLinkPreview.getMetadata(link: url);
-      meta.then((value) => print(value));
       messageWidget = AnyLinkPreview(
         link: url,
         cache: const Duration(hours: 1),
