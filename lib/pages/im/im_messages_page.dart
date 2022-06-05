@@ -1,3 +1,4 @@
+import 'package:any_link_preview/any_link_preview.dart';
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/im/im_channel.dart';
@@ -9,8 +10,10 @@ import 'package:dom24x7_flutter/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import "package:flutter_chat_types/flutter_chat_types.dart" as types;
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:string_validator/string_validator.dart';
 
 enum IMMessageMenu { profile, answer, copy, edit, delete }
 
@@ -174,6 +177,10 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_getFlat(store, flat))));
   }
 
+  void _handleImageSelection() async {
+    await ImagePicker().pickImage(source: ImageSource.gallery);
+  }
+
   Flat _getFlat(MainStore store, Flat flat) {
     final flats = store.flats.list!;
     for (Flat item in flats) {
@@ -197,48 +204,50 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   }
 
   Widget _textMessageBuilder(types.TextMessage message, { required int messageWidth, required bool showName }) {
+    // виджет для отображения времени создания сообщения
     final timeWidget = Text(
         Utilities.getDateFormat(message.createdAt!, 'HH:mm'),
         style: TextStyle(color: message.author.id == _user.id ? Colors.white54 : Colors.black38)
     );
-    if (message.author.id == _user.id) {
-      return Container(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(message.text, style: const TextStyle(color: Colors.white)),
-            timeWidget
-          ]
-        )
+
+    // виджет с именем автора
+    Widget authorTitleWidget = Text(_getAuthorTitle(message.author), style: const TextStyle(fontWeight: FontWeight.bold));
+
+    // виджет сообщения
+    Widget messageWidget = Text(message.text, style: TextStyle(color: message.author.id == _user.id ? Colors.white : Colors.black));
+    if (isURL(message.text)) {
+      String url = message.text;
+      if (!url.contains('https://')) url = 'https://$url';
+      Future<Metadata?> meta = AnyLinkPreview.getMetadata(link: url);
+      meta.then((value) => print(value));
+      messageWidget = AnyLinkPreview(
+        link: url,
+        cache: const Duration(hours: 1),
+        backgroundColor: message.author.id == _user.id ? Colors.indigo : Colors.white12,
+        titleStyle: TextStyle(color: message.author.id == _user.id ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
+        bodyStyle: TextStyle(color: message.author.id == _user.id ? Colors.white : Colors.black),
+        removeElevation: true,
+        errorBody: 'Ой! Не удалось получить данные по ссылке',
+        errorImage: 'Ой! Не удалось загрузить картинку',
+        errorTitle: 'Ой! Что-то не так с заголовком',
       );
-    } else {
-      if (showName) {
-        return Container(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(_getAuthorTitle(message.author), style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 5.0),
-                Text(message.text),
-                timeWidget
-              ]
-            )
-        );
-      } else {
-        return Container(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(message.text),
-              timeWidget
-            ]
-          )
-        );
-      }
     }
+
+    // контайнер сообщения
+    final messageColumns = [messageWidget, timeWidget];
+    if (message.author.id != _user.id && showName) {
+      messageColumns.insert(0, const SizedBox(height: 5.0));
+      messageColumns.insert(0, authorTitleWidget);
+    }
+    final messageContainer = Container(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: messageColumns
+      )
+    );
+
+    return messageContainer;
   }
 
   void _showMenu(BuildContext context, types.Message message) async {
@@ -292,29 +301,32 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
       ),
       items: items
     );
+    if (item == null) return;
 
-    final store = Provider.of<MainStore>(context, listen: false);
-    switch (item) {
-      case IMMessageMenu.profile: // посмотреть данные по пользователю
-        _handlerAvatarTap(store, message.author);
-        break;
-      case IMMessageMenu.answer: // ответить на сообщение
-        break;
-      case IMMessageMenu.copy: // скопировать сообщение в буфер
-        Clipboard.setData(ClipboardData(text: (message as types.TextMessage).text));
-        break;
-      case IMMessageMenu.edit: // редактировать сообщение
-        break;
-      case IMMessageMenu.delete: // удалить сообщение
-        _client.socket.emit('im.del', { 'messageId': message.id }, (String name, dynamic error, dynamic data) {
-          if (error != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
-            );
-          }
-        });
-        break;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final store = Provider.of<MainStore>(context, listen: false);
+      switch (item) {
+        case IMMessageMenu.profile: // посмотреть данные по пользователю
+          _handlerAvatarTap(store, message.author);
+          break;
+        case IMMessageMenu.answer: // ответить на сообщение
+          break;
+        case IMMessageMenu.copy: // скопировать сообщение в буфер
+          Clipboard.setData(ClipboardData(text: (message as types.TextMessage).text));
+          break;
+        case IMMessageMenu.edit: // редактировать сообщение
+          break;
+        case IMMessageMenu.delete: // удалить сообщение
+          _client.socket.emit('im.del', { 'messageId': message.id }, (String name, dynamic error, dynamic data) {
+            if (error != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+              );
+            }
+          });
+          break;
+      }
+    });
   }
 
   bool _imPersonNameIsEmpty(IMMessage message) {
@@ -357,12 +369,14 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         child: Chat(
           l10n: const ChatL10nRu(),
           theme: const DefaultChatTheme(
-              inputBackgroundColor: Colors.blue,
-              inputTextCursorColor: Colors.white
+            attachmentButtonIcon: Icon(Icons.attach_file, color: Colors.white),
+            inputBackgroundColor: Colors.blue,
+            inputTextCursorColor: Colors.white,
+            primaryColor: Colors.indigo
           ),
           showUserNames: !widget.channel.private!,
           showUserAvatars: true,
-          usePreviewData: true,
+          sendButtonVisibilityMode: SendButtonVisibilityMode.always,
           customDateHeaderText: _customDateHeaderText,
           textMessageBuilder: _textMessageBuilder,
           user: _user,
@@ -371,6 +385,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
           onSendPressed: _send,
           onAvatarTap: (types.User user) => _handlerAvatarTap(store, user),
           onMessageTap: _showMenu,
+          onAttachmentPressed: _handleImageSelection,
         )
       )
     );
