@@ -78,9 +78,10 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
               if (channel.lastMessage != null) {
                 const maxLen = 45;
                 final lastMessage = channel.lastMessage;
-                if (lastMessage!.imPerson != null) {
+                String text = lastMessage!.body!.text != null ? lastMessage.body!.text! : '';
+                if (lastMessage.imPerson != null) {
                   final person = '${Utilities.getPersonTitle(lastMessage.imPerson!, store.user.value!.person!, true)}: ';
-                  final text = Utilities.getHeaderTitle(lastMessage.body!.text, maxLen - person.length);
+                  text = Utilities.getHeaderTitle(text, maxLen - person.length);
                   channelInfo.add(
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,7 +100,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
                       )
                   );
                 } else {
-                  final text = Utilities.getHeaderTitle(lastMessage.body!.text, maxLen);
+                  text = Utilities.getHeaderTitle(text, maxLen);
                   channelInfo.add(
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

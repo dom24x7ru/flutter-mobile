@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:any_link_preview/any_link_preview.dart';
@@ -35,6 +36,8 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   final List<dynamic> _listeners = [];
   bool _mute = false;
   Offset? _tapPosition;
+
+  final _primaryColor = Colors.indigo;
 
   @override
   void initState() {
@@ -92,22 +95,53 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
       firstName = message.imPerson!.person.name;
     }
 
-    return types.TextMessage(
-      author: types.User(
-        id: message.imPerson != null ? message.imPerson!.person.id.toString() : '0',
-        firstName: firstName,
-        lastName: message.imPerson != null ? message.imPerson!.person.surname : null,
-        imageUrl: message.imPerson == null ? 'https://dom24x7-static.ru.yapahost.ru/img/im/bot.png' : null,
-        metadata: message.imPerson != null ? message.imPerson!.toMap() : null
-      ),
-      id: message.guid,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt,
-      roomId: widget.channel.id.toString(),
-      text: message.body!.text,
-      status: status,
-      metadata: { 'messageId': message.id }
+    final author = types.User(
+      id: message.imPerson != null ? message.imPerson!.person.id.toString() : '0',
+      firstName: firstName,
+      lastName: message.imPerson != null ? message.imPerson!.person.surname : null,
+      imageUrl: message.imPerson == null ? 'https://dom24x7-static.ru.yapahost.ru/img/im/bot.png' : null,
+      metadata: message.imPerson != null ? message.imPerson!.toMap() : null
     );
+
+    if (message.body!.text != null) {
+      return types.TextMessage(
+        author: author,
+        id: message.guid,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+        roomId: widget.channel.id.toString(),
+        text: message.body!.text!,
+        status: status,
+        metadata: { 'messageId': message.id }
+      );
+    } else if (message.body!.image != null) {
+      final image = message.body!.image!;
+      return types.ImageMessage(
+        author: author,
+        id: message.guid,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+        roomId: widget.channel.id.toString(),
+        name: image.name,
+        size: image.size,
+        uri: image.uri,
+        width: image.width.toDouble(),
+        height: image.height.toDouble(),
+        status: status
+      );
+    } else {
+      // неизвестный тип сообщения
+      return types.TextMessage(
+        author: author,
+        id: message.guid,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+        roomId: widget.channel.id.toString(),
+        text: 'Какое-то странное сообщение',
+        status: status,
+        metadata: { 'messageId': message.id }
+      );
+    }
   }
 
   void _loadMessages({ int limit = 20, int offset = 0 }) {
@@ -163,30 +197,32 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     setState(() => _messages.removeAt(index));
   }
 
-  void _send(types.PartialText message) {
+  void _send(IMMessageBody body, { String? guid }) {
     final channelId = widget.channel.id;
-    final guid = '$channelId-${DateTime.now().millisecondsSinceEpoch}';
-    final newMessage = types.TextMessage(
-      author: types.User(id: _user.id),
-      id: guid,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      updatedAt: DateTime.now().millisecondsSinceEpoch,
-      roomId: widget.channel.id.toString(),
-      text: message.text,
-      status: types.Status.sending
-    );
-    _addMessage(newMessage);
-    Map<String, dynamic> data = { 'guid': guid, 'channelId': channelId, 'body': { 'text': message.text } };
+    guid ??= '$channelId-${DateTime.now().millisecondsSinceEpoch}';
+    if (body.text != null) {
+      final newMessage = types.TextMessage(
+        author: types.User(id: _user.id),
+        id: guid,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        updatedAt: DateTime.now().millisecondsSinceEpoch,
+        roomId: widget.channel.id.toString(),
+        text: body.text!,
+        status: types.Status.sending
+      );
+      _addMessage(newMessage);
+    }
+    Map<String, dynamic> data = { 'guid': guid, 'channelId': channelId, 'body': body.toMap() };
     _client.socket.emit('im.save', data, (String name, dynamic error, dynamic data) {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+          SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
         );
         return;
       }
       if (data == null || data['status'] != 'OK') {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Произошла неизвестная ошибка. Попробуйте позже...'), backgroundColor: Colors.red)
+          const SnackBar(content: Text('Произошла неизвестная ошибка. Попробуйте позже...'), backgroundColor: Colors.red)
         );
         return;
       }
@@ -205,20 +241,56 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
       final bytes = await result.readAsBytes();
       final image = await decodeImageFromList(bytes);
 
+      final channelId = widget.channel.id;
       final message = types.ImageMessage(
         author: _user,
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: '$channelId-${DateTime.now().millisecondsSinceEpoch}',
         createdAt: DateTime.now().millisecondsSinceEpoch,
         updatedAt: DateTime.now().millisecondsSinceEpoch,
         roomId: widget.channel.id.toString(),
-        height: image.height.toDouble(),
         name: result.name,
         size: bytes.length,
         uri: result.path,
         width: image.width.toDouble(),
+        height: image.height.toDouble(),
         status: types.Status.sending
       );
       _addMessage(message);
+
+      final data = {
+        'base64': base64Encode(bytes),
+        'name': result.name,
+        'size': bytes.length,
+        'width': image.width,
+        'height': image.height
+      };
+      _client.socket.emit('file.upload', data, (String name, dynamic error, dynamic data) {
+        if (error != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+          );
+          return;
+        }
+        if (data == null || data['status'] != 'OK') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Произошла неизвестная ошибка. Попробуйте позже...'), backgroundColor: Colors.red)
+          );
+          return;
+        }
+
+        // теперь можем сохранить сообщение с картинкой
+        final body = IMMessageBody.fromMap({
+          'image': {
+            'id': data['file']['id'],
+            'name': message.name,
+            'size': message.size,
+            'uri': data['file']['link'],
+            'width': image.width,
+            'height': image.height
+          }
+        });
+        _send(body, guid: message.id);
+      });
     }
   }
 
@@ -291,12 +363,18 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   }
 
   Widget _imageMessageBuilder(types.ImageMessage message, { required int messageWidth }) {
+    late ImageProvider image;
+    if (message.uri.contains('https://')) {
+      image = NetworkImage(message.uri);
+    } else {
+      image = FileImage(File(message.uri));
+    }
     return Container(
       padding: const EdgeInsets.all(15.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image(image: FileImage(File(message.uri))),
+          Image(image: image),
           _getMessageTimeWidget(message)
         ]
       ),
@@ -421,11 +499,11 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         onTapDown: _getPosition,
         child: Chat(
           l10n: const ChatL10nRu(),
-          theme: const DefaultChatTheme(
-            attachmentButtonIcon: Icon(Icons.attach_file, color: Colors.white),
+          theme: DefaultChatTheme(
+            attachmentButtonIcon: const Icon(Icons.attach_file, color: Colors.white),
             inputBackgroundColor: Colors.blue,
             inputTextCursorColor: Colors.white,
-            primaryColor: Colors.indigo
+            primaryColor: _primaryColor
           ),
           showUserNames: !widget.channel.private!,
           showUserAvatars: true,
@@ -436,7 +514,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
           user: _user,
           messages: _messages,
           onEndReached: () async => _loadMessages(offset: _messages.length),
-          onSendPressed: _send,
+          onSendPressed: (types.PartialText message) => _send(IMMessageBody.fromMap({ 'text': message.text })),
           onAvatarTap: (types.User user) => _handlerAvatarTap(store, user),
           onMessageTap: _showMenu,
           onAttachmentPressed: _handleImageSelection,

@@ -3,6 +3,33 @@ import 'package:dom24x7_flutter/models/im/im_channel.dart';
 import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/user/person.dart';
 
+class IMImage extends Model {
+  late String name;
+  late int size;
+  late String uri;
+  late int width;
+  late int height;
+
+  IMImage.fromMap(Map<String, dynamic> map) : super(map['id']) {
+    name = map['name'];
+    size = map['size'];
+    uri = map['uri'];
+    width = map['width'];
+    height = map['height'];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'size': size,
+      'uri': uri,
+      'width': width,
+      'height': height
+    };
+  }
+}
+
 class IMMessageHistoryItem {
   late int createdAt;
   late String text;
@@ -18,12 +45,14 @@ class IMMessageHistoryItem {
 }
 
 class IMMessageBody {
-  late String text;
+  String? text;
+  IMImage? image;
   late List<IMMessageHistoryItem> history = [];
   IMMessage? aMessage;
 
   IMMessageBody.fromMap(Map<String, dynamic> map) {
     text = map['text'];
+    if (map['image'] != null) image = IMImage.fromMap(map['image']);
     if (map['history'] != null) {
       for (var item in map['history']) {
         history.add(IMMessageHistoryItem.fromMap(item));
@@ -33,9 +62,14 @@ class IMMessageBody {
   }
 
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = { 'text': text, 'history': [] };
-    for (var item in history) {
-      map['history'].add(item.toMap());
+    Map<String, dynamic> map = {};
+    if (text != null) map['text'] = text;
+    if (image != null) map['image'] = image!.toMap();
+    if (history.isNotEmpty) {
+      map['history'] = [];
+      for (var item in history) {
+        map['history'].add(item.toMap());
+      }
     }
     if (aMessage != null) map['aMessage'] = aMessage!.toMap();
     return map;
