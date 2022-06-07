@@ -267,13 +267,13 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
       _client.socket.emit('file.upload', data, (String name, dynamic error, dynamic data) {
         if (error != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
           );
           return;
         }
         if (data == null || data['status'] != 'OK') {
           ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Произошла неизвестная ошибка. Попробуйте позже...'), backgroundColor: Colors.red)
+            const SnackBar(content: Text('Произошла неизвестная ошибка. Попробуйте позже...'), backgroundColor: Colors.red)
           );
           return;
         }
@@ -472,6 +472,9 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   void _showAttachMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0)
+      ),
       builder: (BuildContext context) {
         return Container(
           height: 140,
@@ -552,7 +555,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
           onEndReached: () async => _loadMessages(offset: _messages.length),
           onSendPressed: (types.PartialText message) => _send(IMMessageBody.fromMap({ 'text': message.text })),
           onAvatarTap: (types.User user) => _handlerAvatarTap(store, user),
-          onMessageTap: _showMenu,
+          onMessageLongPress: _showMenu,
           onAttachmentPressed: () => _showAttachMenu(context),
         )
       )
