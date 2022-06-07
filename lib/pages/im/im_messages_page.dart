@@ -235,8 +235,8 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_getFlat(store, flat))));
   }
 
-  void _handleImageSelection() async {
-    final result = await ImagePicker().pickImage(source: ImageSource.gallery);
+  void _handleImageSelection(ImageSource source) async {
+    final result = await ImagePicker().pickImage(source: source);
     if (result != null) {
       final bytes = await result.readAsBytes();
       final image = await decodeImageFromList(bytes);
@@ -469,6 +469,42 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     setState(() => _tapPosition = details.globalPosition);
   }
 
+  void _showAttachMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 140,
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleImageSelection(ImageSource.gallery);
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.green)
+                ),
+                child: const Text('Галерея'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleImageSelection(ImageSource.camera);
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blue)
+                ),
+                child: const Text('Камера'),
+              )
+            ]
+          )
+        );
+      }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
@@ -517,7 +553,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
           onSendPressed: (types.PartialText message) => _send(IMMessageBody.fromMap({ 'text': message.text })),
           onAvatarTap: (types.User user) => _handlerAvatarTap(store, user),
           onMessageTap: _showMenu,
-          onAttachmentPressed: _handleImageSelection,
+          onAttachmentPressed: () => _showAttachMenu(context),
         )
       )
     );
