@@ -97,7 +97,7 @@ class _SpaceEditPageState extends State<SpaceEditPage> {
     final store = Provider.of<MainStore>(context);
 
     return Scaffold(
-      appBar: Header(context, 'Редактировать'),
+      appBar: Header.get(context, 'Редактировать'),
       body: Container(
         padding: const EdgeInsets.all(15.0),
         child: ListView(

@@ -16,7 +16,7 @@ class FAQListPage extends StatelessWidget {
     final categoryName = list.isNotEmpty ? list[0].category.name : null;
 
     return Scaffold(
-      appBar: Header(context, categoryName != null ? Utilities.getHeaderTitle(categoryName) : 'Неизвестная категория'),
+      appBar: Header.get(context, categoryName != null ? Utilities.getHeaderTitle(categoryName) : 'Неизвестная категория'),
       bottomNavigationBar: const Footer(FooterNav.services),
       body: ListView.separated(
         itemCount: list.length,
@@ -24,7 +24,7 @@ class FAQListPage extends StatelessWidget {
           final FAQItem item = list[index];
           return ListTile(
             title: Text(item.title),
-            onTap: () => showFAQItem(context, item)
+            onTap: () => _showFAQItem(context, item)
           );
         },
         separatorBuilder: (BuildContext context, int index) {
@@ -34,7 +34,7 @@ class FAQListPage extends StatelessWidget {
     );
   }
 
-  void showFAQItem(BuildContext context, FAQItem item) {
+  void _showFAQItem(BuildContext context, FAQItem item) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {

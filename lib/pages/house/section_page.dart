@@ -33,7 +33,7 @@ class _SectionPageState extends State<SectionPage> {
     final floors = _getFloors(widget.flats);
 
     return Scaffold(
-      appBar: Header(context, _getSectionTitle(widget.flats[0])),
+      appBar: Header.get(context, _getSectionTitle(widget.flats[0])),
       bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
         itemCount: floors.length + 1,

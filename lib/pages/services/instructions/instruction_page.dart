@@ -12,7 +12,7 @@ class InstructionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(context, Utilities.getHeaderTitle(instruction.title)),
+      appBar: Header.get(context, Utilities.getHeaderTitle(instruction.title)),
       bottomNavigationBar: const Footer(FooterNav.services),
       body: ListView.builder(
         itemCount: instruction.body.length + 1,

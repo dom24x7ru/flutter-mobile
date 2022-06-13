@@ -19,7 +19,7 @@ class VoteResultPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
     return Scaffold(
-      appBar: Header(context, 'Результаты'),
+      appBar: Header.get(context, 'Результаты'),
       bottomNavigationBar: const Footer(FooterNav.services),
       body: Container(
         padding: const EdgeInsets.all(15.0),

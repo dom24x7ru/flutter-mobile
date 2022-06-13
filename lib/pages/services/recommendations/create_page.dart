@@ -99,7 +99,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
     final String title = widget.recommendation != null ? 'Редактировать' : 'Создать рекомендацию';
 
     return Scaffold(
-      appBar: Header(context, title),
+      appBar: Header.get(context, title),
       bottomNavigationBar: const Footer(FooterNav.services),
       body: Container(
         padding: const EdgeInsets.all(15.0),

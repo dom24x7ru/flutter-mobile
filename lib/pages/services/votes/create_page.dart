@@ -103,7 +103,7 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
       );
     }
     return Scaffold(
-      appBar: Header(context, 'Создать голосование'),
+      appBar: Header.get(context, 'Создать голосование'),
       bottomNavigationBar: const Footer(FooterNav.services),
       body: Container(
         padding: const EdgeInsets.all(15.0),

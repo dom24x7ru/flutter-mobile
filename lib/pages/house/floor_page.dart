@@ -19,7 +19,7 @@ class _FloorPageState extends State<FloorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(context, _getFloorTitle(widget.flats[0])),
+      appBar: Header.get(context, _getFloorTitle(widget.flats[0])),
       bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
         itemCount: widget.flats.length + 1,

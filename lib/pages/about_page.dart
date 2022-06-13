@@ -29,7 +29,7 @@ class _AboutPage extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(context, 'О приложении'),
+      appBar: Header.get(context, 'О приложении'),
       bottomNavigationBar: const Footer(null),
       body: Center(
         child: Column(

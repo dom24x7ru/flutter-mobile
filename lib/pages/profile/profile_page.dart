@@ -8,7 +8,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(context, 'Профиль'),
+      appBar: Header.get(context, 'Профиль'),
       bottomNavigationBar: const Footer(FooterNav.news),
       body: Container()
     );

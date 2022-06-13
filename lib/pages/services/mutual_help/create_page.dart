@@ -74,7 +74,7 @@ class _MutualHelpCreatePageState extends State<MutualHelpCreatePage> {
     final String title = widget.item != null ? 'Редактировать' : 'Создать помощь';
 
     return Scaffold(
-        appBar: Header(context, title),
+        appBar: Header.get(context, title),
         bottomNavigationBar: const Footer(FooterNav.services),
         body: Container(
             padding: const EdgeInsets.all(15.0),

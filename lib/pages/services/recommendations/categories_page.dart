@@ -64,7 +64,7 @@ class _RecommendationsCategoriesPageState extends State<RecommendationsCategorie
     }
 
     return Scaffold(
-        appBar: Header(context, 'Рекомендации'),
+        appBar: Header.get(context, 'Рекомендации'),
         bottomNavigationBar: const Footer(FooterNav.services),
         floatingActionButton: floatingActionButton,
         body: ListView.builder(

@@ -18,7 +18,7 @@ class _SpacesPageState extends State<SpacesPage> {
     final residents = store.user.value!.residents;
 
     return Scaffold(
-        appBar: Header(context, 'Помещения'),
+        appBar: Header.get(context, 'Помещения'),
         bottomNavigationBar: const Footer(FooterNav.news),
         floatingActionButton: FloatingActionButton(
             onPressed: () => _showAddEditSpace(context),

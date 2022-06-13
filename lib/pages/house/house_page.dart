@@ -30,7 +30,7 @@ class HousePage extends StatelessWidget {
 
     if (!store.loaded) {
       return Scaffold(
-        appBar: Header(context, 'Подъезды'),
+        appBar: Header.get(context, 'Подъезды'),
         bottomNavigationBar: const Footer(FooterNav.house)
       );
     }
@@ -38,7 +38,7 @@ class HousePage extends StatelessWidget {
     final sections = _getSections(store.flats.list);
 
     return Scaffold(
-      appBar: Header(context, 'Подъезды'),
+      appBar: Header.get(context, 'Подъезды'),
       bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
           itemCount: sections.length + 1,

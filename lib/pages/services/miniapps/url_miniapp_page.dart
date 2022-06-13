@@ -39,7 +39,7 @@ class _UrlMiniAppPageState extends State<UrlMiniAppPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(context, Utilities.getHeaderTitle(widget.title)),
+      appBar: Header.get(context, Utilities.getHeaderTitle(widget.title)),
       bottomNavigationBar: const Footer(FooterNav.services),
       body: UrlMiniApp(url: widget.url)
     );

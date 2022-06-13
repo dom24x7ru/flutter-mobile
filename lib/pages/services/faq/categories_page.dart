@@ -16,7 +16,7 @@ class FAQCategoriesPage extends StatelessWidget {
     final categories = getCategories(faq);
 
     return Scaffold(
-      appBar: Header(context, 'ЧаВо'),
+      appBar: Header.get(context, 'ЧаВо'),
       bottomNavigationBar: const Footer(FooterNav.services),
       body: ListView.separated(
         itemCount: categories.length,

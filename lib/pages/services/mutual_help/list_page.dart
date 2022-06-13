@@ -69,7 +69,7 @@ class _MutualHelpListPageState extends State<MutualHelpListPage> {
     }
 
     return Scaffold(
-        appBar: Header(context, categoryName != null ? Utilities.getHeaderTitle(categoryName) : 'Неизвестная категория'),
+        appBar: Header.get(context, categoryName != null ? Utilities.getHeaderTitle(categoryName) : 'Неизвестная категория'),
         bottomNavigationBar: const Footer(FooterNav.services),
         floatingActionButton: floatingActionButton,
         body: ListView.builder(

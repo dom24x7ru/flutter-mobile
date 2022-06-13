@@ -99,7 +99,7 @@ class _FlatPageState extends State<FlatPage> {
     final client = store.client;
     if (_flat == null) {
       return Scaffold(
-        appBar: Header(context, ''),
+        appBar: Header.get(context, ''),
         bottomNavigationBar: const Footer(FooterNav.house),
       );
     } else if (!_loaded) {
@@ -120,7 +120,7 @@ class _FlatPageState extends State<FlatPage> {
     }
 
     return Scaffold(
-      appBar: Header(context, Utilities.getFlatTitle(_flat!)),
+      appBar: Header.get(context, Utilities.getFlatTitle(_flat!)),
       bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
         itemCount: _persons.length + 1,

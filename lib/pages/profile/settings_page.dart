@@ -74,7 +74,7 @@ class _SettingsPage extends State<SettingsPage> {
     final store = Provider.of<MainStore>(context);
 
     return Scaffold(
-      appBar: Header(context, 'Настройки'),
+      appBar: Header.get(context, 'Настройки'),
       bottomNavigationBar: const Footer(null),
       body: Container(
         padding: const EdgeInsets.all(15.0),

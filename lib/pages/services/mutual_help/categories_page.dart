@@ -64,7 +64,7 @@ class _MutualHelpCategoriesPageState extends State<MutualHelpCategoriesPage> {
     }
 
     return Scaffold(
-        appBar: Header(context, 'Могу помочь'),
+        appBar: Header.get(context, 'Могу помочь'),
         bottomNavigationBar: const Footer(FooterNav.services),
         floatingActionButton: floatingActionButton,
         body: ListView.builder(

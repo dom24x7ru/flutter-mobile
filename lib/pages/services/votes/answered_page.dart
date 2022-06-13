@@ -75,7 +75,7 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
     if (widget.vote.anonymous) children.insert(2, const Text('анонимное голосование', style: TextStyle(color: Colors.black26)));
 
     return Scaffold(
-        appBar: Header(context, Utilities.getHeaderTitle(widget.vote.title)),
+        appBar: Header.get(context, Utilities.getHeaderTitle(widget.vote.title)),
         bottomNavigationBar: const Footer(FooterNav.services),
         body: Card(
             child: Container(

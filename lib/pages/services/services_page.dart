@@ -3,6 +3,7 @@ import 'package:dom24x7_flutter/pages/services/documents_page.dart';
 import 'package:dom24x7_flutter/pages/services/faq/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/miniapps/url_miniapp_page.dart';
 import 'package:dom24x7_flutter/pages/services/mutual_help/categories_page.dart';
+import 'package:dom24x7_flutter/pages/services/noise_page.dart';
 import 'package:dom24x7_flutter/pages/services/recommendations/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/votes/list_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -83,6 +84,7 @@ class ServicesPage extends StatelessWidget {
       'faq': { 'page': const FAQCategoriesPage(), 'count': store.faq.list != null ? store.faq.list!.length : 0 },
       'apartments': { 'page': const FAQCategoriesPage(), 'count': 0 },
       'market': { 'page': const FAQCategoriesPage(), 'count': 0 },
+      'noise': { 'page': const NoisePage(), 'count': 0 },
       'mutual-help': { 'page': const MutualHelpCategoriesPage(), 'count': store.mutualHelp.list != null ? store.mutualHelp.list!.length : 0 },
     };
 
@@ -119,7 +121,7 @@ class ServicesPage extends StatelessWidget {
     }
 
     return Scaffold(
-        appBar: Header(context, 'Сервисы'),
+        appBar: Header.get(context, 'Сервисы'),
         bottomNavigationBar: const Footer(FooterNav.services),
         body: Container(
             padding: const EdgeInsets.all(15.0),

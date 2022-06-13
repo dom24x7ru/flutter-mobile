@@ -57,7 +57,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
     final store = Provider.of<MainStore>(context);
 
     return Scaffold(
-        appBar: Header(context, 'Чаты'),
+        appBar: Header.get(context, 'Чаты'),
         bottomNavigationBar: const Footer(FooterNav.im),
         body: ListView.builder(
             itemCount: _channels.length,

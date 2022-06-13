@@ -59,7 +59,7 @@ class _NewsPageState extends State<NewsPage> {
 
     if (!store.loaded || store.posts.list == null) {
       return Scaffold(
-          appBar: Header(context, 'Новости'),
+          appBar: Header.get(context, 'Новости'),
           bottomNavigationBar: const Footer(FooterNav.news)
       );
     }
@@ -67,7 +67,7 @@ class _NewsPageState extends State<NewsPage> {
     final int itemCount = store.posts.list!.length + (vote != null ? 1 : 0);
 
     return Scaffold(
-        appBar: Header(context, 'Новости'),
+        appBar: Header.get(context, 'Новости'),
         bottomNavigationBar: const Footer(FooterNav.news),
         body: ListView.builder(
             itemCount: itemCount,
