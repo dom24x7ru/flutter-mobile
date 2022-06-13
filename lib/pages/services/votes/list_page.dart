@@ -35,9 +35,12 @@ class _VotesListPageState extends State<VotesListPage> {
         _votes = store.votes.list!;
       });
       var listener = _client.on('vote', this, (event, cont) {
-        setState(() { _votes = store.votes.list!; });
+        setState(() => _votes = store.votes.list!);
       });
       _listeners.add(listener);
+      listener = _client.on('votes', this, (event, cont) {
+        setState(() => _votes = store.votes.list!);
+      });
     });
   }
 
@@ -56,9 +59,9 @@ class _VotesListPageState extends State<VotesListPage> {
     Widget? floatingActionButton;
     if (store.user.value!.residents.isNotEmpty) {
       floatingActionButton = FloatingActionButton(
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VoteCreatePage())),
-          backgroundColor: Colors.blue,
-          child: const Icon(Icons.add)
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const VoteCreatePage())),
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add)
       );
     }
 
@@ -90,17 +93,17 @@ class _VotesListPageState extends State<VotesListPage> {
               if (vote.anonymous) children.insert(2, const Text('анонимное голосование', style: TextStyle(color: Colors.black26)));
 
               return GestureDetector(
-                  child: Card(
-                      child: Container(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: children
-                          )
+                child: Card(
+                  child: Container(
+                    padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: children
                       )
-                  ),
-                  onTap: () => _gotoVote(context, store, vote),
-                  onLongPress: () => _showMenu(context, store, vote)
+                  )
+                ),
+                onTap: () => _gotoVote(context, store, vote),
+                onLongPress: () => _showMenu(context, store, vote)
               );
             }
         )
