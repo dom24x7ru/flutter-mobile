@@ -195,7 +195,7 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
     store.client.socket.emit('vote.save', data, (String name, dynamic error, dynamic data) {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+          SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
         );
         return;
       }
@@ -203,7 +203,7 @@ class _VoteCreatePageState extends State<VoteCreatePage> {
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Не удалось сохранить голосование. Попробуйте позже'), backgroundColor: Colors.red)
+          const SnackBar(content: Text('Не удалось сохранить голосование. Попробуйте позже'), backgroundColor: Colors.red)
         );
       }
     });

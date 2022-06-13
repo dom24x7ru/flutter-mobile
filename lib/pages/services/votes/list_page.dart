@@ -160,6 +160,13 @@ class _VotesListPageState extends State<VotesListPage> {
                       );
                     }
                   });
+                  // если закрываем голосование, то отписываемся от канала vote.voteId,
+                  // при повторном открытии голосования, переподписываемся на канала vote.voteId
+                  if (action == 'vote.close') {
+                    store.client.closeChannel('vote.${vote.id}');
+                  } else if (action == 'vote.reopen') {
+                    store.client.initChannel('vote.${vote.id}');
+                  }
                   Navigator.pop(context);
                 },
                 style: ButtonStyle(

@@ -329,7 +329,8 @@ class SocketClient extends BasicListener with EventEmitter {
       if (store.votes.list == null) return;
       final List<Vote> votes = store.votes.list!;
       for (Vote vote in votes) {
-        initChannel('vote.${vote.id}');
+        // подписываемся только на каналы незакрытых голосований
+        if (!vote.closed) initChannel('vote.${vote.id}');
       }
       return;
     }
