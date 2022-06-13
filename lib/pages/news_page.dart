@@ -100,7 +100,7 @@ class _NewsPageState extends State<NewsPage> {
                 );
               }
 
-              final Post post = store.posts.list![index + (vote != null ? 1 : 0)];
+              final Post post = store.posts.list![index + (vote != null ? -1 : 0)];
               final createdAt = Utilities.getDateFormat(post.createdAt);
               final icon = _getIconStyle(post);
               return GestureDetector(
