@@ -90,16 +90,19 @@ class ServicesPage extends StatelessWidget {
     final List<MiniApp> miniApps = store.miniApps.list != null ? store.miniApps.list! : [];
     for (var miniapp in miniApps) {
       if (miniapp.type.code == 'inline') {
-        miniapps.add(
-          ServiceCard(miniapp.title,
-            count: inlineMiniApps[miniapp.extra.code]['count'],
-            color: _getColor(miniapp.extra.color),
-            onTap: () {
-              store.client.socket.emit('miniapp.setAction', { 'miniappId': miniapp.id, 'action': 'open' });
-              Navigator.push(context, MaterialPageRoute(builder: (context) => inlineMiniApps[miniapp.extra.code]['page']));
-            }
-          )
-        );
+        final service = inlineMiniApps[miniapp.extra.code];
+        if (service != null) {
+          miniapps.add(
+            ServiceCard(miniapp.title,
+              count: service['count'],
+              color: _getColor(miniapp.extra.color),
+              onTap: () {
+                store.client.socket.emit('miniapp.setAction', { 'miniappId': miniapp.id, 'action': 'open' });
+                Navigator.push(context, MaterialPageRoute(builder: (context) => service['page']));
+              }
+            )
+          );
+        }
       } else if (miniapp.type.code == 'external') {
         // TODO: доработать когда появятся такие миниприложения
       } else if (miniapp.type.code == 'url') {
