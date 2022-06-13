@@ -24,32 +24,32 @@ class VoteResultPage extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.all(15.0),
         child: GroupedListView<VoteAnswer, String>(
-            elements: vote.answers,
-            groupBy: (VoteAnswer answer) => getQuestionBody(vote, answer),
-            groupSeparatorBuilder: (String questionBody) => Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(questionBody, style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text(questionCount(vote, getQuestionByBody(vote, questionBody)!), style: const TextStyle(fontWeight: FontWeight.bold))
-              ]
-            ),
-            groupComparator: (String group1, String group2) => questionCompare(getQuestionByBody(vote, group1)!, getQuestionByBody(vote, group2)!),
-            itemBuilder: (BuildContext context, VoteAnswer answer) {
-              return GestureDetector(
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(getFlat(store, answer)))),
-                child: Container(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Text(getPersonOrFlatName(answer), style: const TextStyle(color: Colors.blue))
-                )
-              );
-            },
-            useStickyGroupSeparators: true
+          elements: vote.answers,
+          groupBy: (VoteAnswer answer) => _getQuestionBody(vote, answer),
+          groupSeparatorBuilder: (String questionBody) => Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(questionBody, style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(_questionCount(vote, _getQuestionByBody(vote, questionBody)!), style: const TextStyle(fontWeight: FontWeight.bold))
+            ]
+          ),
+          groupComparator: (String group1, String group2) => _questionCompare(_getQuestionByBody(vote, group1)!, _getQuestionByBody(vote, group2)!),
+          itemBuilder: (BuildContext context, VoteAnswer answer) {
+            return GestureDetector(
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_getFlat(store, answer)))),
+              child: Container(
+                padding: const EdgeInsets.all(5.0),
+                child: Text(_getPersonOrFlatName(answer), style: const TextStyle(color: Colors.blue))
+              )
+            );
+          },
+          useStickyGroupSeparators: true
         )
       )
     );
   }
 
-  String getPersonOrFlatName(VoteAnswer answer) {
+  String _getPersonOrFlatName(VoteAnswer answer) {
     Person person = answer.person;
     String fullName = '';
     if (person.surname != null) {
@@ -68,27 +68,27 @@ class VoteResultPage extends StatelessWidget {
     return fullName.trim();
   }
 
-  String getQuestionBody(Vote vote, VoteAnswer answer) {
+  String _getQuestionBody(Vote vote, VoteAnswer answer) {
     for (VoteQuestion question in vote.questions) {
       if (question.id == answer.question.id) return question.body!;
     }
     return 'Неизвестный вопрос';
   }
 
-  VoteQuestion? getQuestionByBody(Vote vote, String questionBody) {
+  VoteQuestion? _getQuestionByBody(Vote vote, String questionBody) {
     for (VoteQuestion question in vote.questions) {
       if (question.body == questionBody) return question;
     }
     return null;
   }
 
-  int questionCompare(VoteQuestion question1, VoteQuestion question2) {
+  int _questionCompare(VoteQuestion question1, VoteQuestion question2) {
     if (question1.id < question2.id) return -1;
     if (question1.id > question2.id) return 1;
     return 0;
   }
 
-  String questionCount(Vote vote, VoteQuestion question) {
+  String _questionCount(Vote vote, VoteQuestion question) {
     int count = 0;
     String unit = 'голосов';
     for (VoteAnswer answer in vote.answers) {
@@ -116,7 +116,7 @@ class VoteResultPage extends StatelessWidget {
     return '$count $unit';
   }
 
-  Flat getFlat(MainStore store, VoteAnswer answer) {
+  Flat _getFlat(MainStore store, VoteAnswer answer) {
     Flat flat = answer.flat;
     final flats = store.flats.list!;
     for (Flat item in flats) {

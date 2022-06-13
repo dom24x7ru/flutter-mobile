@@ -39,8 +39,40 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
 
     final createdAt = Utilities.getDateFormat(widget.vote.createdAt);
     final List<Widget> status = [];
-    if (answered(store, widget.vote)) status.add(const Icon(Icons.done, color: Colors.green, size: 15.0));
+    if (_answered(store, widget.vote)) status.add(const Icon(Icons.done, color: Colors.green, size: 15.0));
     if (widget.vote.closed) status.add(const Icon(Icons.block, color: Colors.red, size: 15.0));
+
+    final children = [
+      Text(widget.vote.title.toUpperCase()),
+      Text(createdAt, style: const TextStyle(color: Colors.black26)),
+      Container(padding: const EdgeInsets.all(10.0)),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Проголосовало ${widget.vote.answers.length} из ${widget.vote.persons}'),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: status)
+        ]
+      ),
+      const Divider(),
+      DropdownButton<VoteResultFormat>(
+        isExpanded: true,
+        value: voteResultFormat,
+        onChanged: (VoteResultFormat? value) {
+          setState(() {
+            voteResultFormat = value!;
+          });
+        },
+        items: voteResultFormats.map<DropdownMenuItem<VoteResultFormat>>((VoteResultFormat value) {
+          return DropdownMenuItem<VoteResultFormat>(
+            value: value,
+            child: Text(value.text)
+          );
+        }).toList(),
+      ),
+      _resultChart(store, widget.vote)
+    ];
+
+    if (widget.vote.anonymous) children.insert(2, const Text('анонимное голосование', style: TextStyle(color: Colors.black26)));
 
     return Scaffold(
         appBar: Header(context, Utilities.getHeaderTitle(widget.vote.title)),
@@ -50,42 +82,14 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(widget.vote.title.toUpperCase()),
-                      Text(createdAt, style: const TextStyle(color: Colors.black26)),
-                      Container(padding: const EdgeInsets.all(10.0)),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Проголосовало ${widget.vote.answers.length} из ${widget.vote.persons}'),
-                            Row(mainAxisAlignment: MainAxisAlignment.end, children: status)
-                          ]
-                      ),
-                      const Divider(),
-                      DropdownButton<VoteResultFormat>(
-                        isExpanded: true,
-                        value: voteResultFormat,
-                        onChanged: (VoteResultFormat? value) {
-                          setState(() {
-                            voteResultFormat = value!;
-                          });
-                        },
-                        items: voteResultFormats.map<DropdownMenuItem<VoteResultFormat>>((VoteResultFormat value) {
-                          return DropdownMenuItem<VoteResultFormat>(
-                            value: value,
-                            child: Text(value.text)
-                          );
-                        }).toList(),
-                      ),
-                      resultChart(store, widget.vote)
-                    ]
+                    children: children
                 )
             )
         )
     );
   }
 
-  bool answered(MainStore store, Vote vote, [VoteQuestion? question]) {
+  bool _answered(MainStore store, Vote vote, [VoteQuestion? question]) {
     final answers = vote.answers;
     if (answers.isEmpty) return false;
 
@@ -102,10 +106,10 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
     return false;
   }
   
-  Widget resultChart(MainStore store, Vote vote) {
+  Widget _resultChart(MainStore store, Vote vote) {
     List<TableRow> rows = [];
     for (VoteQuestion question in vote.questions) {
-      double percent = this.percent(store, vote, question);
+      double percent = _percent(store, vote, question);
       rows.add(
         TableRow(
           children: [
@@ -125,7 +129,7 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                answered(store, vote, question) ? const Icon(Icons.task_alt, color: Colors.blue, size: 16.0) : const Text(''),
+                _answered(store, vote, question) ? const Icon(Icons.task_alt, color: Colors.blue, size: 16.0) : const Text(''),
                 const Text(' ')
               ]
             ),
@@ -145,26 +149,29 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
           },
           children: rows
       ),
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VoteResultPage(vote))),
-      onLongPress: () => showMenu(context, store, vote)
+      onTap: () {
+        if (widget.vote.anonymous) return;
+        Navigator.push(context, MaterialPageRoute(builder: (context) => VoteResultPage(vote)));
+      },
+      onLongPress: () => _showMenu(context, store, vote)
     );
   }
 
-  double percent(MainStore store, Vote vote, VoteQuestion question) {
+  double _percent(MainStore store, Vote vote, VoteQuestion question) {
     switch (voteResultFormat.value) {
-      case 'persons': return percentPersons(vote, question);
-      case 'flats': return percentFlats(store, vote, question);
-      case 'squares': return percentSquares(store, vote, question);
-      default: return percentPersons(vote, question);
+      case 'persons': return _percentPersons(vote, question);
+      case 'flats': return _percentFlats(store, vote, question);
+      case 'squares': return _percentSquares(store, vote, question);
+      default: return _percentPersons(vote, question);
     }
   }
 
-  double percentPersons(Vote vote, VoteQuestion question) {
+  double _percentPersons(Vote vote, VoteQuestion question) {
     List<VoteAnswer> answers = vote.answers.where((answer) => answer.question.id == question.id).toList();
     return answers.length / vote.persons;
   }
 
-  double percentFlats(MainStore store, Vote vote, VoteQuestion question) {
+  double _percentFlats(MainStore store, Vote vote, VoteQuestion question) {
     List<VoteAnswer> answers = vote.answers.where((answer) => answer.question.id == question.id).toList();
     int uniqueFlatsCount = 0;
     Map<int, List<Person>> flats = {};
@@ -177,10 +184,10 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
       flats[flat.id]!.add(answer.person);
     }
 
-    return uniqueFlatsCount / getVoteFlats(store, vote).length;
+    return uniqueFlatsCount / _getVoteFlats(store, vote).length;
   }
 
-  double percentSquares(MainStore store, Vote vote, VoteQuestion question) {
+  double _percentSquares(MainStore store, Vote vote, VoteQuestion question) {
     List<VoteAnswer> answers = vote.answers.where((answer) => answer.question.id == question.id).toList();
     double uniqueFlatsSquares = 0;
     Map<int, List<Person>> flats = {};
@@ -193,11 +200,11 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
       flats[flat.id]!.add(answer.person);
     }
 
-    final squares = getVoteFlats(store, vote).map((Flat flat) => flat.square).reduce((sum, square) => sum + square);
+    final squares = _getVoteFlats(store, vote).map((Flat flat) => flat.square).reduce((sum, square) => sum + square);
     return uniqueFlatsSquares / squares;
   }
 
-  List<Flat> getVoteFlats(MainStore store, Vote vote) {
+  List<Flat> _getVoteFlats(MainStore store, Vote vote) {
     List<Flat> voteFlats = store.flats.list!;
     if (vote.section != null) {
       voteFlats = voteFlats.where((flat) => flat.section == vote.section).toList();
@@ -208,7 +215,7 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
     return voteFlats;
   }
 
-  void showMenu(BuildContext context, MainStore store, Vote vote) {
+  void _showMenu(BuildContext context, MainStore store, Vote vote) {
     if (vote.closed) return;
     
     showModalBottomSheet(

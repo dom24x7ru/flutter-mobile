@@ -75,24 +75,27 @@ class _VotesListPageState extends State<VotesListPage> {
               if (_answered(store, vote)) status.add(const Icon(Icons.done, color: Colors.green, size: 15.0));
               if (vote.closed) status.add(const Icon(Icons.block, color: Colors.red, size: 15.0));
 
+              final children = [
+                Text(vote.title.toUpperCase()),
+                Text(createdAt, style: const TextStyle(color: Colors.black26)),
+                Container(padding: const EdgeInsets.all(10.0)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Проголосовало ${vote.answers.length} из ${vote.persons}'),
+                    Row(mainAxisAlignment: MainAxisAlignment.end, children: status)
+                  ]
+                )
+              ];
+              if (vote.anonymous) children.insert(2, const Text('анонимное голосование', style: TextStyle(color: Colors.black26)));
+
               return GestureDetector(
                   child: Card(
                       child: Container(
                           padding: const EdgeInsets.all(15.0),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(vote.title.toUpperCase()),
-                                Text(createdAt, style: const TextStyle(color: Colors.black26)),
-                                Container(padding: const EdgeInsets.all(10.0)),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Проголосовало ${vote.answers.length} из ${vote.persons}'),
-                                      Row(mainAxisAlignment: MainAxisAlignment.end, children: status)
-                                    ]
-                                )
-                              ]
+                              children: children
                           )
                       )
                   ),

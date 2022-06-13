@@ -33,7 +33,7 @@ class _VotePageState extends State<VotePage> {
   @override
   void initState() {
     super.initState();
-    questions = createQuestionsList(widget.vote);
+    questions = _createQuestionsList(widget.vote);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
@@ -45,7 +45,7 @@ class _VotePageState extends State<VotePage> {
         final data = eventData['data'];
         final vote = Vote.fromMap(data);
         // если найден наш ответ, то переходим на страницу с результатами
-        if (answered(store, vote)) {
+        if (_answered(store, vote)) {
           Navigator.pop(context);
           Navigator.push(context, MaterialPageRoute(builder: (context) => VoteAnsweredPage(vote)));
         }
@@ -67,6 +67,29 @@ class _VotePageState extends State<VotePage> {
     final store = Provider.of<MainStore>(context);
     final createdAt = Utilities.getDateFormat(widget.vote.createdAt);
 
+    final children = [
+      Text(widget.vote.title.toUpperCase()),
+      Text(createdAt, style: const TextStyle(color: Colors.black26)),
+      Container(padding: const EdgeInsets.all(10.0)),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Проголосовало ${widget.vote.answers.length} из ${widget.vote.persons}'),
+        ]
+      ),
+      const Divider(),
+      Column(children: _questionWidgets(questions)),
+      SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: _btnEnabled() ? () => _send(context, store, widget.vote) : null,
+          child: Text('Проголосовать'.toUpperCase())
+        )
+      )
+    ];
+
+    if (widget.vote.anonymous) children.insert(2, const Text('анонимное голосование', style: TextStyle(color: Colors.black26)));
+
     return Scaffold(
       appBar: Header(context, Utilities.getHeaderTitle(widget.vote.title)),
       bottomNavigationBar: const Footer(FooterNav.services),
@@ -75,33 +98,14 @@ class _VotePageState extends State<VotePage> {
           padding: const EdgeInsets.all(15.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(widget.vote.title.toUpperCase()),
-              Text(createdAt, style: const TextStyle(color: Colors.black26)),
-              Container(padding: const EdgeInsets.all(10.0)),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Проголосовало ${widget.vote.answers.length} из ${widget.vote.persons}'),
-                  ]
-              ),
-              const Divider(),
-              Column(children: questionWidgets(questions)),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                    onPressed: btnEnabled() ? () => send(context, store, widget.vote) : null,
-                    child: Text('Проголосовать'.toUpperCase())
-                )
-              )
-            ]
+            children: children
           )
         )
       )
     );
   }
 
-  bool answered(MainStore store, Vote vote) {
+  bool _answered(MainStore store, Vote vote) {
     final answers = vote.answers;
     if (answers.isEmpty) return false;
 
@@ -111,23 +115,23 @@ class _VotePageState extends State<VotePage> {
     return answers.where((answer) => answer.person.id == person.id).isNotEmpty;
   }
 
-  List<Question> createQuestionsList(Vote vote) {
+  List<Question> _createQuestionsList(Vote vote) {
     return vote.questions.map((question) {
       return Question(question.id, question.body!);
     }).toList();
   }
 
-  List<Widget> questionWidgets(List<Question> questions) {
+  List<Widget> _questionWidgets(List<Question> questions) {
     return questions.map((question) {
       return Dom24x7Checkbox(
         value: question.selected,
         label: question.body,
-        onChanged: (bool? value) => selectQuestion(widget.vote, question, value),
+        onChanged: (bool? value) => _selectQuestion(widget.vote, question, value),
       );
     }).toList();
   }
 
-  void selectQuestion(Vote vote, Question question, bool? value) {
+  void _selectQuestion(Vote vote, Question question, bool? value) {
     setState(() {
       if (!vote.multi) {
         // необходимо предварительно сбросить все галочки
@@ -139,11 +143,11 @@ class _VotePageState extends State<VotePage> {
     });
   }
 
-  bool btnEnabled() {
+  bool _btnEnabled() {
     return questions.where((question) => question.selected).isNotEmpty;
   }
 
-  void send(BuildContext context, MainStore store, Vote vote) {
+  void _send(BuildContext context, MainStore store, Vote vote) {
     var data = {
       'voteId': vote.id,
       'answers': questions.where((question) => question.selected).map((question) => question.id).toList()

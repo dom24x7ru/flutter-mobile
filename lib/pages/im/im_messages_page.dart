@@ -386,11 +386,8 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
 
     List<PopupMenuEntry<IMMessageMenu>> items = [
       PopupMenuItem<IMMessageMenu>(
-          value: IMMessageMenu.profile,
-          child: Row(children: const [
-            Icon(Icons.person_outline),
-            Text(' Профиль')
-          ])
+        value: IMMessageMenu.profile,
+        child: Row(children: const [Icon(Icons.person_outline), Text(' Профиль')])
       ),
       // PopupMenuItem<IMMessageMenu>(
       //     value: IMMessageMenu.answer,
@@ -400,10 +397,8 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
       //     ])
       // ),
       PopupMenuItem<IMMessageMenu>(
-          value: IMMessageMenu.copy,
-          child: Row(
-              children: const [Icon(Icons.copy), Text(' Копировать')])
-      )
+        value: IMMessageMenu.copy,
+        child: Row(children: const [Icon(Icons.copy), Text(' Копировать')]))
     ];
     if (message.author.metadata!['person']['id'].toString() == _user.id) {
       // items.add(PopupMenuItem<IMMessageMenu>(
@@ -414,21 +409,18 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
       //     ])
       // ));
       items.add(PopupMenuItem<IMMessageMenu>(
-          value: IMMessageMenu.delete,
-          child: Row(children: const [
-            Icon(Icons.delete_outline),
-            Text(' Удалить')
-          ])
+        value: IMMessageMenu.delete,
+        child: Row(children: const [Icon(Icons.delete_outline), Text(' Удалить')])
       ));
     }
 
     IMMessageMenu? item = await showMenu<IMMessageMenu>(
       context: context,
       position: RelativeRect.fromLTRB(
-          _tapPosition!.dx - 10,
-          _tapPosition!.dy - 10,
-          _tapPosition!.dx + 10,
-          _tapPosition!.dy + 10
+        _tapPosition!.dx - 10,
+        _tapPosition!.dy - 10,
+        _tapPosition!.dx + 10,
+        _tapPosition!.dy + 10
       ),
       items: items
     );
@@ -443,7 +435,10 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         case IMMessageMenu.answer: // ответить на сообщение
           break;
         case IMMessageMenu.copy: // скопировать сообщение в буфер
-          Clipboard.setData(ClipboardData(text: (message as types.TextMessage).text));
+          // только для текстовых сообщений
+          if (message.runtimeType.toString() == 'TextMessage') {
+            Clipboard.setData(ClipboardData(text: (message as types.TextMessage).text));
+          }
           break;
         case IMMessageMenu.edit: // редактировать сообщение
           break;
@@ -451,8 +446,13 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
           _client.socket.emit('im.del', { 'messageId': message.metadata!['messageId'] }, (String name, dynamic error, dynamic data) {
             if (error != null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+                SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
               );
+            }
+
+            // если сообщение картинка, то удалить файл
+            if (message.runtimeType.toString() == 'ImageMessage') {
+              _client.socket.emit('file.del', { 'fileId': 0 }, );
             }
           });
           break;

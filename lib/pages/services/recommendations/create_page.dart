@@ -1,8 +1,12 @@
+import 'dart:convert';
+
+import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class RecommendationCategoryItem {
@@ -22,6 +26,8 @@ class RecommendationCreatePage extends StatefulWidget {
 }
 
 class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
+  late SocketClient _client;
+
   final List<RecommendationCategoryItem> _recommendationCategories = [];
   RecommendationCategoryItem? _recommendationCategory;
 
@@ -52,7 +58,8 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
-      store.client.socket.emit('recommendation.categories', {}, (String name, dynamic error, dynamic data) {
+      _client = store.client;
+      _client.socket.emit('recommendation.categories', {}, (String name, dynamic error, dynamic data) {
         if (error != null) {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
@@ -174,6 +181,10 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
               ),
             ),
             ElevatedButton(
+              onPressed: () => _showImageMenu(context),
+              child: Text('Добавить картинку'.toUpperCase()),
+            ),
+            ElevatedButton(
               onPressed: _btnEnabled && !_isLoading ? () => _save(context, store) : null,
               child: Text('Сохранить'.toUpperCase()),
             )
@@ -181,6 +192,75 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
         )
       )
     );
+  }
+
+  void _showImageMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0)
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          height: 140,
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleImageSelection(ImageSource.gallery);
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.green)
+                ),
+                child: const Text('Галерея'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleImageSelection(ImageSource.camera);
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blue)
+                ),
+                child: const Text('Камера'),
+              )
+            ]
+          )
+        );
+      }
+    );
+  }
+
+  void _handleImageSelection(ImageSource source) async {
+    final result = await ImagePicker().pickImage(source: source);
+    if (result != null) {
+      final bytes = await result.readAsBytes();
+      final image = await decodeImageFromList(bytes);
+
+      final data = {
+        'base64': base64Encode(bytes),
+        'name': result.name,
+        'size': bytes.length,
+        'width': image.width,
+        'height': image.height
+      };
+      _client.socket.emit('file.upload', data, (String name, dynamic error, dynamic data) {
+        if (error != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+          );
+          return;
+        }
+        if (data == null || data['status'] != 'OK') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Произошла неизвестная ошибка. Попробуйте позже...'), backgroundColor: Colors.red)
+          );
+          return;
+        }
+      });
+    }
   }
 
   void _calcBtnEnabled() {
@@ -235,11 +315,11 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
       }
     };
     setState(() => _isLoading = true);
-    store.client.socket.emit('recommendation.save', data, (String name, dynamic error, dynamic data) {
+    _client.socket.emit('recommendation.save', data, (String name, dynamic error, dynamic data) {
       setState(() => _isLoading = false);
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+          SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
         );
         return;
       }
@@ -247,7 +327,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
         Navigator.pop(context, 'save');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Не удалось сохранить рекомендацию. Попробуйте позже'), backgroundColor: Colors.red)
+          const SnackBar(content: Text('Не удалось сохранить рекомендацию. Попробуйте позже'), backgroundColor: Colors.red)
         );
       }
     });
