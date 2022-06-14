@@ -1,7 +1,11 @@
+import 'package:dom24x7_flutter/models/house/flat.dart';
+import 'package:dom24x7_flutter/store/main.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NoisePage extends StatefulWidget {
@@ -12,6 +16,41 @@ class NoisePage extends StatefulWidget {
 }
 
 class _NoisePageState extends State<NoisePage> {
+  List<Flat>? _flats;
+  Flat? _flat;
+  late TextEditingController _cFlat;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _cFlat = TextEditingController();
+    _cFlat.addListener(_findFlat);
+  }
+
+  @override
+  void dispose() {
+    _cFlat.removeListener(_findFlat);
+    _cFlat.dispose();
+
+    super.dispose();
+  }
+
+  void _findFlat() {
+    if (_flats == null) return;
+    for (Flat flat in _flats!) {
+      if (flat.number.toString() == _cFlat.text) {
+        setState(() => _flat = flat);
+        return;
+      }
+    }
+  }
+
+  String _getFlatInfo(Flat? flat) {
+    if (flat == null) return 'Указанный номер квартиры не найден в доме';
+    return Utilities.getFlatTitle(flat);
+  }
+
   void _showModalBottomSheet({ required BuildContext context, required double height, required Widget child }) {
     showModalBottomSheet(
       context: context,
@@ -19,10 +58,14 @@ class _NoisePageState extends State<NoisePage> {
         borderRadius: BorderRadius.circular(20.0)
       ),
       builder: (BuildContext context) {
-        return Container(
-          height: height,
-          padding: const EdgeInsets.all(15.0),
-          child: child
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              height: height,
+              padding: const EdgeInsets.all(15.0),
+              child: child
+            );
+          }
         );
       }
     );
@@ -30,6 +73,31 @@ class _NoisePageState extends State<NoisePage> {
 
   @override
   Widget build(BuildContext context) {
+    final store = Provider.of<MainStore>(context);
+    setState(() => _flats = store.flats.list);
+
+    const noiseTitle = Text('Можно шуметь', style: TextStyle(fontSize: 24.0));
+    const noiseBody = Text(
+        'ПН - СБ: 09:00 - 21:00\nПерерыв (тихий час): 13:00 - 15:00',
+        style: TextStyle(fontSize: 18.0)
+    );
+    const silenceTitle = Text('Нельзя шуметь', style: TextStyle(fontSize: 24.0));
+    const silenceBody = Text(
+        'ПН - СБ: 21:00 - 09:00\nВС, праздничные дни',
+        style: TextStyle(fontSize: 18.0)
+    );
+    const description = Text('''
+Шуметь - это:
+- громко слушать музыку дома и в автомобиле у дома;
+- использовать строительную технику;
+- взрывать петарды и запускать фейерверки;
+- кричать, свистеть и громко петь;
+- сверлить, стучать и рубить;
+- играть на музыкальных инструментах.
+        ''',
+        style: TextStyle(fontSize: 18.0)
+    );
+
     return Scaffold(
       appBar: Header.get(context, 'Шумит сосед'),
       bottomNavigationBar: const Footer(FooterNav.services),
@@ -40,8 +108,18 @@ class _NoisePageState extends State<NoisePage> {
             ElevatedButton(
               onPressed: () => _showModalBottomSheet(
                 context: context,
-                height: 100,
-                child: const Text('Позвонить соседу')
+                height: 180,
+                child: ListView(
+                  children: [
+                    TextField(
+                      controller: _cFlat,
+                      decoration: const InputDecoration(hintText: 'Введите номер квартиры')
+                    ),
+                    Text(_getFlatInfo(_flat), style: const TextStyle(color: Colors.black45)),
+                    const SizedBox(height: 15.0),
+                    ElevatedButton(onPressed: () => {}, child: Text('Перейти'.toUpperCase()))
+                  ]
+                )
               ),
               child: Text('Позвонить соседу'.toUpperCase())
             ),
@@ -101,6 +179,17 @@ class _NoisePageState extends State<NoisePage> {
               ),
               child: Text('Постучать по батарее'.toUpperCase())
             ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                SizedBox(height: 45.0),
+                noiseTitle, SizedBox(height: 10.0), noiseBody,
+                SizedBox(height: 30.0),
+                silenceTitle, SizedBox(height: 10.0), silenceBody,
+                SizedBox(height: 30.0),
+                description
+              ]
+            )
           ]
         )
       )
