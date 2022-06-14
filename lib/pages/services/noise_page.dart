@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/house/flat.dart';
+import 'package:dom24x7_flutter/pages/house/flat_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
@@ -46,17 +47,10 @@ class _NoisePageState extends State<NoisePage> {
     }
   }
 
-  String _getFlatInfo(Flat? flat) {
-    if (flat == null) return 'Указанный номер квартиры не найден в доме';
-    return Utilities.getFlatTitle(flat);
-  }
-
   void _showModalBottomSheet({ required BuildContext context, required double height, required Widget child }) {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0)
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
@@ -115,9 +109,11 @@ class _NoisePageState extends State<NoisePage> {
                       controller: _cFlat,
                       decoration: const InputDecoration(hintText: 'Введите номер квартиры')
                     ),
-                    Text(_getFlatInfo(_flat), style: const TextStyle(color: Colors.black45)),
                     const SizedBox(height: 15.0),
-                    ElevatedButton(onPressed: () => {}, child: Text('Перейти'.toUpperCase()))
+                    ElevatedButton(
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_flat))),
+                      child: Text('Перейти'.toUpperCase())
+                    )
                   ]
                 )
               ),

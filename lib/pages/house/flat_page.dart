@@ -120,7 +120,7 @@ class _FlatPageState extends State<FlatPage> {
     }
 
     return Scaffold(
-      appBar: Header.get(context, Utilities.getFlatTitle(_flat!)),
+      appBar: Header.get(context, Utilities.getHeaderTitle(Utilities.getFlatTitle(_flat!))),
       bottomNavigationBar: const Footer(FooterNav.house),
       body: ListView.builder(
         itemCount: _persons.length + 1,
