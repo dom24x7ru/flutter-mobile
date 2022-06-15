@@ -96,7 +96,7 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
-    final String title = widget.recommendation != null ? 'Редактировать' : 'Создать рекомендацию';
+    final String title = widget.recommendation != null ? 'Редактировать' : 'Создать';
 
     return Scaffold(
       appBar: Header.get(context, title),
