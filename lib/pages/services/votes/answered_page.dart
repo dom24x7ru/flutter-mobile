@@ -58,7 +58,15 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
         isExpanded: true,
         value: _voteResultFormat,
         onChanged: (VoteResultFormat? value) {
-          setState(() => _voteResultFormat = value!);
+          if (value != _voteResultFormats[2]) {
+            setState(() => _voteResultFormat = value!);
+          } else if (_checkFlatsSquare(store, widget.vote)) {
+            setState(() => _voteResultFormat = value!);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Не у всех квартир, участвующих в голосовании, указана квадратура'), backgroundColor: Colors.red)
+            );
+          }
         },
         items: _voteResultFormats.map<DropdownMenuItem<VoteResultFormat>>((VoteResultFormat value) {
           return DropdownMenuItem<VoteResultFormat>(
@@ -198,6 +206,15 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
 
     final squares = _getVoteFlats(store, vote).map((Flat flat) => flat.square).reduce((sum, square) => sum + square);
     return uniqueFlatsSquares / squares;
+  }
+
+  bool _checkFlatsSquare(MainStore store, Vote vote) {
+    final flats = _getVoteFlats(store, vote);
+    bool result = true;
+    for (Flat flat in flats) {
+      if (flat.square == 0) return false;
+    }
+    return result;
   }
 
   List<Flat> _getVoteFlats(MainStore store, Vote vote) {
