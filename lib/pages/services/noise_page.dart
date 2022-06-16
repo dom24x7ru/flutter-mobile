@@ -1,5 +1,7 @@
 import 'package:dom24x7_flutter/models/house/flat.dart';
+import 'package:dom24x7_flutter/models/im/im_message.dart';
 import 'package:dom24x7_flutter/pages/house/flat_page.dart';
+import 'package:dom24x7_flutter/pages/im/im_messages_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
@@ -20,6 +22,7 @@ class _NoisePageState extends State<NoisePage> {
   List<Flat>? _flats;
   Flat? _flat;
   late TextEditingController _cFlat;
+  late TextEditingController _cIMMessage;
 
   @override
   void initState() {
@@ -27,10 +30,18 @@ class _NoisePageState extends State<NoisePage> {
 
     _cFlat = TextEditingController();
     _cFlat.addListener(_findFlat);
+
+    _cIMMessage = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final store = Provider.of<MainStore>(context, listen: false);
+      final miniapp = store.miniApps.list!.firstWhere((item) => item.extra.code == 'noise');
+      _cIMMessage.text = miniapp.extra.more['text'];
+    });
   }
 
   @override
   void dispose() {
+    _cIMMessage.dispose();
     _cFlat.removeListener(_findFlat);
     _cFlat.dispose();
 
@@ -47,21 +58,16 @@ class _NoisePageState extends State<NoisePage> {
     }
   }
 
-  void _showModalBottomSheet({ required BuildContext context, required double height, required Widget child }) {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              height: height,
-              padding: const EdgeInsets.all(15.0),
-              child: child
-            );
-          }
+  void _showBottomSheet({ required BuildContext context, required double height, required Widget child }) {
+    Scaffold.of(context).showBottomSheet<void>(
+      (BuildContext context) {
+        return Container(
+          height: height,
+          padding: const EdgeInsets.all(15.0),
+          child: child
         );
-      }
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
     );
   }
 
@@ -97,46 +103,89 @@ class _NoisePageState extends State<NoisePage> {
       bottomNavigationBar: const Footer(FooterNav.services),
       body: Container(
         padding: const EdgeInsets.all(15.0),
-        child: ListView(
-          children: [
-            ElevatedButton(
-              onPressed: () => _showModalBottomSheet(
-                context: context,
-                height: 180,
-                child: ListView(
-                  children: [
-                    TextField(
-                      controller: _cFlat,
-                      decoration: const InputDecoration(hintText: 'Введите номер квартиры')
-                    ),
-                    const SizedBox(height: 15.0),
-                    ElevatedButton(
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_flat))),
-                      child: Text('Перейти'.toUpperCase())
-                    )
-                  ]
-                )
-              ),
-              child: Text('Позвонить соседу'.toUpperCase())
-            ),
-            ElevatedButton(
-              onPressed: () => _showModalBottomSheet(
-                context: context,
-                height: 100,
-                child: const Text('Написать в общий чат')
-              ),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.green)
-              ),
-              child: Text('Написать в общий чат'.toUpperCase())
-            ),
-            ElevatedButton(
-              onPressed: () => _showModalBottomSheet(
-                context: context,
-                height: 320,
-                child: Column(
-                  children: [
-                    Html(data: '''
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return ListView(
+                children: [
+                  ElevatedButton(
+                      onPressed: () => _showBottomSheet(
+                          context: context,
+                          height: 180,
+                          child: ListView(
+                              children: [
+                                TextField(
+                                    controller: _cFlat,
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(hintText: 'Введите номер квартиры')
+                                ),
+                                const SizedBox(height: 15.0),
+                                ElevatedButton(
+                                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FlatPage(_flat))),
+                                    child: Text('Перейти'.toUpperCase())
+                                )
+                              ]
+                          )
+                      ),
+                      child: Text('Позвонить соседу'.toUpperCase())
+                  ),
+                  ElevatedButton(
+                      onPressed: () => _showBottomSheet(
+                          context: context,
+                          height: 200,
+                          child: ListView(
+                              children: [
+                                TextField(
+                                  controller: _cIMMessage,
+                                  keyboardType: TextInputType.multiline,
+                                  maxLines: null,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Текст сообщения'
+                                  ),
+                                ),
+                                const SizedBox(height: 15.0),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      final text = _cIMMessage.text;
+                                      if (text.trim().isEmpty) return;
+
+                                      final channel = store.im.channels!.firstWhere((item) => item.allHouse != null && item.allHouse!);
+                                      final guid = '${channel.id}-${DateTime.now().millisecondsSinceEpoch}';
+                                      final body = IMMessageBody.fromMap({ 'text': text });
+                                      Map<String, dynamic> data = { 'guid': guid, 'channelId': channel.id, 'body': body.toMap() };
+                                      store.client.socket.emit('im.save', data, (String name, dynamic error, dynamic data) {
+                                        if (error != null) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+                                          );
+                                          return;
+                                        }
+                                        if (data == null || data['status'] != 'OK') {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(content: Text('Произошла неизвестная ошибка. Попробуйте позже...'), backgroundColor: Colors.red)
+                                          );
+                                          return;
+                                        }
+
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => IMMessagesPage(channel, channel.title!)));
+                                      });
+                                    },
+                                    child: Text('Отправить'.toUpperCase())
+                                )
+                              ]
+                          )
+                      ),
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.green)
+                      ),
+                      child: Text('Написать в общий чат'.toUpperCase())
+                  ),
+                  ElevatedButton(
+                      onPressed: () => _showBottomSheet(
+                          context: context,
+                          height: 320,
+                          child: Column(
+                              children: [
+                                Html(data: '''
                       <ul>
                         <li><a href="tel:102">102</a> — при звонке с мобильного</li>
                         <li><a href="tel:112">112</a> — номер экстренных оперативных служб</li>
@@ -146,20 +195,20 @@ class _NoisePageState extends State<NoisePage> {
                       и часы приема.</p>
                       <p>Также можно найти контакты самостоятельно на сайте МВД</p>
                     '''),
-                    ElevatedButton(onPressed: () => launchUrl(Uri.parse('https://xn--b1aew.xn--p1ai/district')), child: Text('Сайт МВД'.toUpperCase()))
-                  ]
-                )
-              ),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.deepPurple)
-              ),
-              child: Text('Позвонить участковому'.toUpperCase())
-            ),
-            ElevatedButton(
-              onPressed: () => _showModalBottomSheet(
-                context: context,
-                height: 380,
-                child: Html(data: '''
+                                ElevatedButton(onPressed: () => launchUrl(Uri.parse('https://xn--b1aew.xn--p1ai/district')), child: Text('Сайт МВД'.toUpperCase()))
+                              ]
+                          )
+                      ),
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.deepPurple)
+                      ),
+                      child: Text('Позвонить участковому'.toUpperCase())
+                  ),
+                  ElevatedButton(
+                      onPressed: () => _showBottomSheet(
+                          context: context,
+                          height: 380,
+                          child: Html(data: '''
                   <p>Итак, в вашей квартире есть батареи. Если не было перепланировок, ты вы можете обнаружить
                   эти устройства под окнами в каждом помещении квартиры.</p> 
                   <p>Эти штуковины прекрасно проводят звук по многим квартирам и этим можно воспользоваться.</p>
@@ -169,24 +218,26 @@ class _NoisePageState extends State<NoisePage> {
                   <p>Данные рекомендации имеют шуточный характер, не призывают к действию и не гарантируют
                   желаемый результат).</p>
                 ''')
-              ),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.red)
-              ),
-              child: Text('Постучать по батарее'.toUpperCase())
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                SizedBox(height: 45.0),
-                noiseTitle, SizedBox(height: 10.0), noiseBody,
-                SizedBox(height: 30.0),
-                silenceTitle, SizedBox(height: 10.0), silenceBody,
-                SizedBox(height: 30.0),
-                description
-              ]
-            )
-          ]
+                      ),
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.red)
+                      ),
+                      child: Text('Постучать по батарее'.toUpperCase())
+                  ),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        SizedBox(height: 45.0),
+                        noiseTitle, SizedBox(height: 10.0), noiseBody,
+                        SizedBox(height: 30.0),
+                        silenceTitle, SizedBox(height: 10.0), silenceBody,
+                        SizedBox(height: 30.0),
+                        description
+                      ]
+                  )
+                ]
+            );
+          },
         )
       )
     );

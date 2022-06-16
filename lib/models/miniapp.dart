@@ -14,11 +14,13 @@ class MiniAppExtra {
   late String color;
   late String code;
   String? url;
+  late Map<String, dynamic> more;
 
   MiniAppExtra.fromMap(Map<String, dynamic> map) {
     color = map['color'];
     code = map['code'];
     if (map['url'] != null) url = map['url'];
+    more = map;
   }
 }
 

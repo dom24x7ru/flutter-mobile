@@ -16,6 +16,7 @@ class IMPerson {
 
 class IMChannel extends Model {
   String? title;
+  bool? allHouse;
   bool? private;
   IMMessage? lastMessage;
   late int count;
@@ -24,6 +25,7 @@ class IMChannel extends Model {
   IMChannel.fromMap(Map<String, dynamic> map) : super(map['id']) {
 
     title = map['title'];
+    allHouse = map['allHouse'];
     private = map['private'];
     lastMessage = map['lastMessage'] != null ? IMMessage.fromMap(map['lastMessage']) : null;
     count = map['count'] ?? 0;
@@ -37,6 +39,7 @@ class IMChannel extends Model {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = { 'id': id };
     if (title != null) map['title'] = title;
+    map['allHouse'] = allHouse;
     map['private'] = private;
     if (lastMessage != null) map['lastMessage'] = lastMessage!.toMap();
     map['count'] = count;
