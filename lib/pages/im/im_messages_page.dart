@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:any_link_preview/any_link_preview.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/im/im_channel.dart';
@@ -363,20 +364,22 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   }
 
   Widget _imageMessageBuilder(types.ImageMessage message, { required int messageWidth }) {
-    late ImageProvider image;
+    late Widget image;
     if (message.uri.contains('https://')) {
-      image = NetworkImage(message.uri);
+      image = CachedNetworkImage(
+        imageUrl: message.uri,
+        progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+        errorWidget: (context, url, error) => const Icon(Icons.error)
+      );
     } else {
-      image = FileImage(File(message.uri));
+      image = Image(image: FileImage(File(message.uri)));
     }
     return Container(
       padding: const EdgeInsets.all(15.0),
+      color: _user.id == message.author.id ? _primaryColor : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image(image: image),
-          _getMessageTimeWidget(message)
-        ]
+        children: [image, _getMessageTimeWidget(message)]
       ),
     );
   }
