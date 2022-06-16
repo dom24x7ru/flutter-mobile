@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // enum AppBarMenu { about, profile, invite, settings, spaces }
-enum AppBarMenu { about, profile, invite, settings }
+enum AppBarMenu { about, profile, invite, settings, feedback }
 enum FlatSearchMenu { ownerFlat, topFlat, bottomFlat }
 
 class Header {
@@ -58,16 +58,22 @@ class Header {
         icon: const Icon(Icons.more_vert),
         itemBuilder: (BuildContext context) => [
           const PopupMenuItem<AppBarMenu>(
-              value: AppBarMenu.about, child: Text('О приложении')),
+            value: AppBarMenu.about, child: Text('О приложении')
+          ),
           const PopupMenuDivider(),
           // const PopupMenuItem<AppBarMenu>(
           //   value: AppBarMenu.profile, child: Text('Профиль')),
           const PopupMenuItem<AppBarMenu>(
-              value: AppBarMenu.invite, child: Text('Приглашения')),
+            value: AppBarMenu.invite, child: Text('Приглашения')
+          ),
           const PopupMenuItem<AppBarMenu>(
-              value: AppBarMenu.settings, child: Text('Настройки')),
+            value: AppBarMenu.settings, child: Text('Настройки')
+          ),
           // const PopupMenuItem<AppBarMenu>(
           //   value: AppBarMenu.spaces, child: Text('Помещения')),
+          const PopupMenuItem<AppBarMenu>(
+            value: AppBarMenu.feedback, child: Text('Обратная связь')
+          ),
         ],
         onSelected: (AppBarMenu item) {
           switch (item) {
@@ -86,6 +92,9 @@ class Header {
           // case AppBarMenu.spaces:
           //   Navigator.pushNamedAndRemoveUntil(context, '/spaces', (route) => false);
           //   break;
+            case AppBarMenu.feedback:
+              Navigator.pushNamedAndRemoveUntil(context, '/feedback', (route) => false);
+              break;
             default:
               Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
           }

@@ -1,5 +1,6 @@
 import 'package:dom24x7_flutter/pages/about_page.dart';
 import 'package:dom24x7_flutter/pages/app_loader_screen_page.dart';
+import 'package:dom24x7_flutter/pages/feedback_page.dart';
 import 'package:dom24x7_flutter/pages/house/house_page.dart';
 import 'package:dom24x7_flutter/pages/im/im_channels_page.dart';
 import 'package:dom24x7_flutter/pages/security/invite_page.dart';
@@ -92,6 +93,7 @@ class MyApp extends StatelessWidget {
           '/invite': (context) => const InvitePage(),
           '/settings': (context) => const SettingsPage(),
           '/spaces': (context) => const SpacesPage(),
+          '/feedback': (context) => const FeedbackPage(),
           '/security/auth': (context) => const SecAuthPage(),
           '/security/reg': (context) => const SecRegPage(),
           '/security/code': (context) => const SecCodePage(),

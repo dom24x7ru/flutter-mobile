@@ -59,8 +59,9 @@ class _NoisePageState extends State<NoisePage> {
   }
 
   void _showBottomSheet({ required BuildContext context, required double height, required Widget child }) {
-    Scaffold.of(context).showBottomSheet<void>(
-      (BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
         return Container(
           height: height,
           padding: const EdgeInsets.all(15.0),
@@ -112,7 +113,7 @@ class _NoisePageState extends State<NoisePage> {
                   ElevatedButton(
                       onPressed: () => _showBottomSheet(
                           context: context,
-                          height: 180,
+                          height: 450,
                           child: ListView(
                               children: [
                                 TextField(
@@ -133,7 +134,7 @@ class _NoisePageState extends State<NoisePage> {
                   ElevatedButton(
                       onPressed: () => _showBottomSheet(
                           context: context,
-                          height: 200,
+                          height: 600,
                           child: ListView(
                               children: [
                                 TextField(
@@ -184,20 +185,12 @@ class _NoisePageState extends State<NoisePage> {
                   ElevatedButton(
                       onPressed: () => _showBottomSheet(
                           context: context,
-                          height: 320,
+                          height: 240,
                           child: Column(
                               children: [
-                                Html(data: '''
-                      <ul>
-                        <li><a href="tel:102">102</a> — при звонке с мобильного</li>
-                        <li><a href="tel:112">112</a> — номер экстренных оперативных служб</li>
-                      </ul>
-                      <p>Необходимо назвать свои ФИО, адрес места жительства и попросить данные участкового,
-                      который обслуживает ваш район. Вам должны сообщить фамилию, имя, отчество, номер телефона
-                      и часы приема.</p>
-                      <p>Также можно найти контакты самостоятельно на сайте МВД</p>
-                    '''),
-                                ElevatedButton(onPressed: () => launchUrl(Uri.parse('https://xn--b1aew.xn--p1ai/district')), child: Text('Сайт МВД'.toUpperCase()))
+                                Html(data: '<p>Для вызова участкового необходимо с мобльного номера позвонить на номер 102 и сообщить номер квартиры где по вашему предположению шумят</p>'),
+                                ElevatedButton(onPressed: () => launchUrl(Uri.parse('tel:102')), child: Text('Позвонить'.toUpperCase())),
+                                Html(data: '<p>Также вы можете зайти на сайт <a href="https://xn--b1aew.xn--p1ai/district">МВД</a> и найти контактные данные участкового по своему району</p>')
                               ]
                           )
                       ),
