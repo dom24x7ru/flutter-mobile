@@ -67,7 +67,9 @@ class _NoisePageState extends State<NoisePage> {
           child: child
         );
       },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))
+      )
     );
   }
 
