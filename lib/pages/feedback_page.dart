@@ -51,8 +51,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
       }
       if (data != null) {
         if (data['status'] == 'OK') {
+          _cTitle.text = '';
+          _cBody.text = '';
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Сообщение успешно отправлено'), backgroundColor: Colors.green)
+            const SnackBar(content: Text('Сообщение успешно взято в работу. О результатах обязательно вам сообщим.'), backgroundColor: Colors.green)
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(

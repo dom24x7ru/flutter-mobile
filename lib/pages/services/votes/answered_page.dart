@@ -26,12 +26,12 @@ class VoteAnsweredPage extends StatefulWidget {
 }
 
 class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
-  List<VoteResultFormat> voteResultFormats = [
+  final List<VoteResultFormat> _voteResultFormats = [
     VoteResultFormat('По жильцам', 'persons'),
     VoteResultFormat('По квартирам', 'flats'),
     VoteResultFormat('По квадратуре', 'squares')
   ];
-  late VoteResultFormat voteResultFormat = voteResultFormats[0];
+  late VoteResultFormat _voteResultFormat = _voteResultFormats[0];
 
   @override
   Widget build(BuildContext context) {
@@ -56,13 +56,11 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
       const Divider(),
       DropdownButton<VoteResultFormat>(
         isExpanded: true,
-        value: voteResultFormat,
+        value: _voteResultFormat,
         onChanged: (VoteResultFormat? value) {
-          setState(() {
-            voteResultFormat = value!;
-          });
+          setState(() => _voteResultFormat = value!);
         },
-        items: voteResultFormats.map<DropdownMenuItem<VoteResultFormat>>((VoteResultFormat value) {
+        items: _voteResultFormats.map<DropdownMenuItem<VoteResultFormat>>((VoteResultFormat value) {
           return DropdownMenuItem<VoteResultFormat>(
             value: value,
             child: Text(value.text)
@@ -115,9 +113,7 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text('${Utilities.percent(percent)} '),
-              ]
+              children: [Text('${Utilities.percent(percent)} ')]
             ),
             Text(question.body!)
           ]
@@ -158,7 +154,7 @@ class _VoteAnsweredPageState extends State<VoteAnsweredPage> {
   }
 
   double _percent(MainStore store, Vote vote, VoteQuestion question) {
-    switch (voteResultFormat.value) {
+    switch (_voteResultFormat.value) {
       case 'persons': return _percentPersons(vote, question);
       case 'flats': return _percentFlats(store, vote, question);
       case 'squares': return _percentSquares(store, vote, question);
