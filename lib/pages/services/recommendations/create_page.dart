@@ -180,10 +180,10 @@ class _RecommendationCreatePageState extends State<RecommendationCreatePage> {
                 labelText: 'Телеграм'
               ),
             ),
-            ElevatedButton(
-              onPressed: () => _showImageMenu(context),
-              child: Text('Добавить картинку'.toUpperCase()),
-            ),
+            // ElevatedButton(
+            //   onPressed: () => _showImageMenu(context),
+            //   child: Text('Добавить картинку'.toUpperCase()),
+            // ),
             ElevatedButton(
               onPressed: _btnEnabled && !_isLoading ? () => _save(context, store) : null,
               child: Text('Сохранить'.toUpperCase()),
