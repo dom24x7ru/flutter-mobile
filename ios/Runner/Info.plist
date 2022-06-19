@@ -64,10 +64,10 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to the photo library.</string>
+	<string>Доступ к галерее необходим для отправки картинок в чаты, а также в рамках различных миниприложений (например, рекоммендаций)</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>My description about why I need this capability</string>
+    <string>Доступ к галерее необходим для отправки картинок в чаты, а также в рамках различных миниприложений (например, рекоммендаций)</string>
     <key>NSCameraUsageDescription</key>
-    <string>This app requires access to the camera.</string>
+    <string>Доступ к камере необходим для отправки своих фото в чатах, а также в рамках различных миниприложений (например, рекоммендаций)</string>
 </dict>
 </plist>
