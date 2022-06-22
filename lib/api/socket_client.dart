@@ -66,7 +66,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   @override
   void onAuthentication(Socket socket, bool? status) async {
-    debugPrint('onAuthentication: socket $socket status $status');
+    debugPrint('${DateTime.now()}: onAuthentication: socket $socket status $status');
     if (status != null && !status) {
       emit('logout', 'socket');
     } else {
@@ -80,25 +80,25 @@ class SocketClient extends BasicListener with EventEmitter {
 
   @override
   void onConnectError(Socket socket, e) {
-    debugPrint('onConnectError: socket $socket e $e');
+    debugPrint('${DateTime.now()}: onConnectError: socket $socket e $e');
   }
 
   @override
   void onConnected(Socket socket) {
-    debugPrint('onConnected: socket $socket');
+    debugPrint('${DateTime.now()}: onConnected: socket $socket');
     this.socket = socket;
     if (_timer != null) _timer!.cancel();
   }
 
   @override
   void onDisconnected(Socket socket) {
-    debugPrint('onDisconnected: socket $socket');
+    debugPrint('${DateTime.now()}: onDisconnected: socket $socket');
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) => connect(url));
   }
 
   @override
   void onSetAuthToken(String? token, Socket socket) async {
-    debugPrint('onSetAuthToken: socket $socket token $token');
+    debugPrint('${DateTime.now()}: onSetAuthToken: socket $socket token $token');
 
     if (token != null) {
       final prefs = await SharedPreferences.getInstance();
@@ -132,6 +132,8 @@ class SocketClient extends BasicListener with EventEmitter {
   }
 
   void initChannel(String name) {
+    // предварительно проверим, что ранее не были подписаны на канал
+    if (channels.where((channel) => channel == name).isNotEmpty) return;
     channels.add(name);
     socket.subscribe(name);
     socket.onSubscribe(name, (channel, data) {
@@ -146,6 +148,13 @@ class SocketClient extends BasicListener with EventEmitter {
   void closeChannel(String name) {
     channels.remove(name);
     socket.unsubscribe(name);
+  }
+
+  void closeAllChannels() {
+    final channelsCopy = List.from(channels);
+    for (var channel in channelsCopy) {
+      closeChannel(channel);
+    }
   }
 
   void loadStore() {
@@ -176,27 +185,30 @@ class SocketClient extends BasicListener with EventEmitter {
   }
 
   void onLogin(event, context) async {
-    store.user.setUser(user);
+    // только если ранее еще не загружали данные
+    if (store.user.value == null) {
+      store.user.setUser(user);
 
-    socket.emit('version.current', {}, (name, error, version) {
-      if (version['status'] == 'ERROR') {
-        if (version.message == "BANNED" || version.message == "DELETED") {
-          socket.emit('user.logout', {});
-          storeClearAll();
-          // TODO: переходим на страницу авторизации
+      socket.emit('version.current', {}, (name, error, version) {
+        if (version['status'] == 'ERROR') {
+          if (version.message == "BANNED" || version.message == "DELETED") {
+            socket.emit('user.logout', {});
+            storeClearAll();
+            // TODO: переходим на страницу авторизации
+          }
         }
-      }
-      store.version.setVersion(Version.fromMap(version));
-    });
+        store.version.setVersion(Version.fromMap(version));
+      });
 
-    // передаем данные по используемому мобильному приложению
-    final info = await PackageInfo.fromPlatform();
-    Map<String, String> appInfo = {
-      'version': info.version,
-      'platform': Platform.operatingSystem,
-      'platformVersion': Platform.operatingSystemVersion
-    };
-    socket.emit('service.appInfo', appInfo);
+      // передаем данные по используемому мобильному приложению
+      final info = await PackageInfo.fromPlatform();
+      Map<String, String> appInfo = {
+        'version': info.version,
+        'platform': Platform.operatingSystem,
+        'platformVersion': Platform.operatingSystemVersion
+      };
+      socket.emit('service.appInfo', appInfo);
+    }
   }
 
   void onLogout(event, context) {
@@ -223,7 +235,10 @@ class SocketClient extends BasicListener with EventEmitter {
   }
 
   void onUser(event, context) {
-    if (event.eventData['event'] == 'ready') return;
+    if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
+      return;
+    }
     final data = event.eventData['data'];
     store.user.setUser(User.fromMap(data));
     final houseId = store.user.value!.houseId;
@@ -248,7 +263,10 @@ class SocketClient extends BasicListener with EventEmitter {
   }
 
   void onAll(event, context) {
-    if (event.eventData['event'] == 'ready') return;
+    if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
+      return;
+    }
     final data = event.eventData['data'];
     final user = store.user.value;
     final houseId = user!.houseId;
@@ -261,6 +279,7 @@ class SocketClient extends BasicListener with EventEmitter {
       store.posts.setPosts(posts);
       closeChannel('all.$houseId.posts');
       initChannel('posts.$houseId');
+      debugPrint('${DateTime.now()}: all.posts loaded');
       checkReady('posts');
     }
     if (data['flats'].length != 0) {
@@ -271,6 +290,7 @@ class SocketClient extends BasicListener with EventEmitter {
       store.flats.setFlats(flats);
       closeChannel('all.$houseId.flats');
       initChannel('flats.$houseId');
+      debugPrint('${DateTime.now()}: all.flats loaded');
       checkReady('flats');
     }
     if (data['invites'].length != 0) {
@@ -281,30 +301,43 @@ class SocketClient extends BasicListener with EventEmitter {
       store.invites.setInvites(invites);
       closeChannel('all.$houseId.invites');
       initChannel('invites.${user.id}');
+      debugPrint('${DateTime.now()}: all.invites loaded');
       checkReady('invites');
     }
   }
 
   void onInstructions(event, context) {
-    if (event.eventData['event'] == 'ready') return;
+    if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
+      return;
+    }
     final data = event.eventData['data'];
     store.instructions.addInstruction(Instruction.fromMap(data));
   }
 
   void onDocuments(event, context) {
-    if (event.eventData['event'] == 'ready') return;
+    if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
+      return;
+    }
     final data = event.eventData['data'];
     store.documents.addDocument(Document.fromMap(data));
   }
 
   void onFAQ(event, context) {
-    if (event.eventData['event'] == 'ready') return;
+    if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
+      return;
+    }
     final data = event.eventData['data'];
     store.faq.addFAQItem(FAQItem.fromMap(data));
   }
 
   void onRecommendations(event, context) {
-    if (event.eventData['event'] == 'ready') return;
+    if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
+      return;
+    }
     final data = event.eventData['data'];
     if (event.eventData['event'] != 'destroy') {
       store.recommendations.addRecommendation(Recommendation.fromMap(data));
@@ -314,7 +347,10 @@ class SocketClient extends BasicListener with EventEmitter {
   }
 
   void onMutualHelp(event, context) {
-    if (event.eventData['event'] == 'ready') return;
+    if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
+      return;
+    }
     final data = event.eventData['data'];
     if (event.eventData['event'] != 'destroy') {
       store.mutualHelp.addMutualHelpItem(MutualHelpItem.fromMap(data));
@@ -332,6 +368,7 @@ class SocketClient extends BasicListener with EventEmitter {
         // подписываемся только на каналы незакрытых голосований
         if (!vote.closed) initChannel('vote.${vote.id}');
       }
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -339,7 +376,10 @@ class SocketClient extends BasicListener with EventEmitter {
   }
 
   void onVote(event, context) {
-    if (event.eventData['event'] == 'ready') return;
+    if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
+      return;
+    }
     final data = event.eventData['data'];
     store.votes.addVote(Vote.fromMap(data));
   }
@@ -352,6 +392,7 @@ class SocketClient extends BasicListener with EventEmitter {
       for (IMChannel channel in imChannels) {
         initChannel('imChannel.${channel.id}');
       }
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -359,12 +400,16 @@ class SocketClient extends BasicListener with EventEmitter {
   }
 
   void onIMChannel(event, context) {
-    if (event.eventData['event'] == 'ready') return;
+    if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
+      return;
+    }
     final data = event.eventData['data'];
     store.im.addChannel(IMChannel.fromMap(data));
   }
 
   void storeClearAll() {
+    debugPrint('${DateTime.now()}: store clear all');
     store.clear();
   }
 
