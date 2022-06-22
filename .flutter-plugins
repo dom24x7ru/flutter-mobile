@@ -43,5 +43,5 @@ wakelock=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/wak
 wakelock_macos=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock_macos-0.4.0/
 wakelock_web=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock_web-0.4.0/
 webview_flutter=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter-2.8.0/
-webview_flutter_android=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter_android-2.8.11/
+webview_flutter_android=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter_android-2.8.13/
 webview_flutter_wkwebview=/Users/timur/development/flutter/.pub-cache/hosted/pub.dartlang.org/webview_flutter_wkwebview-2.8.1/
