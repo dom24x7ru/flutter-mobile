@@ -24,7 +24,7 @@ dependencies:
   flutter_html: ^2.2.1
   font_awesome_flutter: ^10.1.0
   grouped_list: ^5.0.1
-  visibility_detector: ^0.2.2
+  visibility_detector: ^0.3.3
   scrollable_positioned_list: ^0.3.2
   firebase_core: ^1.17.0
   firebase_messaging: ^11.4.0

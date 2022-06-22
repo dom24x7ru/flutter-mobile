@@ -369,7 +369,7 @@ packages:
       name: flutter_chat_ui
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.8"
+    version: "1.6.2"
   flutter_html:
     dependency: "direct main"
     description:
@@ -397,7 +397,7 @@ packages:
       name: flutter_link_previewer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.6.6"
+    version: "3.0.1"
   flutter_linkify:
     dependency: transitive
     description:
@@ -827,7 +827,7 @@ packages:
       name: photo_view
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.0"
+    version: "0.14.0"
   platform:
     dependency: transitive
     description:
@@ -1196,7 +1196,7 @@ packages:
       name: visibility_detector
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.2"
+    version: "0.3.3"
   wakelock:
     dependency: transitive
     description:
