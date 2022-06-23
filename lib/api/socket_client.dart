@@ -66,7 +66,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   @override
   void onAuthentication(Socket socket, bool? status) async {
-    debugPrint('${DateTime.now()}: onAuthentication: socket $socket status $status');
+    debugPrint('${DateTime.now()}: onAuthentication: status $status');
     if (status != null && !status) {
       emit('logout', 'socket');
     } else {
@@ -85,7 +85,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   @override
   void onConnected(Socket socket) {
-    debugPrint('${DateTime.now()}: onConnected: socket $socket');
+    debugPrint('${DateTime.now()}: onConnected');
     this.socket = socket;
     if (_timer != null) _timer!.cancel();
   }
@@ -110,6 +110,7 @@ class SocketClient extends BasicListener with EventEmitter {
   }
 
   void loginInit(String? token) {
+    closeAllChannels();
     if (token != null) {
       socket.authToken = token;
       user = User.fromMap(Jwt.parseJwt(token));
@@ -236,7 +237,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onUser(event, context) {
     if (event.eventData['event'] == 'ready') {
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
+      emit('loading', 'socket', { 'channel': 'user' });
       return;
     }
     final data = event.eventData['data'];
@@ -264,7 +265,6 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onAll(event, context) {
     if (event.eventData['event'] == 'ready') {
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -279,7 +279,7 @@ class SocketClient extends BasicListener with EventEmitter {
       store.posts.setPosts(posts);
       closeChannel('all.$houseId.posts');
       initChannel('posts.$houseId');
-      debugPrint('${DateTime.now()}: all.posts loaded');
+      emit('loading', 'socket', { 'channel': 'all.posts' });
       checkReady('posts');
     }
     if (data['flats'].length != 0) {
@@ -290,7 +290,7 @@ class SocketClient extends BasicListener with EventEmitter {
       store.flats.setFlats(flats);
       closeChannel('all.$houseId.flats');
       initChannel('flats.$houseId');
-      debugPrint('${DateTime.now()}: all.flats loaded');
+      emit('loading', 'socket', { 'channel': 'all.flats' });
       checkReady('flats');
     }
     if (data['invites'].length != 0) {
@@ -301,14 +301,12 @@ class SocketClient extends BasicListener with EventEmitter {
       store.invites.setInvites(invites);
       closeChannel('all.$houseId.invites');
       initChannel('invites.${user.id}');
-      debugPrint('${DateTime.now()}: all.invites loaded');
       checkReady('invites');
     }
   }
 
   void onInstructions(event, context) {
     if (event.eventData['event'] == 'ready') {
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -317,7 +315,6 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onDocuments(event, context) {
     if (event.eventData['event'] == 'ready') {
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -326,7 +323,6 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onFAQ(event, context) {
     if (event.eventData['event'] == 'ready') {
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -335,7 +331,6 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onRecommendations(event, context) {
     if (event.eventData['event'] == 'ready') {
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -348,7 +343,6 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onMutualHelp(event, context) {
     if (event.eventData['event'] == 'ready') {
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -368,7 +362,6 @@ class SocketClient extends BasicListener with EventEmitter {
         // подписываемся только на каналы незакрытых голосований
         if (!vote.closed) initChannel('vote.${vote.id}');
       }
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -377,7 +370,6 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onVote(event, context) {
     if (event.eventData['event'] == 'ready') {
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -392,7 +384,6 @@ class SocketClient extends BasicListener with EventEmitter {
       for (IMChannel channel in imChannels) {
         initChannel('imChannel.${channel.id}');
       }
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -401,7 +392,6 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onIMChannel(event, context) {
     if (event.eventData['event'] == 'ready') {
-      debugPrint('${DateTime.now()}: ${event.eventName} loaded');
       return;
     }
     final data = event.eventData['data'];
@@ -409,7 +399,6 @@ class SocketClient extends BasicListener with EventEmitter {
   }
 
   void storeClearAll() {
-    debugPrint('${DateTime.now()}: store clear all');
     store.clear();
   }
 
