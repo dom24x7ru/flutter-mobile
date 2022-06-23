@@ -26,19 +26,15 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
-      setState(() {
-        _channels = store.im.channels != null ? store.im.channels! : [];
-      });
+      setState(() => _channels = _sortIMChannels(store.im.channels != null ? store.im.channels! : []));
 
       _client = store.client;
       var listener = _client.on('imChannels', this, (event, cont) {
-        setState(() {
-          _channels = store.im.channels != null ? store.im.channels! : [];
-        });
+        setState(() => _channels = _sortIMChannels(store.im.channels != null ? store.im.channels! : []));
       });
       _listeners.add(listener);
       listener = _client.on('imChannel', this, (event, cont) {
-        setState(() => _channels = store.im.channels != null ? store.im.channels! : []);
+        setState(() => _channels = _sortIMChannels(store.im.channels != null ? store.im.channels! : []));
       });
       _listeners.add(listener);
     });
@@ -137,5 +133,21 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
   String _lastMessageDate(IMChannel channel) {
     if (channel.lastMessage == null) return '';
     return Utilities.getDateIM(channel.lastMessage!.createdAt);
+  }
+
+  List<IMChannel> _sortIMChannels(List<IMChannel> channels) {
+    List<IMChannel> sortedIMChannels = List.from(channels);
+    sortedIMChannels.sort((channel1, channel2) {
+      if (channel1.lastMessage == null && channel2.lastMessage == null) return 0;
+      if (channel1.lastMessage != null && channel2.lastMessage != null) {
+        if (channel1.lastMessage!.createdAt > channel2.lastMessage!.createdAt) return 1;
+        if (channel1.lastMessage!.createdAt < channel2.lastMessage!.createdAt) return -1;
+        return 0;
+      }
+      if (channel1.lastMessage == null) return -1;
+      if (channel2.lastMessage == null) return 1;
+      return 0;
+    });
+    return sortedIMChannels;
   }
 }
