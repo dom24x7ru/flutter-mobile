@@ -7,4 +7,8 @@ class Version {
     number = map['number'];
     build = map['build'];
   }
+
+  Map<String, dynamic> toMap() {
+    return { 'number': number, 'build': build };
+  }
 }

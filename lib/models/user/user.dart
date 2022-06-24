@@ -24,4 +24,16 @@ class User extends Model {
       }
     }
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = { 'id': id, 'mobile': mobile, 'banned': banned, 'role': role.toMap() };
+    if (houseId != null) map['houseId'] = houseId;
+    if (person != null) map['person'] = person!.toMap();
+    map['residents'] = [];
+    for (var resident in residents) {
+      map['residents'].add(resident.toMap());
+    }
+    return map;
+  }
 }

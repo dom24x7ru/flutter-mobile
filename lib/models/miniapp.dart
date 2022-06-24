@@ -8,6 +8,11 @@ class MiniAppType extends Model {
     code = map['code'];
     name = map['name'];
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return { 'id': id, 'code': code, 'name': name };
+  }
 }
 
 class MiniAppExtra {
@@ -22,6 +27,12 @@ class MiniAppExtra {
     if (map['url'] != null) url = map['url'];
     more = map;
   }
+
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = { 'color': color, 'code': code, 'more': more };
+    if (url != null) map['url'] = url;
+    return map;
+  }
 }
 
 class MiniApp extends Model {
@@ -35,5 +46,10 @@ class MiniApp extends Model {
     title = map['title'];
     published = map['published'];
     extra =MiniAppExtra.fromMap(map['extra']);
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return { 'id': id, 'type': type.toMap(), 'title': title, 'published': published, 'extra': extra.toMap() };
   }
 }

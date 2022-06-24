@@ -23,7 +23,6 @@ class IMChannel extends Model {
   List<IMPerson> persons = [];
 
   IMChannel.fromMap(Map<String, dynamic> map) : super(map['id']) {
-
     title = map['title'];
     allHouse = map['allHouse'];
     private = map['private'];
@@ -36,6 +35,7 @@ class IMChannel extends Model {
     }
   }
 
+  @override
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = { 'id': id };
     if (title != null) map['title'] = title;

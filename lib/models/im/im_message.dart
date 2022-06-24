@@ -18,6 +18,7 @@ class IMImage extends Model {
     height = map['height'];
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -110,6 +111,7 @@ class IMMessage extends Model {
     extra = map['extra'] != null ? IMMessageExtra.fromMap(map['extra']) : null;
   }
 
+  @override
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = { 'id': id, 'createdAt': createdAt  };
     if (updatedAt != null) map['updatedAt'] = updatedAt;

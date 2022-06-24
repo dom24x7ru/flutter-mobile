@@ -7,4 +7,9 @@ class Role extends Model {
   Role.fromMap(Map<String, dynamic> map) : super(map['id']) {
     name = map['name'];
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return { 'id': id, 'name': name };
+  }
 }

@@ -17,6 +17,7 @@ import 'package:dom24x7_flutter/models/vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -235,13 +236,14 @@ class SocketClient extends BasicListener with EventEmitter {
     }
   }
 
-  void onUser(event, context) {
+  void onUser(event, context) async {
     if (event.eventData['event'] == 'ready') {
       emit('loading', 'socket', { 'channel': 'user' });
       return;
     }
     final data = event.eventData['data'];
     store.user.setUser(User.fromMap(data));
+
     final houseId = store.user.value!.houseId;
     final channels = [
       'all.$houseId.flats', 'all.$houseId.posts', 'all.$houseId.invites', // начальная инициализация

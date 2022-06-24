@@ -8,6 +8,13 @@ class FAQCategory extends Model {
     name = map['name'];
     description = map['description'];
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = { 'id': id, 'name': name };
+    if (description != null) map['description'] = description;
+    return map;
+  }
 }
 
 class FAQItem extends Model {
@@ -20,5 +27,10 @@ class FAQItem extends Model {
     title = map['title'];
     body = map['body'];
     category = FAQCategory.fromMap(map['category']);
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return { 'id': id, 'body': body, 'category': category.toMap() };
   }
 }

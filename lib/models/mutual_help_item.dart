@@ -13,6 +13,11 @@ class MutualHelpCategory extends Model {
     img = map['img'];
     sort = map['sort'];
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return { 'id': id, 'name': name, 'img': img, 'sort': sort, 'count': count };
+  }
 }
 
 class MutualHelpItem extends Model {
@@ -30,5 +35,10 @@ class MutualHelpItem extends Model {
     category = MutualHelpCategory.fromMap(map['category']);
     person = Person.fromMap(map['person']);
     flat = Flat.fromMap(map['person']['flat']);
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return { 'id': id, 'title': title, 'body': body, 'deleted': deleted, 'category': category.toMap(), 'person': person.toMap(), 'flat': flat.toMap() };
   }
 }

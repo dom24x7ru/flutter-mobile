@@ -11,6 +11,7 @@ class FlatType extends Model {
     name = map['name'];
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return { 'id': id, 'code': code, 'name': name };
   }
@@ -40,6 +41,7 @@ class Flat extends Model {
     }
   }
 
+  @override
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = { 'id': id, 'number': number, 'floor': floor, 'section': section };
     if (rooms != null) map['rooms'] = rooms;

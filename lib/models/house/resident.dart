@@ -49,6 +49,7 @@ class Resident extends Model {
     if (map['extra'] != null) extra = ResidentExtra.fromMap(map['extra']);
   }
 
+  @override
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = { 'id': id, 'personId': personId };
     if (isOwner != null) map['isOwner'] = isOwner;

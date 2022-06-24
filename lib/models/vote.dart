@@ -8,6 +8,13 @@ class VoteQuestion extends Model {
   VoteQuestion.fromMap(Map<String, dynamic> map) : super(map['id']) {
     body = map['body'];
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = { 'id': id };
+    if (body != null) map['body'] = body;
+    return map;
+  }
 }
 
 class VoteAnswer extends Model {
@@ -19,6 +26,11 @@ class VoteAnswer extends Model {
     question = VoteQuestion.fromMap(map['question']);
     person = Person.fromMap(map['person']);
     flat = Flat.fromMap(map['person']['flat']);
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return { 'id': id, 'question': question.toMap(), 'person': person.toMap(), 'flat': flat.toMap() };
   }
 }
 
@@ -53,5 +65,31 @@ class Vote extends Model {
     for (var answer in map['answers']) {
       answers.add(VoteAnswer.fromMap(answer));
     }
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = {
+      'id': id,
+      'userId': userId,
+      'title': title,
+      'createdAt': createdAt,
+      'multi': multi,
+      'anonymous': anonymous,
+      'closed': closed,
+      'house': house,
+      'persons': persons,
+      'questions': [],
+      'answers': []
+    };
+    if (section != null) map['section'] = section;
+    if (floor != null) map['floor'] = floor;
+    for (var question in questions) {
+      map['questions'].add(question.toMap());
+    }
+    for (var answer in answers) {
+      map['answers'].add(answer.toMap());
+    }
+    return map;
   }
 }

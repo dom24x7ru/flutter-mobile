@@ -11,4 +11,11 @@ class Document extends Model {
     annotation = map['annotation'];
     url = map['url'];
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = { 'id': id, 'title': title, 'url': url };
+    if (annotation != null) map['annotation'] = annotation;
+    return map;
+  }
 }

@@ -14,4 +14,11 @@ class Post extends Model {
     body = map['body'];
     url = map['url'];
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> map = { 'id': id, 'createdAt': createdAt, 'type': type, 'title': title, 'body': body };
+    if (url != null) map['url'] = url;
+    return map;
+  }
 }
