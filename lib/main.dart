@@ -14,6 +14,7 @@ import 'package:dom24x7_flutter/pages/profile/settings_page.dart';
 import 'package:dom24x7_flutter/pages/profile/spaces_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'api/socket_client.dart';
@@ -56,6 +57,8 @@ void main() async {
     }
   });
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await Hive.initFlutter();
 
   runApp(const MyApp());
 }
