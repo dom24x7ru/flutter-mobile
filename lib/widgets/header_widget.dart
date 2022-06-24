@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dom24x7_flutter/pages/house/flat_page.dart';
 import 'package:dom24x7_flutter/pages/services/noise_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -9,6 +11,8 @@ enum AppBarMenu { about, profile, invite, settings, feedback }
 enum FlatSearchMenu { ownerFlat, topFlat, bottomFlat }
 
 class Header {
+  static Timer? _timer;
+
   static AppBar get(BuildContext context, String title) {
     final store = Provider.of<MainStore>(context);
     final miniApps = store.miniApps.list;
@@ -107,6 +111,20 @@ class Header {
           icon: const Icon(Icons.ads_click_outlined)
       ));
     }
+
+    _timer ??= Timer.periodic(const Duration(seconds: 5), (timer) {
+      store.client.socket.emit('service.ping', {}, (String name, dynamic error, dynamic data) {
+        if (error != null) {
+          debugPrint('${DateTime.now()}: $error');
+        } else if (data == null) {
+          debugPrint('${DateTime.now()}: неизвестная ошибка (данные пусты)');
+        } else if (data['status'] == 'OK') {
+          // debugPrint('${DateTime.now()}: server ping');
+        } else {
+          debugPrint('${DateTime.now()}: неизвестная ошибка');
+        }
+      });
+    });
 
     return AppBar(title: Row(children: [Text(title)]), actions: actions);
   }
