@@ -28,6 +28,17 @@ mixin _$FlatsStore on _FlatsStore, Store {
       ActionController(name: '_FlatsStore', context: context);
 
   @override
+  void addFlat(Flat flat) {
+    final _$actionInfo =
+        _$_FlatsStoreActionController.startAction(name: '_FlatsStore.addFlat');
+    try {
+      return super.addFlat(flat);
+    } finally {
+      _$_FlatsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setFlats(List<Flat> flats) {
     final _$actionInfo =
         _$_FlatsStoreActionController.startAction(name: '_FlatsStore.setFlats');

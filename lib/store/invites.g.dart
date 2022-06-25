@@ -28,6 +28,17 @@ mixin _$InvitesStore on _InvitesStore, Store {
       ActionController(name: '_InvitesStore', context: context);
 
   @override
+  void addInvite(Invite invite) {
+    final _$actionInfo = _$_InvitesStoreActionController.startAction(
+        name: '_InvitesStore.addInvite');
+    try {
+      return super.addInvite(invite);
+    } finally {
+      _$_InvitesStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setInvites(List<Invite> invites) {
     final _$actionInfo = _$_InvitesStoreActionController.startAction(
         name: '_InvitesStore.setInvites');

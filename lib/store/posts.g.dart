@@ -28,6 +28,17 @@ mixin _$PostsStore on _PostsStore, Store {
       ActionController(name: '_PostsStore', context: context);
 
   @override
+  void addPost(Post post) {
+    final _$actionInfo =
+        _$_PostsStoreActionController.startAction(name: '_PostsStore.addPost');
+    try {
+      return super.addPost(post);
+    } finally {
+      _$_PostsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setPosts(List<Post> posts) {
     final _$actionInfo =
         _$_PostsStoreActionController.startAction(name: '_PostsStore.setPosts');
