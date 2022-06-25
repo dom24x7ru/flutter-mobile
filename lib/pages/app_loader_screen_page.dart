@@ -47,6 +47,7 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
         final PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
 
         if (!mounted) return;
+        debugPrint('${DateTime.now()}: завершили загрузку и запустили приложение');
         Navigator.pushNamedAndRemoveUntil(context, initialLink != null ? initialLink.link.path : '/', (route) => false);
       });
       _listeners.add(listener);

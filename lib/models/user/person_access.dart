@@ -29,7 +29,7 @@ class NameAccess {
   }
 
   Map<String, dynamic> toMap() {
-    return { 'level': level, 'format': format };
+    return { 'level': level.name, 'format': format.name };
   }
 }
 
@@ -52,7 +52,7 @@ class ContactAccess {
   }
 
   Map<String, dynamic> toMap() {
-    return { 'level': level };
+    return { 'level': level.name };
   }
 }
 

@@ -50,6 +50,8 @@ class SocketClient extends BasicListener with EventEmitter {
 
   Future<void> connect([String url = 'node.dom24x7.ru']) async {
     try {
+      _box ??= await Hive.openBox('dom24x7');
+
       final prefs = await SharedPreferences.getInstance();
       final authToken = prefs.getString('authToken');
       String? lastNodeHost = prefs.getString('lastNodeHost');
@@ -59,9 +61,9 @@ class SocketClient extends BasicListener with EventEmitter {
           authToken: authToken,
           listener: this
       );
-      _box ??= await Hive.openBox('dom24x7');
       loadStore();
     } catch (error) {
+      print('error');
       debugPrint(error.toString());
     }
   }
@@ -128,7 +130,7 @@ class SocketClient extends BasicListener with EventEmitter {
     if (user == null) return [];
     return [
       'user.${user!.id}',
-      'house',
+      'house.${user!.id}',
       'imChannels.${user!.id}',
       'votes.${user!.id}'
     ];
@@ -157,6 +159,17 @@ class SocketClient extends BasicListener with EventEmitter {
         emit(event[0], 'socket', data);
       }
     });
+    final cacheData = _box!.get(name);
+    if (cacheData != null) {
+      debugPrint('${DateTime.now()}: найден кэш для канала $name');
+      // if (name.contains('user')) {
+      //   store.user.setUser(User.fromMap(cacheData));
+      // } else if (name.contains('flats')) {
+      //   store.flats.setFlats((cacheData as List).map((flat) => Flat.fromMap(flat)).toList());
+      // } else if (name.contains('posts')) {
+      //   store.posts.setPosts((cacheData as List).map((post) => Post.fromMap(post)).toList());
+      // }
+    }
     socket.emit('service.update', { 'channel': name, 'lastUpdated': 0 });
   }
 
@@ -229,6 +242,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onUser(event, context) async {
     if (event.eventData['event'] == 'ready') {
+      _box!.put('user.${store.user.value!.id}', store.user.value!.toMap());
       emit('loading', 'socket', { 'channel': 'user' });
       return;
     }
@@ -240,7 +254,7 @@ class SocketClient extends BasicListener with EventEmitter {
       'flats.$houseId',
       'posts.$houseId',
       'pinnedPosts.$houseId',
-      'invites.${store.user.value!.id}'
+      'invites.${store.user.value!.id}',
       'instructions.$houseId',
       'documents.$houseId',
       'faq.$houseId',
@@ -260,6 +274,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onFlats(event, context) {
     if (event.eventData['event'] == 'ready') {
+      _box!.put('flats.${store.user.value!.houseId}', store.flats.list!.map((flat) => flat.toMap()).toList());
       emit('loading', 'socket', { 'channel': 'flats' });
       checkReady('flats');
       return;
@@ -270,6 +285,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onPosts(event, context) {
     if (event.eventData['event'] == 'ready') {
+      _box!.put('posts.${store.user.value!.houseId}', store.posts.list!.map((post) => post.toMap()).toList());
       emit('loading', 'socket', { 'channel': 'posts' });
       checkReady('posts');
       return;

@@ -49,7 +49,7 @@ class Flat extends Model {
     if (type != null) map['type'] = type!.toMap();
     map['residents'] = [];
     for (var resident in residents) {
-      map['residents'].app(resident.toMap());
+      map['residents'].add(resident.toMap());
     }
     return map;
   }
