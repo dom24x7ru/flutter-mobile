@@ -1,65 +1,16 @@
-enum Level { nothing, friends, all }
-enum NameFormat { name, all }
+import 'package:dom24x7_flutter/models/user/contact_access.dart';
+import 'package:dom24x7_flutter/models/user/name_access.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-class NameAccess {
-  Level level = Level.nothing;
-  NameFormat format = NameFormat.all;
+part 'person_access.g.dart';
 
-  NameAccess(this.level, this.format);
-  NameAccess.fromMap(Map<String, dynamic> map) {
-    switch(map['level']) {
-      case 'nothing':
-        level = Level.nothing;
-        break;
-      case 'friends':
-        level = Level.friends;
-        break;
-      case 'all':
-        level = Level.all;
-        break;
-    }
-    switch(map['format']) {
-      case 'name':
-        format = NameFormat.name;
-        break;
-      case 'all':
-        format = NameFormat.all;
-        break;
-    }
-  }
-
-  Map<String, dynamic> toMap() {
-    return { 'level': level.name, 'format': format.name };
-  }
-}
-
-class ContactAccess {
-  Level level = Level.nothing;
-
-  ContactAccess(this.level);
-  ContactAccess.fromMap(Map<String, dynamic> map) {
-    switch(map['level']) {
-      case 'nothing':
-        level = Level.nothing;
-        break;
-      case 'friends':
-        level = Level.friends;
-        break;
-      case 'all':
-        level = Level.all;
-        break;
-    }
-  }
-
-  Map<String, dynamic> toMap() {
-    return { 'level': level.name };
-  }
-}
-
-
+@HiveType(typeId: 5)
 class PersonAccess {
+  @HiveField(1)
   NameAccess? name;
+  @HiveField(2)
   ContactAccess? mobile;
+  @HiveField(3)
   ContactAccess? telegram;
 
   PersonAccess(this.name, this.mobile, this.telegram);

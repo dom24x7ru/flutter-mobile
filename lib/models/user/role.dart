@@ -1,6 +1,11 @@
 import 'package:dom24x7_flutter/models/model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
+part 'role.g.dart';
+
+@HiveType(typeId: 3)
 class Role extends Model {
+  @HiveField(1)
   late String name;
 
   Role(id, this.name) : super(id);

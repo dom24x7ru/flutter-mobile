@@ -1,43 +1,21 @@
 import 'package:dom24x7_flutter/models/house/flat.dart';
+import 'package:dom24x7_flutter/models/house/resident_extra.dart';
 import 'package:dom24x7_flutter/models/model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-class Tenant {
-  late int start;
-  int? end;
+part 'resident.g.dart';
 
-  Tenant(this.start, this.end);
-  Tenant.fromMap(Map<String, dynamic> map) {
-    start = map['start'];
-    end = map['end'];
-  }
-
-  Map<String, dynamic> toMap() {
-    return { 'start': start, 'end': end };
-  }
-}
-
-class ResidentExtra {
-  late String type;
-  Tenant? tenant;
-
-  ResidentExtra(this.type);
-  ResidentExtra.fromMap(Map<String, dynamic> map) {
-    type = map['type'];
-    if (map['tenant'] != null) tenant = Tenant.fromMap(map['tenant']);
-  }
-
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = { 'type': type };
-    if (tenant != null) map['tenant'] = tenant!.toMap();
-    return map;
-  }
-}
-
+@HiveType(typeId: 10)
 class Resident extends Model {
+  @HiveField(1)
   late int personId;
+  @HiveField(2)
   bool? isOwner;
+  @HiveField(3)
   bool? deleted;
+  @HiveField(4)
   Flat? flat;
+  @HiveField(5)
   ResidentExtra? extra;
 
   Resident(int id, this.personId) : super(id);

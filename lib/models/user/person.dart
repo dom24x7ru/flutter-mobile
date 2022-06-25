@@ -1,18 +1,33 @@
+import 'package:dom24x7_flutter/models/house/resident_extra.dart';
 import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/user/person_access.dart';
-import 'package:dom24x7_flutter/models/house/resident.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
+part 'person.g.dart';
+
+@HiveType(typeId: 4)
 class Person extends Model {
+  @HiveField(1)
   String? surname;
+  @HiveField(2)
   String? name;
+  @HiveField(3)
   String? midname;
+  @HiveField(4)
   DateTime? birthday;
+  @HiveField(5)
   String? sex;
+  @HiveField(6)
   String? biography;
+  @HiveField(7)
   String? telegram;
+  @HiveField(8)
   String? mobile;
+  @HiveField(9)
   bool deleted = false;
+  @HiveField(10)
   PersonAccess? access;
+  @HiveField(11)
   ResidentExtra? extra;
 
   Person(id, this.surname, this.name, this.midname) : super(id);
