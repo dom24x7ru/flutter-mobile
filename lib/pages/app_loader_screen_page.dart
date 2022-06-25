@@ -56,10 +56,10 @@ class _AppLoaderScreenPage extends State<AppLoaderScreenPage> {
           case 'user':
             setState(() => _loadMessage = 'данные по пользователю загружены...');
             break;
-          case 'all.posts':
+          case 'posts':
             setState(() => _loadMessage = 'лента новостей загружена...');
             break;
-          case 'all.flats':
+          case 'flats':
             setState(() => _loadMessage = 'данные по квартирам загружены...');
             break;
         }

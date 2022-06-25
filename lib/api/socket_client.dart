@@ -12,7 +12,6 @@ import 'package:dom24x7_flutter/models/mutual_help_item.dart';
 import 'package:dom24x7_flutter/models/post.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
 import 'package:dom24x7_flutter/models/user/user.dart';
-import 'package:dom24x7_flutter/models/version.dart';
 import 'package:dom24x7_flutter/models/vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:eventify/eventify.dart';
@@ -30,6 +29,7 @@ class SocketClient extends BasicListener with EventEmitter {
   User? user;
   List<String> channels = [];
   Timer? _timer;
+  Box? _box;
 
   final ready = {
     'house': true,
@@ -59,6 +59,7 @@ class SocketClient extends BasicListener with EventEmitter {
           authToken: authToken,
           listener: this
       );
+      _box ??= await Hive.openBox('dom24x7');
       loadStore();
     } catch (error) {
       debugPrint(error.toString());
@@ -116,9 +117,9 @@ class SocketClient extends BasicListener with EventEmitter {
       socket.authToken = token;
       user = User.fromMap(Jwt.parseJwt(token));
       emit('login', 'socket', user);
-
-      for (final name in userChannels()) {
-        initChannel(name);
+      initVersion();
+      for (final channel in userChannels()) {
+        initChannel(channel);
       }
     }
   }
@@ -133,6 +134,17 @@ class SocketClient extends BasicListener with EventEmitter {
     ];
   }
 
+  void initVersion() async {
+    // передаем данные по используемому мобильному приложению
+    final info = await PackageInfo.fromPlatform();
+    Map<String, String> appInfo = {
+      'version': info.version,
+      'platform': Platform.operatingSystem,
+      'platformVersion': Platform.operatingSystemVersion
+    };
+    socket.emit('service.appInfo', appInfo);
+  }
+
   void initChannel(String name) {
     // предварительно проверим, что ранее не были подписаны на канал
     if (channels.where((channel) => channel == name).isNotEmpty) return;
@@ -145,6 +157,7 @@ class SocketClient extends BasicListener with EventEmitter {
         emit(event[0], 'socket', data);
       }
     });
+    socket.emit('service.update', { 'channel': name, 'lastUpdated': 0 });
   }
 
   void closeChannel(String name) {
@@ -163,12 +176,11 @@ class SocketClient extends BasicListener with EventEmitter {
     on('login', this, onLogin);
     on('logout', this, onLogout);
     on('user', this, onUser);
-    on('all', this, onAll);
     on('house', this, onNothing);
-    on('flats', this, onNothing);
-    on('posts', this, onNothing);
+    on('flats', this, onFlats);
+    on('posts', this, onPosts);
     on('pinnedPosts', this, onNothing);
-    on('invites', this, onNothing);
+    on('invites', this, onInvites);
     on('instructions', this, onInstructions);
     on('documents', this, onDocuments);
     on('faq', this, onFAQ);
@@ -188,29 +200,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onLogin(event, context) async {
     // только если ранее еще не загружали данные
-    if (store.user.value == null) {
-      store.user.setUser(user);
-
-      socket.emit('version.current', {}, (name, error, version) {
-        if (version['status'] == 'ERROR') {
-          if (version.message == "BANNED" || version.message == "DELETED") {
-            socket.emit('user.logout', {});
-            storeClearAll();
-            // TODO: переходим на страницу авторизации
-          }
-        }
-        store.version.setVersion(Version.fromMap(version));
-      });
-
-      // передаем данные по используемому мобильному приложению
-      final info = await PackageInfo.fromPlatform();
-      Map<String, String> appInfo = {
-        'version': info.version,
-        'platform': Platform.operatingSystem,
-        'platformVersion': Platform.operatingSystemVersion
-      };
-      socket.emit('service.appInfo', appInfo);
-    }
+    if (store.user.value == null) store.user.setUser(user);
   }
 
   void onLogout(event, context) {
@@ -233,6 +223,7 @@ class SocketClient extends BasicListener with EventEmitter {
         closeChannel(channel);
       }
       storeClearAll();
+      _box!.clear();
     }
   }
 
@@ -246,8 +237,10 @@ class SocketClient extends BasicListener with EventEmitter {
 
     final houseId = store.user.value!.houseId;
     final channels = [
-      'all.$houseId.flats', 'all.$houseId.posts', 'all.$houseId.invites', // начальная инициализация
+      'flats.$houseId',
+      'posts.$houseId',
       'pinnedPosts.$houseId',
+      'invites.${store.user.value!.id}'
       'instructions.$houseId',
       'documents.$houseId',
       'faq.$houseId',
@@ -265,46 +258,34 @@ class SocketClient extends BasicListener with EventEmitter {
     });
   }
 
-  void onAll(event, context) {
+  void onFlats(event, context) {
     if (event.eventData['event'] == 'ready') {
+      emit('loading', 'socket', { 'channel': 'flats' });
+      checkReady('flats');
       return;
     }
     final data = event.eventData['data'];
-    final user = store.user.value;
-    final houseId = user!.houseId;
+    store.flats.addFlat(Flat.fromMap(data));
+  }
 
-    if (data['posts'].length != 0) {
-      List<Post> posts = [];
-      for (var item in data['posts']) {
-        posts.add(Post.fromMap(item));
-      }
-      store.posts.setPosts(posts);
-      closeChannel('all.$houseId.posts');
-      initChannel('posts.$houseId');
-      emit('loading', 'socket', { 'channel': 'all.posts' });
+  void onPosts(event, context) {
+    if (event.eventData['event'] == 'ready') {
+      emit('loading', 'socket', { 'channel': 'posts' });
       checkReady('posts');
+      return;
     }
-    if (data['flats'].length != 0) {
-      List<Flat> flats = [];
-      for (var item in data['flats']) {
-        flats.add(Flat.fromMap(item));
-      }
-      store.flats.setFlats(flats);
-      closeChannel('all.$houseId.flats');
-      initChannel('flats.$houseId');
-      emit('loading', 'socket', { 'channel': 'all.flats' });
-      checkReady('flats');
-    }
-    if (data['invites'].length != 0) {
-      List<Invite> invites = [];
-      for (var item in data['invites']) {
-        invites.add(Invite.fromMap(item));
-      }
-      store.invites.setInvites(invites);
-      closeChannel('all.$houseId.invites');
-      initChannel('invites.${user.id}');
+    final data = event.eventData['data'];
+    store.posts.addPost(Post.fromMap(data));
+  }
+
+  void onInvites(event, context) {
+    if (event.eventData['event'] == 'ready') {
+      emit('loading', 'socket', { 'channel': 'invites' });
       checkReady('invites');
+      return;
     }
+    final data = event.eventData['data'];
+    store.invites.addInvite(Invite.fromMap(data));
   }
 
   void onInstructions(event, context) {
