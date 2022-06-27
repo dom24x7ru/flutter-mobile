@@ -65,7 +65,6 @@ class SocketClient extends BasicListener with EventEmitter {
       );
       loadStore();
     } catch (error) {
-      print('error');
       debugPrint(error.toString());
     }
   }

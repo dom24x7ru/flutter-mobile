@@ -57,7 +57,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         setState(() => _mute = data['mute']);
       });
 
-      _client.initChannel('imMessages.${widget.channel.id}');
+      _client.initChannel('imMessages.${widget.channel.id}', false);
       var listener = _client.on('imMessages', this, (event, cont) {
         final eventData = event.eventData! as Map<String, dynamic>;
         if (eventData['event'] == 'ready') return;
