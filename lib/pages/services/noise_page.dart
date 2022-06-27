@@ -1,9 +1,8 @@
 import 'package:dom24x7_flutter/models/house/flat.dart';
-import 'package:dom24x7_flutter/models/im/im_message.dart';
+import 'package:dom24x7_flutter/models/im/im_message_body.dart';
 import 'package:dom24x7_flutter/pages/house/flat_page.dart';
 import 'package:dom24x7_flutter/pages/im/im_messages_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
-import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';

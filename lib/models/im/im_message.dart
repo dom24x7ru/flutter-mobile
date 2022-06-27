@@ -1,104 +1,32 @@
 import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/im/im_channel.dart';
+import 'package:dom24x7_flutter/models/im/im_message_body.dart';
+import 'package:dom24x7_flutter/models/im/im_message_extra.dart';
+import 'package:dom24x7_flutter/models/im/im_person.dart';
 import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/user/person.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-class IMImage extends Model {
-  late String name;
-  late int size;
-  late String uri;
-  late int width;
-  late int height;
+part 'im_message.g.dart';
 
-  IMImage.fromMap(Map<String, dynamic> map) : super(map['id']) {
-    name = map['name'];
-    size = map['size'];
-    uri = map['uri'];
-    width = map['width'];
-    height = map['height'];
-  }
-
-  @override
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'size': size,
-      'uri': uri,
-      'width': width,
-      'height': height
-    };
-  }
-}
-
-class IMMessageHistoryItem {
-  late int createdAt;
-  late String text;
-
-  IMMessageHistoryItem.fromMap(Map<String, dynamic> map) {
-    createdAt = map['createdAt'];
-    text = map['text'];
-  }
-
-  Map<String, dynamic> toMap() {
-    return { 'createdAt': createdAt, 'text': text };
-  }
-}
-
-class IMMessageBody {
-  String? text;
-  IMImage? image;
-  late List<IMMessageHistoryItem> history = [];
-  IMMessage? aMessage;
-
-  IMMessageBody.fromMap(Map<String, dynamic> map) {
-    text = map['text'];
-    if (map['image'] != null) image = IMImage.fromMap(map['image']);
-    if (map['history'] != null) {
-      for (var item in map['history']) {
-        history.add(IMMessageHistoryItem.fromMap(item));
-      }
-    }
-    aMessage = map['aMessage'] != null ? IMMessage.fromMap(map['aMessage']) : null;
-  }
-
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {};
-    if (text != null) map['text'] = text;
-    if (image != null) map['image'] = image!.toMap();
-    if (history.isNotEmpty) {
-      map['history'] = [];
-      for (var item in history) {
-        map['history'].add(item.toMap());
-      }
-    }
-    if (aMessage != null) map['aMessage'] = aMessage!.toMap();
-    return map;
-  }
-}
-
-class IMMessageExtra {
-  List<int> shown = [];
-
-  IMMessageExtra.fromMap(Map<String, dynamic> map) {
-    for (var personId in map['shown']) {
-      shown.add(personId);
-    }
-  }
-
-  Map<String, dynamic> toMap() {
-    return { 'shown': shown };
-  }
-}
-
+@HiveType(typeId: 17)
 class IMMessage extends Model {
+  @HiveField(1)
   late String guid;
+  @HiveField(2)
   late int createdAt;
+  @HiveField(3)
   late int? updatedAt;
+  @HiveField(4)
   IMPerson? imPerson;
+  @HiveField(5)
   IMChannel? channel;
+  @HiveField(6)
   IMMessageBody? body;
+  @HiveField(7)
   IMMessageExtra? extra;
+
+  IMMessage(id, this.guid, this.createdAt, this.updatedAt, this.imPerson, this.channel, this.body, this.extra) : super(id);
 
   IMMessage.fromMap(Map<String, dynamic> map) : super(map['id']) {
     guid = map['guid'];

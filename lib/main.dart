@@ -2,6 +2,11 @@ import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/house/flat_type.dart';
 import 'package:dom24x7_flutter/models/house/resident.dart';
 import 'package:dom24x7_flutter/models/house/resident_extra.dart';
+import 'package:dom24x7_flutter/models/im/im_channel.dart';
+import 'package:dom24x7_flutter/models/im/im_image.dart';
+import 'package:dom24x7_flutter/models/im/im_message.dart';
+import 'package:dom24x7_flutter/models/im/im_message_body.dart';
+import 'package:dom24x7_flutter/models/im/im_person.dart';
 import 'package:dom24x7_flutter/models/post.dart';
 import 'package:dom24x7_flutter/models/user/contact_access.dart';
 import 'package:dom24x7_flutter/models/user/enums/level.dart';
@@ -86,6 +91,11 @@ void main() async {
   Hive.registerAdapter(FlatAdapter());
   Hive.registerAdapter(FlatTypeAdapter());
   Hive.registerAdapter(PostAdapter());
+  Hive.registerAdapter(IMChannelAdapter());
+  Hive.registerAdapter(IMMessageAdapter());
+  Hive.registerAdapter(IMMessageBodyAdapter());
+  Hive.registerAdapter(IMPersonAdapter());
+  Hive.registerAdapter(IMImageAdapter());
 
   runApp(const MyApp());
 }

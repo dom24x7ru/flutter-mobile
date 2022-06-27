@@ -30,7 +30,6 @@ class SocketClient extends BasicListener with EventEmitter {
   List<String> channels = [];
   Timer? _timer;
 
-  BoxCollection? _hiveCollection;
   Box? _box;
 
   final ready = {
@@ -391,6 +390,8 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onIMChannels(event, context) {
     if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: подгружены с сервера данные по списку чатов');
+      _box!.put('imChannels.${store.user.value!.id}', store.im.channels);
       // подписаться на каналы по каждому доступному чату
       if (store.im.channels == null) return;
       final List<IMChannel> imChannels = store.im.channels!;
