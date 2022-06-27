@@ -29,6 +29,8 @@ class SocketClient extends BasicListener with EventEmitter {
   User? user;
   List<String> channels = [];
   Timer? _timer;
+
+  BoxCollection? _hiveCollection;
   Box? _box;
 
   final ready = {
@@ -147,7 +149,7 @@ class SocketClient extends BasicListener with EventEmitter {
     socket.emit('service.appInfo', appInfo);
   }
 
-  void initChannel(String name) {
+  void initChannel(String name, [bool withCache = true]) {
     // предварительно проверим, что ранее не были подписаны на канал
     if (channels.where((channel) => channel == name).isNotEmpty) return;
     channels.add(name);
@@ -159,18 +161,28 @@ class SocketClient extends BasicListener with EventEmitter {
         emit(event[0], 'socket', data);
       }
     });
-    final cacheData = _box!.get(name);
-    if (cacheData != null) {
-      debugPrint('${DateTime.now()}: найден кэш для канала $name');
-      // if (name.contains('user')) {
-      //   store.user.setUser(User.fromMap(cacheData));
-      // } else if (name.contains('flats')) {
-      //   store.flats.setFlats((cacheData as List).map((flat) => Flat.fromMap(flat)).toList());
-      // } else if (name.contains('posts')) {
-      //   store.posts.setPosts((cacheData as List).map((post) => Post.fromMap(post)).toList());
-      // }
+
+    if (withCache) {
+      final cacheData = _box!.get(name);
+      if (cacheData != null) {
+        debugPrint('${DateTime.now()}: найден кэш для канала $name');
+        if (name.contains('user')) {
+          store.user.setUser(cacheData);
+          emit('loading', 'socket', { 'channel': 'user'});
+        } else if (name.contains('flats')) {
+          store.flats.setFlats(
+              (cacheData as List).map((flat) => flat as Flat).toList());
+          emit('loading', 'socket', { 'channel': 'flats'});
+          checkReady('flats');
+        } else if (name.contains('posts')) {
+          store.posts.setPosts(
+              (cacheData as List).map((post) => post as Post).toList());
+          emit('loading', 'socket', { 'channel': 'posts'});
+          checkReady('posts');
+        }
+      }
+      socket.emit('service.update', { 'channel': name, 'lastUpdated': 0});
     }
-    socket.emit('service.update', { 'channel': name, 'lastUpdated': 0 });
   }
 
   void closeChannel(String name) {
@@ -242,7 +254,8 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onUser(event, context) async {
     if (event.eventData['event'] == 'ready') {
-      _box!.put('user.${store.user.value!.id}', store.user.value!.toMap());
+      debugPrint('${DateTime.now()}: подгружены с сервера данные по пользователю');
+      _box!.put('user.${store.user.value!.id}', store.user.value);
       emit('loading', 'socket', { 'channel': 'user' });
       return;
     }
@@ -274,7 +287,8 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onFlats(event, context) {
     if (event.eventData['event'] == 'ready') {
-      _box!.put('flats.${store.user.value!.houseId}', store.flats.list!.map((flat) => flat.toMap()).toList());
+      debugPrint('${DateTime.now()}: подгружены с сервера данные по квартирым');
+      _box!.put('flats.${store.user.value!.houseId}', store.flats.list);
       emit('loading', 'socket', { 'channel': 'flats' });
       checkReady('flats');
       return;
@@ -285,7 +299,8 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onPosts(event, context) {
     if (event.eventData['event'] == 'ready') {
-      _box!.put('posts.${store.user.value!.houseId}', store.posts.list!.map((post) => post.toMap()).toList());
+      debugPrint('${DateTime.now()}: подгружены с сервера данные по ленте новостей');
+      _box!.put('posts.${store.user.value!.houseId}', store.posts.list);
       emit('loading', 'socket', { 'channel': 'posts' });
       checkReady('posts');
       return;
@@ -359,7 +374,7 @@ class SocketClient extends BasicListener with EventEmitter {
       final List<Vote> votes = store.votes.list!;
       for (Vote vote in votes) {
         // подписываемся только на каналы незакрытых голосований
-        if (!vote.closed) initChannel('vote.${vote.id}');
+        if (!vote.closed) initChannel('vote.${vote.id}', false);
       }
       return;
     }
@@ -381,7 +396,7 @@ class SocketClient extends BasicListener with EventEmitter {
       if (store.im.channels == null) return;
       final List<IMChannel> imChannels = store.im.channels!;
       for (IMChannel channel in imChannels) {
-        initChannel('imChannel.${channel.id}');
+        initChannel('imChannel.${channel.id}', false);
       }
       return;
     }

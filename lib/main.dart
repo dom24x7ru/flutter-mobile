@@ -1,3 +1,16 @@
+import 'package:dom24x7_flutter/models/house/flat.dart';
+import 'package:dom24x7_flutter/models/house/flat_type.dart';
+import 'package:dom24x7_flutter/models/house/resident.dart';
+import 'package:dom24x7_flutter/models/house/resident_extra.dart';
+import 'package:dom24x7_flutter/models/post.dart';
+import 'package:dom24x7_flutter/models/user/contact_access.dart';
+import 'package:dom24x7_flutter/models/user/enums/level.dart';
+import 'package:dom24x7_flutter/models/user/enums/name_format.dart';
+import 'package:dom24x7_flutter/models/user/name_access.dart';
+import 'package:dom24x7_flutter/models/user/person.dart';
+import 'package:dom24x7_flutter/models/user/person_access.dart';
+import 'package:dom24x7_flutter/models/user/role.dart';
+import 'package:dom24x7_flutter/models/user/user.dart';
 import 'package:dom24x7_flutter/pages/about_page.dart';
 import 'package:dom24x7_flutter/pages/app_loader_screen_page.dart';
 import 'package:dom24x7_flutter/pages/feedback_page.dart';
@@ -59,6 +72,20 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await Hive.initFlutter();
+
+  Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(RoleAdapter());
+  Hive.registerAdapter(PersonAdapter());
+  Hive.registerAdapter(PersonAccessAdapter());
+  Hive.registerAdapter(NameAccessAdapter());
+  Hive.registerAdapter(LevelAdapter());
+  Hive.registerAdapter(NameFormatAdapter());
+  Hive.registerAdapter(ContactAccessAdapter());
+  Hive.registerAdapter(ResidentAdapter());
+  Hive.registerAdapter(ResidentExtraAdapter());
+  Hive.registerAdapter(FlatAdapter());
+  Hive.registerAdapter(FlatTypeAdapter());
+  Hive.registerAdapter(PostAdapter());
 
   runApp(const MyApp());
 }
