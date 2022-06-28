@@ -39,6 +39,17 @@ mixin _$VotesStore on _VotesStore, Store {
   }
 
   @override
+  void setVotes(List<Vote> votes) {
+    final _$actionInfo =
+        _$_VotesStoreActionController.startAction(name: '_VotesStore.setVotes');
+    try {
+      return super.setVotes(votes);
+    } finally {
+      _$_VotesStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void clear() {
     final _$actionInfo =
         _$_VotesStoreActionController.startAction(name: '_VotesStore.clear');

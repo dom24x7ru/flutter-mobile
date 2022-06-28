@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
 
-import '../models/vote.dart';
+import '../models/vote/vote.dart';
 import '../utilities.dart';
 import 'house/flat_page.dart';
 

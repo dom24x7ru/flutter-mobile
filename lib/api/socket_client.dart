@@ -12,7 +12,7 @@ import 'package:dom24x7_flutter/models/mutual_help_item.dart';
 import 'package:dom24x7_flutter/models/post.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
 import 'package:dom24x7_flutter/models/user/user.dart';
-import 'package:dom24x7_flutter/models/vote.dart';
+import 'package:dom24x7_flutter/models/vote/vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/cupertino.dart';
@@ -160,27 +160,31 @@ class SocketClient extends BasicListener with EventEmitter {
       }
     });
 
-    if (withCache) {
-      final cacheData = _box!.get(name);
-      if (cacheData != null) {
-        debugPrint('${DateTime.now()}: найден кэш для канала $name');
-        if (name.contains('user')) {
-          store.user.setUser(cacheData);
-          emit('loading', 'socket', { 'channel': 'user'});
-        } else if (name.contains('flats')) {
-          store.flats.setFlats(
-              (cacheData as List).map((flat) => flat as Flat).toList());
-          emit('loading', 'socket', { 'channel': 'flats'});
-          checkReady('flats');
-        } else if (name.contains('posts')) {
-          store.posts.setPosts(
-              (cacheData as List).map((post) => post as Post).toList());
-          emit('loading', 'socket', { 'channel': 'posts'});
-          checkReady('posts');
-        }
+    if (withCache) loadFromCache(name);
+  }
+
+  void loadFromCache(String name) {
+    final cacheData = _box!.get(name);
+    if (cacheData != null) {
+      debugPrint('${DateTime.now()}: найден кэш для канала $name');
+      if (name.contains('user')) {
+        store.user.setUser(cacheData);
+        emit('loading', 'socket', { 'channel': 'user'});
+      } else if (name.contains('flats')) {
+        store.flats.setFlats((cacheData as List).map((flat) => flat as Flat).toList());
+        emit('loading', 'socket', { 'channel': 'flats'});
+        checkReady('flats');
+      } else if (name.contains('posts')) {
+        store.posts.setPosts((cacheData as List).map((post) => post as Post).toList());
+        emit('loading', 'socket', { 'channel': 'posts'});
+        checkReady('posts');
+      } else if (name.contains('imChannels')) {
+        store.im.setChannels((cacheData as List).map((channel) => channel as IMChannel).toList());
+      } else if (name.contains('votes')) {
+        store.votes.setVotes((cacheData as List).map((vote) => vote as Vote).toList());
       }
-      socket.emit('service.update', { 'channel': name, 'lastUpdated': 0});
     }
+    socket.emit('service.update', { 'channel': name, 'lastUpdated': 0});
   }
 
   void closeChannel(String name) {
@@ -367,6 +371,8 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onVotes(event, context) {
     if (event.eventData['event'] == 'ready') {
+      debugPrint('${DateTime.now()}: подгружены с сервера данные по доступным голосованиям');
+      _box!.put('votes.${store.user.value!.id}', store.votes);
       // подписаться на каналы по каждому пришедшему голосованию
       if (store.votes.list == null) return;
       final List<Vote> votes = store.votes.list!;

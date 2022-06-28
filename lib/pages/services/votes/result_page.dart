@@ -1,6 +1,6 @@
 import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/user/person.dart';
-import 'package:dom24x7_flutter/models/vote.dart';
+import 'package:dom24x7_flutter/models/vote/vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';

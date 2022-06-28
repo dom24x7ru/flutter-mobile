@@ -1,5 +1,5 @@
 import 'package:dom24x7_flutter/widgets/checkbox_widget.dart';
-import 'package:dom24x7_flutter/models/vote.dart';
+import 'package:dom24x7_flutter/models/vote/vote.dart';
 import 'package:dom24x7_flutter/pages/services/votes/answered_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';

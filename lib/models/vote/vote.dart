@@ -1,52 +1,38 @@
-import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/model.dart';
-import 'package:dom24x7_flutter/models/user/person.dart';
+import 'package:dom24x7_flutter/models/vote/vote_answer.dart';
+import 'package:dom24x7_flutter/models/vote/vote_question.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-class VoteQuestion extends Model {
-  String? body;
+part 'vote.g.dart';
 
-  VoteQuestion.fromMap(Map<String, dynamic> map) : super(map['id']) {
-    body = map['body'];
-  }
-
-  @override
-  Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = { 'id': id };
-    if (body != null) map['body'] = body;
-    return map;
-  }
-}
-
-class VoteAnswer extends Model {
-  late VoteQuestion question;
-  late Person person;
-  late Flat flat;
-
-  VoteAnswer.fromMap(Map<String, dynamic> map) : super(map['id']) {
-    question = VoteQuestion.fromMap(map['question']);
-    person = Person.fromMap(map['person']);
-    flat = Flat.fromMap(map['person']['flat']);
-  }
-
-  @override
-  Map<String, dynamic> toMap() {
-    return { 'id': id, 'question': question.toMap(), 'person': person.toMap(), 'flat': flat.toMap() };
-  }
-}
-
+@HiveType(typeId: 23)
 class Vote extends Model {
+  @HiveField(1)
   late int userId;
+  @HiveField(2)
   late String title;
+  @HiveField(3)
   late int createdAt;
+  @HiveField(4)
   late bool multi;
+  @HiveField(5)
   late bool anonymous;
+  @HiveField(6)
   late bool closed;
+  @HiveField(7)
   late bool house;
+  @HiveField(8)
   int? section;
+  @HiveField(9)
   int? floor;
+  @HiveField(10)
   late int persons;
+  @HiveField(11)
   late List<VoteQuestion> questions = [];
+  @HiveField(12)
   late List<VoteAnswer> answers = [];
+
+  Vote(id, this.userId, this.title, this.createdAt, this.multi, this.anonymous, this.closed, this.house, this.section, this.floor, this.persons, this.questions, this.answers) : super(id);
 
   Vote.fromMap(Map<String, dynamic> map) : super(map['id']) {
     userId = map['user']['id'];

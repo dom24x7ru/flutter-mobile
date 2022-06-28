@@ -1,5 +1,5 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
-import 'package:dom24x7_flutter/models/vote.dart';
+import 'package:dom24x7_flutter/models/vote/vote.dart';
 import 'package:dom24x7_flutter/pages/services/votes/answered_page.dart';
 import 'package:dom24x7_flutter/pages/services/votes/create_page.dart';
 import 'package:dom24x7_flutter/pages/services/votes/vote_page.dart';
