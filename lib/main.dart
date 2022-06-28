@@ -7,6 +7,9 @@ import 'package:dom24x7_flutter/models/im/im_image.dart';
 import 'package:dom24x7_flutter/models/im/im_message.dart';
 import 'package:dom24x7_flutter/models/im/im_message_body.dart';
 import 'package:dom24x7_flutter/models/im/im_person.dart';
+import 'package:dom24x7_flutter/models/miniapp/miniapp.dart';
+import 'package:dom24x7_flutter/models/miniapp/miniapp_extra.dart';
+import 'package:dom24x7_flutter/models/miniapp/miniapp_type.dart';
 import 'package:dom24x7_flutter/models/post.dart';
 import 'package:dom24x7_flutter/models/user/contact_access.dart';
 import 'package:dom24x7_flutter/models/user/enums/level.dart';
@@ -16,6 +19,9 @@ import 'package:dom24x7_flutter/models/user/person.dart';
 import 'package:dom24x7_flutter/models/user/person_access.dart';
 import 'package:dom24x7_flutter/models/user/role.dart';
 import 'package:dom24x7_flutter/models/user/user.dart';
+import 'package:dom24x7_flutter/models/vote/vote.dart';
+import 'package:dom24x7_flutter/models/vote/vote_answer.dart';
+import 'package:dom24x7_flutter/models/vote/vote_question.dart';
 import 'package:dom24x7_flutter/pages/about_page.dart';
 import 'package:dom24x7_flutter/pages/app_loader_screen_page.dart';
 import 'package:dom24x7_flutter/pages/feedback_page.dart';
@@ -96,6 +102,12 @@ void main() async {
   Hive.registerAdapter(IMMessageBodyAdapter());
   Hive.registerAdapter(IMPersonAdapter());
   Hive.registerAdapter(IMImageAdapter());
+  Hive.registerAdapter(VoteAdapter());
+  Hive.registerAdapter(VoteQuestionAdapter());
+  Hive.registerAdapter(VoteAnswerAdapter());
+  Hive.registerAdapter(MiniAppAdapter());
+  Hive.registerAdapter(MiniAppTypeAdapter());
+  Hive.registerAdapter(MiniAppExtraAdapter());
 
   runApp(const MyApp());
 }

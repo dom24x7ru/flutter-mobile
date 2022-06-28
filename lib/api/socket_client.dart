@@ -7,7 +7,7 @@ import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/im/im_channel.dart';
 import 'package:dom24x7_flutter/models/instruction.dart';
 import 'package:dom24x7_flutter/models/house/invite.dart';
-import 'package:dom24x7_flutter/models/miniapp.dart';
+import 'package:dom24x7_flutter/models/miniapp/miniapp.dart';
 import 'package:dom24x7_flutter/models/mutual_help_item.dart';
 import 'package:dom24x7_flutter/models/post.dart';
 import 'package:dom24x7_flutter/models/recommendation.dart';
@@ -38,7 +38,7 @@ class SocketClient extends BasicListener with EventEmitter {
     'posts': false,
     'pinnedPosts': true,
     'instructions': true,
-    'invites': true, // для запуска приложения, не обязательно дожидаться
+    'invites': true,
     'documents': true,
     'faq': true,
     'recommendations': true,
@@ -280,10 +280,17 @@ class SocketClient extends BasicListener with EventEmitter {
       initChannel(channel);
     }
 
+    final cacheData = _box!.get('miniapps');
+    if (cacheData != null) {
+      debugPrint('${DateTime.now()}: найден кэш со списком доступных миниприложений');
+      store.miniApps.setMiniApps((cacheData as List).map((miniapp) => miniapp as MiniApp).toList());
+    }
     socket.emit('miniapp.list', {}, (String name, dynamic error, dynamic data) {
       for (var miniApp in data) {
         store.miniApps.addMiniApp(MiniApp.fromMap(miniApp));
       }
+      debugPrint('${DateTime.now()}: подгружены с сервера данные по списку миниприложений');
+      _box!.put('miniapps', store.miniApps.list);
     });
   }
 
@@ -372,7 +379,7 @@ class SocketClient extends BasicListener with EventEmitter {
   void onVotes(event, context) {
     if (event.eventData['event'] == 'ready') {
       debugPrint('${DateTime.now()}: подгружены с сервера данные по доступным голосованиям');
-      _box!.put('votes.${store.user.value!.id}', store.votes);
+      _box!.put('votes.${store.user.value!.id}', store.votes.list);
       // подписаться на каналы по каждому пришедшему голосованию
       if (store.votes.list == null) return;
       final List<Vote> votes = store.votes.list!;

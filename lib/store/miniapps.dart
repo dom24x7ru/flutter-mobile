@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/models/miniapp.dart';
+import 'package:dom24x7_flutter/models/miniapp/miniapp.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:mobx/mobx.dart';
 

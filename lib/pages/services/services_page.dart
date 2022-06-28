@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/models/miniapp.dart';
+import 'package:dom24x7_flutter/models/miniapp/miniapp.dart';
 import 'package:dom24x7_flutter/pages/services/documents_page.dart';
 import 'package:dom24x7_flutter/pages/services/faq/categories_page.dart';
 import 'package:dom24x7_flutter/pages/services/miniapps/url_miniapp_page.dart';
