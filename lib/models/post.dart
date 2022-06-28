@@ -8,17 +8,21 @@ class Post extends Model {
   @HiveField(1)
   late int createdAt;
   @HiveField(2)
-  late String type;
+  late int updatedAt;
   @HiveField(3)
-  late String title;
+  late String type;
   @HiveField(4)
-  late String body;
+  late String title;
   @HiveField(5)
+  late String body;
+  @HiveField(6)
   String? url;
 
-  Post(id, this.createdAt, this.type, this.title, this.body, this.url) : super(id);
+  Post(id, this.createdAt, this.updatedAt, this.type, this.title, this.body, this.url) : super(id);
+
   Post.fromMap(Map<String, dynamic> map) : super(map['id']) {
     createdAt = map['createdAt'];
+    updatedAt = map['updatedAt'];
     type = map['type'];
     title = map['title'];
     body = map['body'];
@@ -27,7 +31,7 @@ class Post extends Model {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = { 'id': id, 'createdAt': createdAt, 'type': type, 'title': title, 'body': body };
+    Map<String, dynamic> map = { 'id': id, 'createdAt': createdAt, 'updatedAt': updatedAt, 'type': type, 'title': title, 'body': body };
     if (url != null) map['url'] = url;
     return map;
   }

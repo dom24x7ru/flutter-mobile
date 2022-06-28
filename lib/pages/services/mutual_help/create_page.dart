@@ -1,4 +1,5 @@
-import 'package:dom24x7_flutter/models/mutual_help_item.dart';
+import 'package:dom24x7_flutter/models/mutual_help/mutual_help_category.dart';
+import 'package:dom24x7_flutter/models/mutual_help/mutual_help_item.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';

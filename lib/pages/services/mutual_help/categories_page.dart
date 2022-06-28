@@ -1,5 +1,6 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
-import 'package:dom24x7_flutter/models/mutual_help_item.dart';
+import 'package:dom24x7_flutter/models/mutual_help/mutual_help_category.dart';
+import 'package:dom24x7_flutter/models/mutual_help/mutual_help_item.dart';
 import 'package:dom24x7_flutter/pages/services/mutual_help/create_page.dart';
 import 'package:dom24x7_flutter/pages/services/mutual_help/list_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';

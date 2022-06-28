@@ -24,13 +24,13 @@ class IMChannelAdapter extends TypeAdapter<IMChannel> {
       fields[4] as IMMessage?,
       fields[5] as int,
       (fields[6] as List).cast<IMPerson>(),
-    );
+    )..updatedAt = fields[7] as int;
   }
 
   @override
   void write(BinaryWriter writer, IMChannel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(1)
       ..write(obj.title)
       ..writeByte(2)
@@ -43,6 +43,8 @@ class IMChannelAdapter extends TypeAdapter<IMChannel> {
       ..write(obj.count)
       ..writeByte(6)
       ..write(obj.persons)
+      ..writeByte(7)
+      ..write(obj.updatedAt)
       ..writeByte(0)
       ..write(obj.id);
   }

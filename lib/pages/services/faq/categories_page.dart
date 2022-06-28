@@ -1,4 +1,5 @@
-import 'package:dom24x7_flutter/models/faq_item.dart';
+import 'package:dom24x7_flutter/models/faq/faq_category.dart';
+import 'package:dom24x7_flutter/models/faq/faq_item.dart';
 import 'package:dom24x7_flutter/pages/services/faq/list_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';

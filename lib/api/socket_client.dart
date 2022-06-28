@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dom24x7_flutter/models/document.dart';
-import 'package:dom24x7_flutter/models/faq_item.dart';
+import 'package:dom24x7_flutter/models/faq/faq_item.dart';
 import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/im/im_channel.dart';
-import 'package:dom24x7_flutter/models/instruction.dart';
+import 'package:dom24x7_flutter/models/instruction/instruction.dart';
 import 'package:dom24x7_flutter/models/house/invite.dart';
 import 'package:dom24x7_flutter/models/miniapp/miniapp.dart';
-import 'package:dom24x7_flutter/models/mutual_help_item.dart';
+import 'package:dom24x7_flutter/models/mutual_help/mutual_help_item.dart';
 import 'package:dom24x7_flutter/models/post.dart';
-import 'package:dom24x7_flutter/models/recommendation.dart';
+import 'package:dom24x7_flutter/models/recommendation/recommendation.dart';
 import 'package:dom24x7_flutter/models/user/user.dart';
 import 'package:dom24x7_flutter/models/vote/vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -285,8 +285,8 @@ class SocketClient extends BasicListener with EventEmitter {
       debugPrint('${DateTime.now()}: найден кэш со списком доступных миниприложений');
       store.miniApps.setMiniApps((cacheData as List).map((miniapp) => miniapp as MiniApp).toList());
     }
-    socket.emit('miniapp.list', {}, (String name, dynamic error, dynamic data) {
-      for (var miniApp in data) {
+    socket.emit('miniapp.list', {}, (String name, dynamic error, dynamic list) {
+      for (var miniApp in list) {
         store.miniApps.addMiniApp(MiniApp.fromMap(miniApp));
       }
       debugPrint('${DateTime.now()}: подгружены с сервера данные по списку миниприложений');

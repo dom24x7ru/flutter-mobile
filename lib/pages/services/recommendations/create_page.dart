@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:dom24x7_flutter/api/socket_client.dart';
-import 'package:dom24x7_flutter/models/recommendation.dart';
+import 'package:dom24x7_flutter/models/recommendation/recommendation.dart';
+import 'package:dom24x7_flutter/models/recommendation/recommendation_category.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';

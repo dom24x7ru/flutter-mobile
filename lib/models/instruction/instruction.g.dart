@@ -1,53 +1,40 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'flat.dart';
+part of 'instruction.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class FlatAdapter extends TypeAdapter<Flat> {
+class InstructionAdapter extends TypeAdapter<Instruction> {
   @override
-  final int typeId = 13;
+  final int typeId = 33;
 
   @override
-  Flat read(BinaryReader reader) {
+  Instruction read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Flat(
+    return Instruction(
       fields[0] as dynamic,
-      fields[1] as int,
-      fields[2] as int?,
-      fields[3] as int?,
-    )
-      ..rooms = fields[4] as int?
-      ..square = fields[5] as double
-      ..type = fields[6] as FlatType?
-      ..residents = (fields[7] as List).cast<Resident>()
-      ..updatedAt = fields[8] as int;
+      fields[1] as String,
+      fields[2] as String,
+      (fields[3] as List).cast<InstructionItem>(),
+    )..updatedAt = fields[4] as int;
   }
 
   @override
-  void write(BinaryWriter writer, Flat obj) {
+  void write(BinaryWriter writer, Instruction obj) {
     writer
-      ..writeByte(9)
-      ..writeByte(1)
-      ..write(obj.number)
-      ..writeByte(2)
-      ..write(obj.floor)
-      ..writeByte(3)
-      ..write(obj.section)
-      ..writeByte(4)
-      ..write(obj.rooms)
       ..writeByte(5)
-      ..write(obj.square)
-      ..writeByte(6)
-      ..write(obj.type)
-      ..writeByte(7)
-      ..write(obj.residents)
-      ..writeByte(8)
+      ..writeByte(1)
+      ..write(obj.title)
+      ..writeByte(2)
+      ..write(obj.subtitle)
+      ..writeByte(3)
+      ..write(obj.body)
+      ..writeByte(4)
       ..write(obj.updatedAt)
       ..writeByte(0)
       ..write(obj.id);
@@ -59,7 +46,7 @@ class FlatAdapter extends TypeAdapter<Flat> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is FlatAdapter &&
+      other is InstructionAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

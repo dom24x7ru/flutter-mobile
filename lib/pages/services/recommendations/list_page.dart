@@ -1,7 +1,7 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/user/person.dart';
-import 'package:dom24x7_flutter/models/recommendation.dart';
+import 'package:dom24x7_flutter/models/recommendation/recommendation.dart';
 import 'package:dom24x7_flutter/pages/services/recommendations/create_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';

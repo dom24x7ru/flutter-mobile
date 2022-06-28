@@ -1,52 +1,52 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'flat.dart';
+part of 'recommendation.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class FlatAdapter extends TypeAdapter<Flat> {
+class RecommendationAdapter extends TypeAdapter<Recommendation> {
   @override
-  final int typeId = 13;
+  final int typeId = 37;
 
   @override
-  Flat read(BinaryReader reader) {
+  Recommendation read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Flat(
+    return Recommendation(
       fields[0] as dynamic,
-      fields[1] as int,
-      fields[2] as int?,
-      fields[3] as int?,
-    )
-      ..rooms = fields[4] as int?
-      ..square = fields[5] as double
-      ..type = fields[6] as FlatType?
-      ..residents = (fields[7] as List).cast<Resident>()
-      ..updatedAt = fields[8] as int;
+      fields[1] as String,
+      fields[2] as String,
+      fields[3] as bool,
+      fields[4] as RecommendationExtra,
+      fields[5] as RecommendationCategory,
+      fields[6] as Person,
+      fields[7] as Flat,
+      fields[8] as int,
+    );
   }
 
   @override
-  void write(BinaryWriter writer, Flat obj) {
+  void write(BinaryWriter writer, Recommendation obj) {
     writer
       ..writeByte(9)
       ..writeByte(1)
-      ..write(obj.number)
+      ..write(obj.title)
       ..writeByte(2)
-      ..write(obj.floor)
+      ..write(obj.body)
       ..writeByte(3)
-      ..write(obj.section)
+      ..write(obj.deleted)
       ..writeByte(4)
-      ..write(obj.rooms)
+      ..write(obj.extra)
       ..writeByte(5)
-      ..write(obj.square)
+      ..write(obj.category)
       ..writeByte(6)
-      ..write(obj.type)
+      ..write(obj.person)
       ..writeByte(7)
-      ..write(obj.residents)
+      ..write(obj.flat)
       ..writeByte(8)
       ..write(obj.updatedAt)
       ..writeByte(0)
@@ -59,7 +59,7 @@ class FlatAdapter extends TypeAdapter<Flat> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is FlatAdapter &&
+      other is RecommendationAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

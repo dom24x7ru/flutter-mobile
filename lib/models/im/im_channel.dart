@@ -21,6 +21,8 @@ class IMChannel extends Model {
   late int count;
   @HiveField(6)
   List<IMPerson> persons = [];
+  @HiveField(7)
+  late int updatedAt;
 
   IMChannel(id, this.title, this.allHouse, this.private, this.lastMessage, this.count, this.persons) : super(id);
 
@@ -35,11 +37,12 @@ class IMChannel extends Model {
         persons.add(IMPerson(Person.fromMap(person), Flat.fromMap(person['flat'])));
       }
     }
+    updatedAt = map['updatedAt'];
   }
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = { 'id': id };
+    Map<String, dynamic> map = { 'id': id, 'updatedAt': updatedAt };
     if (title != null) map['title'] = title;
     map['allHouse'] = allHouse;
     map['private'] = private;

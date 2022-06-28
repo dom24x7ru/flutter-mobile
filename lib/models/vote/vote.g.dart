@@ -21,22 +21,23 @@ class VoteAdapter extends TypeAdapter<Vote> {
       fields[1] as int,
       fields[2] as String,
       fields[3] as int,
-      fields[4] as bool,
+      fields[4] as int,
       fields[5] as bool,
       fields[6] as bool,
       fields[7] as bool,
-      fields[8] as int?,
+      fields[8] as bool,
       fields[9] as int?,
-      fields[10] as int,
-      (fields[11] as List).cast<VoteQuestion>(),
-      (fields[12] as List).cast<VoteAnswer>(),
+      fields[10] as int?,
+      fields[11] as int,
+      (fields[12] as List).cast<VoteQuestion>(),
+      (fields[13] as List).cast<VoteAnswer>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Vote obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(1)
       ..write(obj.userId)
       ..writeByte(2)
@@ -44,22 +45,24 @@ class VoteAdapter extends TypeAdapter<Vote> {
       ..writeByte(3)
       ..write(obj.createdAt)
       ..writeByte(4)
-      ..write(obj.multi)
+      ..write(obj.updatedAt)
       ..writeByte(5)
-      ..write(obj.anonymous)
+      ..write(obj.multi)
       ..writeByte(6)
-      ..write(obj.closed)
+      ..write(obj.anonymous)
       ..writeByte(7)
-      ..write(obj.house)
+      ..write(obj.closed)
       ..writeByte(8)
-      ..write(obj.section)
+      ..write(obj.house)
       ..writeByte(9)
-      ..write(obj.floor)
+      ..write(obj.section)
       ..writeByte(10)
-      ..write(obj.persons)
+      ..write(obj.floor)
       ..writeByte(11)
-      ..write(obj.questions)
+      ..write(obj.persons)
       ..writeByte(12)
+      ..write(obj.questions)
+      ..writeByte(13)
       ..write(obj.answers)
       ..writeByte(0)
       ..write(obj.id);

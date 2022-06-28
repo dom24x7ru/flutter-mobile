@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/models/recommendation.dart';
+import 'package:dom24x7_flutter/models/recommendation/recommendation.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:mobx/mobx.dart';
 

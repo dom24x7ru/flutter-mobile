@@ -14,30 +14,33 @@ class Vote extends Model {
   @HiveField(3)
   late int createdAt;
   @HiveField(4)
-  late bool multi;
+  late int updatedAt;
   @HiveField(5)
-  late bool anonymous;
+  late bool multi;
   @HiveField(6)
-  late bool closed;
+  late bool anonymous;
   @HiveField(7)
-  late bool house;
+  late bool closed;
   @HiveField(8)
-  int? section;
+  late bool house;
   @HiveField(9)
-  int? floor;
+  int? section;
   @HiveField(10)
-  late int persons;
+  int? floor;
   @HiveField(11)
-  late List<VoteQuestion> questions = [];
+  late int persons;
   @HiveField(12)
+  late List<VoteQuestion> questions = [];
+  @HiveField(13)
   late List<VoteAnswer> answers = [];
 
-  Vote(id, this.userId, this.title, this.createdAt, this.multi, this.anonymous, this.closed, this.house, this.section, this.floor, this.persons, this.questions, this.answers) : super(id);
+  Vote(id, this.userId, this.title, this.createdAt, this.updatedAt, this.multi, this.anonymous, this.closed, this.house, this.section, this.floor, this.persons, this.questions, this.answers) : super(id);
 
   Vote.fromMap(Map<String, dynamic> map) : super(map['id']) {
     userId = map['user']['id'];
     title = map['title'];
     createdAt = map['createdAt'];
+    updatedAt = map['updatedAt'];
     multi = map['multi'];
     anonymous = map['anonymous'];
     closed = map['closed'];
@@ -60,6 +63,7 @@ class Vote extends Model {
       'userId': userId,
       'title': title,
       'createdAt': createdAt,
+      'updatedAt': updatedAt,
       'multi': multi,
       'anonymous': anonymous,
       'closed': closed,

@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/models/mutual_help_item.dart';
+import 'package:dom24x7_flutter/models/mutual_help/mutual_help_item.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:mobx/mobx.dart';
 

@@ -70,7 +70,7 @@ class _InvitePage extends State<InvitePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(_codeFormat(invite.code!), style: const TextStyle(fontSize: 18.0)),
-                  Text(Utilities.getDateFormat(invite.createdAt!), style: const TextStyle(color: Colors.black45)),
+                  Text(Utilities.getDateFormat(invite.createdAt), style: const TextStyle(color: Colors.black45)),
                   _flatInfoWidget(invite.flat)
                 ]
               )
