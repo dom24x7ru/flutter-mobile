@@ -26,7 +26,7 @@ class FlatAdapter extends TypeAdapter<Flat> {
       ..square = fields[5] as double
       ..type = fields[6] as FlatType?
       ..residents = (fields[7] as List).cast<Resident>()
-      ..updatedAt = fields[8] as int;
+      ..updatedAt = fields[8] as int?;
   }
 
   @override

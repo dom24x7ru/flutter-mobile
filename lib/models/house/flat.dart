@@ -22,7 +22,7 @@ class Flat extends Model {
   @HiveField(7)
   List<Resident> residents = [];
   @HiveField(8)
-  late int updatedAt;
+  int? updatedAt;
 
   Flat(id, this.number, this.floor, this.section) : super(id);
 
@@ -43,7 +43,7 @@ class Flat extends Model {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = { 'id': id, 'number': number, 'floor': floor, 'section': section, 'updatedAt': updatedAt };
+    Map<String, dynamic> map = { 'id': id, 'number': number, 'floor': floor, 'section': section };
     if (rooms != null) map['rooms'] = rooms;
     if (square != 0) map['square'] = square;
     if (type != null) map['type'] = type!.toMap();
@@ -51,6 +51,7 @@ class Flat extends Model {
     for (var resident in residents) {
       map['residents'].add(resident.toMap());
     }
+    if (updatedAt != null) map['updatedAt'] = updatedAt;
     return map;
   }
 }
