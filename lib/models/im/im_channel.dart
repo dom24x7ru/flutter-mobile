@@ -22,7 +22,7 @@ class IMChannel extends Model {
   @HiveField(6)
   List<IMPerson> persons = [];
   @HiveField(7)
-  late int updatedAt;
+  int? updatedAt;
 
   IMChannel(id, this.title, this.allHouse, this.private, this.lastMessage, this.count, this.persons) : super(id);
 

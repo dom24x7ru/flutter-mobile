@@ -24,7 +24,7 @@ class IMChannelAdapter extends TypeAdapter<IMChannel> {
       fields[4] as IMMessage?,
       fields[5] as int,
       (fields[6] as List).cast<IMPerson>(),
-    )..updatedAt = fields[7] as int;
+    )..updatedAt = fields[7] as int?;
   }
 
   @override
