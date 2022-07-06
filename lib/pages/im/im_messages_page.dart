@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import "package:flutter_chat_types/flutter_chat_types.dart" as types;
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:string_validator/string_validator.dart';
@@ -41,13 +42,21 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
 
   final _primaryColor = Colors.indigo;
 
+  Box? _box;
+
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
-      _loadMessages();
+
+      _initBoxHive(() {
+        _loadMessagesBox();
+        _loadMessages();
+      });
+
       _client.socket.emit('im.getMute', { 'channelId': widget.channel.id }, (String name, dynamic error, dynamic data) {
         if (error != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -68,8 +77,10 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
         if (message.channel!.id != widget.channel.id) return;
         if (eventData['event'] == 'destroy') {
           _delMessage(message);
+          _delMessageBox(message);
         } else {
           _addMessage(_convert(message));
+          _addMessageBox(message);
         }
       });
       _listeners.add(listener);
@@ -84,6 +95,11 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     _client.closeChannel('imMessages.${widget.channel.id}');
 
     super.dispose();
+  }
+
+  void _initBoxHive(Function() callback) async {
+    _box ??= await Hive.openBox('dom24x7');
+    callback();
   }
 
   types.Message _convert(IMMessage message, [types.Status status = types.Status.seen]) {
@@ -149,6 +165,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
   void _loadMessages({ int limit = 20, int offset = 0 }) {
     final data = { 'channelId': widget.channel.id, 'limit': limit, 'offset': offset };
     _client.socket.emit('im.load', data, (String name, dynamic error, dynamic data) {
+      debugPrint('${DateTime.now()}: получили обновленные сообщения в чат ${widget.channel.id} с сервера');
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
@@ -163,9 +180,14 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
       }
 
       final List<types.Message> newMessagesList = List.from(_messages);
+
+      final cacheData = _box!.get('im.channel${widget.channel.id}', defaultValue: <IMMessage>[]);
+      final List<IMMessage> boxMessagesList = (cacheData as List).map((msg) => msg as IMMessage).toList();
+
       for (var msg in data) {
         final imMessage = IMMessage.fromMap(msg);
         if (imMessage.channel!.id != widget.channel.id) continue;
+
         final message = _convert(imMessage);
         if (newMessagesList.where((item) => item.id == message.id).isEmpty) {
           newMessagesList.add(message);
@@ -176,11 +198,48 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
             }
           }
         }
+
+        if (boxMessagesList.where((item) => item.id == imMessage.id).isEmpty) {
+          boxMessagesList.add(imMessage);
+        } else {
+          for (int index = 0; index < boxMessagesList.length; index++) {
+            if (boxMessagesList[index].id == imMessage.id) {
+              boxMessagesList[index] = imMessage;
+            }
+          }
+        }
       }
+
       newMessagesList.sort((msg1, msg2) => msg2.id.compareTo(msg1.id));
+      boxMessagesList.sort((msg1, msg2) => msg2.id.compareTo(msg1.id));
 
       setState(() => _messages = newMessagesList);
+      _box!.put('im.channel${widget.channel.id}', boxMessagesList);
     });
+  }
+
+  void _loadMessagesBox() {
+    final List<types.Message> newMessagesList = List.from(_messages);
+
+    final cacheData = _box!.get('im.channel${widget.channel.id}', defaultValue: <IMMessage>[]);
+    final List<IMMessage> boxMessagesList = (cacheData as List).map((msg) => msg as IMMessage).toList();
+    for (var imMessage in boxMessagesList) {
+      if (imMessage.channel!.id != widget.channel.id) continue;
+
+      final message = _convert(imMessage);
+      if (newMessagesList.where((item) => item.id == message.id).isEmpty) {
+        newMessagesList.add(message);
+      } else {
+        for (int index = 0; index < newMessagesList.length; index++) {
+          if (newMessagesList[index].id == message.id) {
+            newMessagesList[index] = message;
+          }
+        }
+      }
+    }
+
+    newMessagesList.sort((msg1, msg2) => msg2.id.compareTo(msg1.id));
+    setState(() => _messages = newMessagesList);
   }
 
   void _addMessage(types.Message message) {
@@ -192,11 +251,34 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     }
   }
 
+  void _addMessageBox(IMMessage message) {
+    final cacheData = _box!.get('im.channel${widget.channel.id}', defaultValue: <IMMessage>[]);
+    final List<IMMessage> boxMessagesList = (cacheData as List).map((msg) => msg as IMMessage).toList();
+    final index = boxMessagesList.indexWhere((msg) => msg.id == message.id);
+    if (index == -1) {
+      boxMessagesList.insert(0, message);
+    } else {
+      boxMessagesList[index] = message;
+    }
+    _box!.put('im.channel${widget.channel.id}', boxMessagesList);
+  }
+
   void _delMessage(IMMessage message) {
     if (message.channel!.id != widget.channel.id) return;
     final index = _messages.indexWhere((msg) => msg.id == message.guid);
     if (index == -1) return;
     setState(() => _messages.removeAt(index));
+  }
+
+  void _delMessageBox(IMMessage message) {
+    if (message.channel!.id != widget.channel.id) return;
+
+    final cacheData = _box!.get('im.channel${widget.channel.id}', defaultValue: <IMMessage>[]);
+    final List<IMMessage> boxMessagesList = (cacheData as List).map((msg) => msg as IMMessage).toList();
+    final index = boxMessagesList.indexWhere((msg) => msg.id == message.id);
+    if (index == -1) return;
+    boxMessagesList.removeAt(index);
+    _box!.put('im.channel${widget.channel.id}', boxMessagesList);
   }
 
   void _send(IMMessageBody body, { String? guid }) {

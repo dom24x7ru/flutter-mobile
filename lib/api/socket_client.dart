@@ -296,7 +296,7 @@ class SocketClient extends BasicListener with EventEmitter {
 
   void onFlats(event, context) {
     if (event.eventData['event'] == 'ready') {
-      debugPrint('${DateTime.now()}: подгружены с сервера данные по квартирым');
+      debugPrint('${DateTime.now()}: подгружены с сервера данные по квартирам');
       _box!.put('flats.${store.user.value!.houseId}', store.flats.list);
       emit('loading', 'socket', { 'channel': 'flats' });
       checkReady('flats');

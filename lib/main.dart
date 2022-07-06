@@ -6,6 +6,8 @@ import 'package:dom24x7_flutter/models/im/im_channel.dart';
 import 'package:dom24x7_flutter/models/im/im_image.dart';
 import 'package:dom24x7_flutter/models/im/im_message.dart';
 import 'package:dom24x7_flutter/models/im/im_message_body.dart';
+import 'package:dom24x7_flutter/models/im/im_message_extra.dart';
+import 'package:dom24x7_flutter/models/im/im_message_history_item.dart';
 import 'package:dom24x7_flutter/models/im/im_person.dart';
 import 'package:dom24x7_flutter/models/miniapp/miniapp.dart';
 import 'package:dom24x7_flutter/models/miniapp/miniapp_extra.dart';
@@ -100,6 +102,8 @@ void main() async {
   Hive.registerAdapter(IMChannelAdapter());
   Hive.registerAdapter(IMMessageAdapter());
   Hive.registerAdapter(IMMessageBodyAdapter());
+  Hive.registerAdapter(IMMessageExtraAdapter());
+  Hive.registerAdapter(IMMessageHistoryItemAdapter());
   Hive.registerAdapter(IMPersonAdapter());
   Hive.registerAdapter(IMImageAdapter());
   Hive.registerAdapter(VoteAdapter());
