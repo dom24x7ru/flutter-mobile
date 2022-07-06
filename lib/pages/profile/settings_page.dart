@@ -39,6 +39,9 @@ class _SettingsPage extends State<SettingsPage> {
   late TextEditingController _cFlat;
   late TextEditingController _cTelegram;
 
+  late TextEditingController _cDeleteAccount;
+  bool _enableDelBtn = false;
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +53,8 @@ class _SettingsPage extends State<SettingsPage> {
 
     _cFlat = TextEditingController();
     _cFlat.addListener(_findFlat);
+
+    _cDeleteAccount = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
@@ -66,6 +71,8 @@ class _SettingsPage extends State<SettingsPage> {
 
     _cFlat.removeListener(_findFlat);
     _cFlat.dispose();
+
+    _cDeleteAccount.dispose();
 
     super.dispose();
   }
@@ -176,6 +183,29 @@ class _SettingsPage extends State<SettingsPage> {
             ElevatedButton(
               onPressed: () => _save(store),
               child: Text('Сохранить'.toUpperCase()),
+            ),
+            Card(
+              color: Colors.redAccent,
+              child: Container(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Я хочу удалить свой аккаунт', style: TextStyle(color: Colors.white)),
+                    TextField(
+                      controller: _cDeleteAccount,
+                      onChanged: (String value) => _enableDelBtnCheck(),
+                      decoration: const InputDecoration(
+                        label: Text('Для удаления введите слово "удалить"', style: TextStyle(color: Colors.white))
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: _enableDelBtn ? () => _delUser(store) : null,
+                      child: Text('Удалить'.toUpperCase())
+                    )
+                  ]
+                )
+              ),
             )
           ],
         )
@@ -282,6 +312,27 @@ class _SettingsPage extends State<SettingsPage> {
             const SnackBar(content: Text('Сохранить не удалось. Попробуйте сохранить позже'), backgroundColor: Colors.red)
         );
       }
+    });
+  }
+
+  void _enableDelBtnCheck() {
+    setState(() => _enableDelBtn = (_cDeleteAccount.text.toUpperCase() == 'УДАЛИТЬ'));
+  }
+
+  void _delUser(MainStore store) {
+    store.client.socket.emit('user.del', {}, (String name, dynamic error, dynamic data) async {
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+      store.clear();
+      final prefs = await SharedPreferences.getInstance();
+      prefs.remove('authToken');
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Navigator.pushNamedAndRemoveUntil(context, '/security/auth', (route) => false);
+      });
     });
   }
 }
