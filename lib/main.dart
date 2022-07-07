@@ -30,7 +30,7 @@ import 'package:dom24x7_flutter/pages/feedback_page.dart';
 import 'package:dom24x7_flutter/pages/house/house_page.dart';
 import 'package:dom24x7_flutter/pages/im/im_channels_page.dart';
 import 'package:dom24x7_flutter/pages/security/invite_page.dart';
-import 'package:dom24x7_flutter/pages/news_page.dart';
+import 'package:dom24x7_flutter/pages/feed/feed_page.dart';
 import 'package:dom24x7_flutter/pages/profile/profile_page.dart';
 import 'package:dom24x7_flutter/pages/security/sec_auth_page.dart';
 import 'package:dom24x7_flutter/pages/security/sec_code_page.dart';
@@ -140,7 +140,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/loader',
         routes: {
           '/loader': (context) => const AppLoaderScreenPage(),
-          '/': (context) => const NewsPage(),
+          '/': (context) => const FeedPage(),
           '/house': (context) => const HousePage(),
           '/im': (context) => const IMChannelsPage(),
           '/services': (context) => const ServicesPage(),
