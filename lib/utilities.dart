@@ -14,12 +14,18 @@ class Utilities {
     return title;
   }
 
-  static String getPersonTitle(IMPerson imPerson, Person owner, [bool you = false]) {
+  /// Возвращает заголосов в виде полного ФИО либо тестового представления квартиры в чате
+  static String getIMPersonTitle(IMPerson imPerson, Person owner, [bool you = false]) {
     Person person = imPerson.person;
     if (you) {
       if (person.id == owner.id) return 'Вы';
     }
 
+    return getPersonTitle(person, imPerson.flat);
+  }
+
+  /// Возвращает заголосов в виде полного ФИО либо тестового представления квартиры
+  static String getPersonTitle(Person person, Flat flat) {
     String fullName = '';
     if (person.surname != null) {
       fullName += person.surname!;
@@ -31,12 +37,12 @@ class Utilities {
       fullName += ' ${person.midname!}';
     }
     if (fullName.trim().isEmpty) {
-      final flat = imPerson.flat;
       return 'сосед(ка) из ${Utilities.getFlatTitle(flat)}';
     }
     return fullName.trim();
   }
 
+  /// Возвращает заголовок канала чата
   static String getChannelTitle(Person owner, IMChannel channel) {
     if (channel.title != null) return channel.title!;
     // раз нет заголовка, то это приватный чат с соседом, нужно указать его имя, либо квартиру
@@ -45,12 +51,25 @@ class Utilities {
     for (var item in imPersons) {
       if (item.person.id != owner.id) imPerson = item;
     }
-    return getPersonTitle(imPerson, owner);
+    return getIMPersonTitle(imPerson, owner);
   }
 
+  /// Возвращает заголовок страницы с учетом максимальной длины строки
   static String getHeaderTitle(String title, [int maxLength = 15]) {
     if (title.length < maxLength) return title;
     return '${title.substring(0, maxLength)}...';
+  }
+
+  /// Возвращает буквы для отображения в аватаре
+  static String getAvatarStr(Person person) {
+    String result = '';
+    if (person.surname != null) {
+      result += person.surname![0].toUpperCase();
+    }
+    if (person.name != null) {
+      result += person.name![0].toUpperCase();
+    }
+    return result.isNotEmpty ? result : 'A'; // если пусто, то Anonymous
   }
 
   static String getDateFormat(int dt, [String format = 'dd.MM.y HH:mm:ss']) {

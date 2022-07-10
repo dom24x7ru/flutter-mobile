@@ -1,8 +1,7 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
-import 'package:dom24x7_flutter/models/post.dart';
-import 'package:dom24x7_flutter/pages/feed/widgets/feed_post_widget.dart';
+import 'package:dom24x7_flutter/models/post/post.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/feed_post_widget.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/feed_vote_widget.dart';
-import 'package:dom24x7_flutter/pages/services/votes/vote_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
@@ -12,7 +11,6 @@ import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/vote/vote.dart';
-import '../../utilities.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);

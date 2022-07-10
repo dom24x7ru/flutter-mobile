@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'post.dart';
+part of 'post/post.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

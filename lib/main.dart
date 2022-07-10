@@ -12,7 +12,7 @@ import 'package:dom24x7_flutter/models/im/im_person.dart';
 import 'package:dom24x7_flutter/models/miniapp/miniapp.dart';
 import 'package:dom24x7_flutter/models/miniapp/miniapp_extra.dart';
 import 'package:dom24x7_flutter/models/miniapp/miniapp_type.dart';
-import 'package:dom24x7_flutter/models/post.dart';
+import 'package:dom24x7_flutter/models/post/post.dart';
 import 'package:dom24x7_flutter/models/user/contact_access.dart';
 import 'package:dom24x7_flutter/models/user/enums/level.dart';
 import 'package:dom24x7_flutter/models/user/enums/name_format.dart';

@@ -9,7 +9,7 @@ import 'package:dom24x7_flutter/models/instruction/instruction.dart';
 import 'package:dom24x7_flutter/models/house/invite.dart';
 import 'package:dom24x7_flutter/models/miniapp/miniapp.dart';
 import 'package:dom24x7_flutter/models/mutual_help/mutual_help_item.dart';
-import 'package:dom24x7_flutter/models/post.dart';
+import 'package:dom24x7_flutter/models/post/post.dart';
 import 'package:dom24x7_flutter/models/recommendation/recommendation.dart';
 import 'package:dom24x7_flutter/models/user/user.dart';
 import 'package:dom24x7_flutter/models/vote/vote.dart';

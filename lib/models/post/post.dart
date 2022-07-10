@@ -1,7 +1,8 @@
 import 'package:dom24x7_flutter/models/model.dart';
+import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-part 'post.g.dart';
+part '../post.g.dart';
 
 @HiveType(typeId: 15)
 class Post extends Model {
@@ -17,6 +18,8 @@ class Post extends Model {
   late String body;
   @HiveField(6)
   String? url;
+  @HiveField(7)
+  EnrichedActivity? enrichedActivity;
 
   Post(id, this.createdAt, this.updatedAt, this.type, this.title, this.body, this.url) : super(id);
 
@@ -27,12 +30,14 @@ class Post extends Model {
     title = map['title'];
     body = map['body'];
     url = map['url'];
+    if (map['enrichedActivity'] != null) enrichedActivity = EnrichedActivity.fromMap(map);
   }
 
   @override
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = { 'id': id, 'createdAt': createdAt, 'updatedAt': updatedAt, 'type': type, 'title': title, 'body': body };
     if (url != null) map['url'] = url;
+    if (enrichedActivity != null) map['enrichedActivity'] = enrichedActivity!.toMap();
     return map;
   }
 }

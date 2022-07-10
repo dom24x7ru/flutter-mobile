@@ -76,7 +76,7 @@ class _IMChannelsPageState extends State<IMChannelsPage> {
                 final lastMessage = channel.lastMessage;
                 String text = lastMessage!.body!.text != null ? lastMessage.body!.text! : '';
                 if (lastMessage.imPerson != null) {
-                  final person = '${Utilities.getPersonTitle(lastMessage.imPerson!, store.user.value!.person!, true)}: ';
+                  final person = '${Utilities.getIMPersonTitle(lastMessage.imPerson!, store.user.value!.person!, true)}: ';
                   text = Utilities.getHeaderTitle(text, maxLen - person.length);
                   channelInfo.add(
                       Row(
