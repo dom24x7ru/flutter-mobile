@@ -14,6 +14,12 @@ class ProfilePicture extends StatelessWidget {
     if (user == null) {
       return const Icon(Icons.error);
     }
-    return Avatar.small(user: IMPerson(user.person!, user.residents[0].flat!));
+    IMPerson person = IMPerson(
+        user.person!,
+        user.residents[0].flat!,
+        null,
+        null
+    );
+    return Avatar.small(user: person);
   }
 }

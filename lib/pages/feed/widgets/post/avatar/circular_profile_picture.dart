@@ -22,10 +22,9 @@ class CircularProfilePicture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final profilePhoto = isThumbnail
-    //     ? user.profilePhotoThumbnail
-    //     : user.profilePhotoResized;
-    const profilePhoto = null;
+    final profilePhoto = isThumbnail
+        ? user.profilePhotoThumbnail
+        : user.profilePhotoResized;
 
     return (profilePhoto == null)
         ? Container(

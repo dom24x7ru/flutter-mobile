@@ -10,12 +10,18 @@ class IMPerson {
   final Person person;
   @HiveField(2)
   final Flat? flat;
+  @HiveField(3)
+  final String? profilePhotoThumbnail;
+  @HiveField(4)
+  final String? profilePhotoResized;
 
-  IMPerson(this.person, this.flat);
+  IMPerson(this.person, this.flat, this.profilePhotoThumbnail, this.profilePhotoResized);
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = { 'person': person.toMap() };
     if (flat != null) map['flat'] = flat!.toMap();
+    map['profilePhotoThumbnail'] = profilePhotoThumbnail;
+    map['profilePhotoResized'] = profilePhotoResized;
     return map;
   }
 }

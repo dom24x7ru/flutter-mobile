@@ -18,18 +18,24 @@ class IMPersonAdapter extends TypeAdapter<IMPerson> {
     };
     return IMPerson(
       fields[1] as Person,
-      fields[2] as Flat,
+      fields[2] as Flat?,
+      fields[3] as String?,
+      fields[4] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, IMPerson obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(4)
       ..writeByte(1)
       ..write(obj.person)
       ..writeByte(2)
-      ..write(obj.flat);
+      ..write(obj.flat)
+      ..writeByte(3)
+      ..write(obj.profilePhotoThumbnail)
+      ..writeByte(4)
+      ..write(obj.profilePhotoResized);
   }
 
   @override

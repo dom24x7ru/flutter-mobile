@@ -32,9 +32,16 @@ class IMChannel extends Model {
     private = map['private'];
     lastMessage = map['lastMessage'] != null ? IMMessage.fromMap(map['lastMessage']) : null;
     count = map['count'] ?? 0;
+
     if (map['persons'] != null) {
       for (var person in map['persons']) {
-        persons.add(IMPerson(Person.fromMap(person), Flat.fromMap(person['flat'])));
+        IMPerson imPerson = IMPerson(
+            Person.fromMap(person),
+            Flat.fromMap(person['flat']),
+            person['profilePhoto'] != null ? person['profilePhoto']['thumbnail'] : null,
+            person['profilePhoto'] != null ? person['profilePhoto']['resized'] : null
+        );
+        persons.add(imPerson);
       }
     }
     updatedAt = map['updatedAt'];

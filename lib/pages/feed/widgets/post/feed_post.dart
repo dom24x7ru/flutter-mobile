@@ -20,7 +20,7 @@ class _FeedPostState extends State<FeedPost> {
     if (widget.post.enrichedActivity != null) {
       EnrichedActivity enrichedActivity = widget.post.enrichedActivity!;
       if (enrichedActivity.actor != null) widgets.add(ProfileSlab(user: enrichedActivity.actor!));
-      widgets.add(PictureCarousal(enrichedActivity: enrichedActivity));
+      if (enrichedActivity.extraData!['image_url'] != null) widgets.add(PictureCarousal(enrichedActivity: enrichedActivity));
       widgets.add(Description(enrichedActivity: enrichedActivity));
     }
     return Column(

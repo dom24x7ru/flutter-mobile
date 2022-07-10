@@ -2,7 +2,7 @@ import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-part '../post.g.dart';
+part 'post.g.dart';
 
 @HiveType(typeId: 15)
 class Post extends Model {

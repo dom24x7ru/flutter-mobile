@@ -32,8 +32,16 @@ class IMMessage extends Model {
     guid = map['guid'];
     createdAt = map['createdAt'];
     updatedAt = map['updatedAt'];
-    final person = map['person'];
-    imPerson = person != null ? IMPerson(Person.fromMap(person), Flat.fromMap(person['flat'])) : null;
+
+    if (map['person'] != null) {
+      imPerson = IMPerson(
+          Person.fromMap(map['person']),
+          Flat.fromMap(map['person']['flat']),
+          map['person']['profilePhoto'] != null ? map['person']['profilePhoto']['thumbnail'] : null,
+          map['person']['profilePhoto'] != null ? map['person']['profilePhoto']['resized'] : null
+      );
+    }
+
     channel = map['channel'] != null ? IMChannel.fromMap(map['channel']) : null;
     body = map['body'] != null ? IMMessageBody.fromMap(map['body']) : null; // не будет в ответе
     extra = map['extra'] != null ? IMMessageExtra.fromMap(map['extra']) : null;
