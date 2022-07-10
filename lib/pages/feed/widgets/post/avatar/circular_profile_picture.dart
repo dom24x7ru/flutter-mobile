@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dom24x7_flutter/models/user/user.dart';
+import 'package:dom24x7_flutter/models/user/im_person.dart';
 import 'package:dom24x7_flutter/theme.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,7 @@ class CircularProfilePicture extends StatelessWidget {
     this.isThumbnail = false,
   }) : super(key: key);
 
-  final User user;
+  final IMPerson user;
 
   final double size;
   final double fontSize;
@@ -37,7 +37,7 @@ class CircularProfilePicture extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                Utilities.getAvatarStr(user.person!),
+                Utilities.getAvatarStr(user.person),
                 style: TextStyle(fontSize: fontSize),
               ),
             ),

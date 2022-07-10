@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/models/user/user.dart';
+import 'package:dom24x7_flutter/models/user/im_person.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/avatar/circular_profile_picture.dart';
 import 'package:flutter/material.dart';
 
@@ -58,7 +58,7 @@ class Avatar extends StatelessWidget {
   final bool hasNewStory;
 
   /// The user data to show for the avatar.
-  final User user;
+  final IMPerson user;
 
   /// Text size of the user's initials when there is no profile photo.
   final double fontSize;

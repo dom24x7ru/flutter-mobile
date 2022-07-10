@@ -1,8 +1,10 @@
+import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/model.dart';
-import 'package:dom24x7_flutter/models/user/user.dart';
+import 'package:dom24x7_flutter/models/user/im_person.dart';
+import 'package:dom24x7_flutter/models/user/person.dart';
 
 class EnrichedActivity extends Model {
-  User? actor;
+  IMPerson? actor;
   late DateTime time;
   Map<String, dynamic>? latestReactions;
   Map<String, dynamic>? ownReactions;
@@ -12,7 +14,7 @@ class EnrichedActivity extends Model {
   EnrichedActivity(int id) : super(id);
 
   EnrichedActivity.fromMap(Map<String, dynamic> map) : super(map['id']) {
-    if (map['actor'] != null) actor = User.fromMap(map['actor']);
+    if (map['actor'] != null) actor =  IMPerson(Person.fromMap(map['actor']), Flat.fromMap(map['actor']['flat']));
     time = map['time'];
     latestReactions = map['latestReactions'];
     ownReactions = map['ownReactions'];

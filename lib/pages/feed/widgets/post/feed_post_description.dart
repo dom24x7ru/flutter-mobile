@@ -15,7 +15,7 @@ class Description extends StatelessWidget {
         TextSpan(
           children: <TextSpan>[
             TextSpan(
-              text: enrichedActivity.actor!.id.toString(),
+              text: enrichedActivity.actor!.person.id.toString(),
               style: AppTextStyle.textStyleBold),
             const TextSpan(text: ' '),
             TextSpan(text: enrichedActivity.extraData?['description'] as String? ?? ''),
