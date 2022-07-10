@@ -1,6 +1,6 @@
 import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/im/im_channel.dart';
-import 'package:dom24x7_flutter/models/im/im_person.dart';
+import 'package:dom24x7_flutter/models/user/im_person.dart';
 import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/user/person.dart';
 import 'package:intl/intl.dart';
