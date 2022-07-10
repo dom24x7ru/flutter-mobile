@@ -38,7 +38,7 @@ class CircularProfilePicture extends StatelessWidget {
             child: Center(
               child: Text(
                 Utilities.getAvatarStr(user.person),
-                style: TextStyle(fontSize: fontSize),
+                style: TextStyle(fontSize: fontSize, color: Colors.white),
               ),
             ),
           )

@@ -1,5 +1,6 @@
 import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
 import 'package:dom24x7_flutter/theme.dart';
+import 'package:dom24x7_flutter/utilities.dart';
 import 'package:flutter/material.dart';
 
 class Description extends StatelessWidget {
@@ -15,7 +16,7 @@ class Description extends StatelessWidget {
         TextSpan(
           children: <TextSpan>[
             TextSpan(
-              text: enrichedActivity.actor!.person.id.toString(),
+              text: Utilities.getPersonTitle(enrichedActivity.actor!.person, enrichedActivity.actor!.flat),
               style: AppTextStyle.textStyleBold),
             const TextSpan(text: ' '),
             TextSpan(text: enrichedActivity.extraData?['description'] as String? ?? ''),
