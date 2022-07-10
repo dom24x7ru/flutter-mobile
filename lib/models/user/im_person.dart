@@ -9,11 +9,13 @@ class IMPerson {
   @HiveField(1)
   final Person person;
   @HiveField(2)
-  final Flat flat;
+  final Flat? flat;
 
   IMPerson(this.person, this.flat);
 
   Map<String, dynamic> toMap() {
-    return { 'person': person.toMap(), 'flat': flat.toMap() };
+    Map<String, dynamic> map = { 'person': person.toMap() };
+    if (flat != null) map['flat'] = flat!.toMap();
+    return map;
   }
 }

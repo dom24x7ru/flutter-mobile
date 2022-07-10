@@ -30,7 +30,7 @@ class Post extends Model {
     title = map['title'];
     body = map['body'];
     url = map['url'];
-    if (map['enrichedActivity'] != null) enrichedActivity = EnrichedActivity.fromMap(map);
+    if (map['enrichedActivity'] != null) enrichedActivity = EnrichedActivity.fromMap(map['enrichedActivity']);
   }
 
   @override

@@ -25,7 +25,7 @@ class Utilities {
   }
 
   /// Возвращает заголосов в виде полного ФИО либо тестового представления квартиры
-  static String getPersonTitle(Person person, Flat flat) {
+  static String getPersonTitle(Person person, Flat? flat) {
     String fullName = '';
     if (person.surname != null) {
       fullName += person.surname!;
@@ -37,7 +37,8 @@ class Utilities {
       fullName += ' ${person.midname!}';
     }
     if (fullName.trim().isEmpty) {
-      return 'сосед(ка) из ${Utilities.getFlatTitle(flat)}';
+      if (flat != null) return 'сосед(ка) из ${Utilities.getFlatTitle(flat)}';
+      return 'Аноним';
     }
     return fullName.trim();
   }

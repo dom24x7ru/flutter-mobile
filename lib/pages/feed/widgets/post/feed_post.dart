@@ -1,3 +1,4 @@
+import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
 import 'package:dom24x7_flutter/models/post/post.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/feed_post_description.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/picture/picture_carousal.dart';
@@ -15,10 +16,12 @@ class FeedPost extends StatefulWidget {
 class _FeedPostState extends State<FeedPost> {
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgets = [ProfileSlab(user: widget.post.enrichedActivity!.actor!)];
+    List<Widget> widgets = [];
     if (widget.post.enrichedActivity != null) {
-      widgets.add(PictureCarousal(enrichedActivity: widget.post.enrichedActivity!));
-      widgets.add(Description(enrichedActivity: widget.post.enrichedActivity!));
+      EnrichedActivity enrichedActivity = widget.post.enrichedActivity!;
+      if (enrichedActivity.actor != null) widgets.add(ProfileSlab(user: enrichedActivity.actor!));
+      widgets.add(PictureCarousal(enrichedActivity: enrichedActivity));
+      widgets.add(Description(enrichedActivity: enrichedActivity));
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -107,7 +107,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
     if (message.imPerson == null) {
       firstName = 'Dom24x7 Bot';
     } else if (_imPersonNameIsEmpty(message)) {
-      final flat = message.imPerson!.flat;
+      final flat = message.imPerson!.flat!;
       firstName = 'сосед(ка) из ${Utilities.getFlatTitle(flat)}';
     } else {
       firstName = message.imPerson!.person.name;
