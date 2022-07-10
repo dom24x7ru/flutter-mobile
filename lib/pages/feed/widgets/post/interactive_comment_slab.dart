@@ -1,6 +1,6 @@
 import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/on_add_comment.dart';
-import 'package:dom24x7_flutter/pages/feed/widgets/post/profile_picture_widget.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/profile_picture.dart';
 import 'package:dom24x7_flutter/models/post/reaction.dart';
 import 'package:dom24x7_flutter/theme.dart';
 import 'package:dom24x7_flutter/utilities.dart';

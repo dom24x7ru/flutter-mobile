@@ -1,6 +1,6 @@
 import 'package:dom24x7_flutter/models/user/user.dart';
 import 'package:dom24x7_flutter/pages/feed/utils.dart';
-import 'package:dom24x7_flutter/pages/feed/widgets/post/avatar/avatar_widget.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/avatar/avatar.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/tap_fade_icon.dart';
 import 'package:dom24x7_flutter/theme.dart';
 import 'package:dom24x7_flutter/utilities.dart';

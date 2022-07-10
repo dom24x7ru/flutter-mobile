@@ -1,4 +1,4 @@
-import 'package:dom24x7_flutter/pages/feed/widgets/post/avatar/avatar_widget.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/avatar/avatar.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

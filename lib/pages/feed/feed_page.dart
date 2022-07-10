@@ -1,7 +1,7 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/post/post.dart';
-import 'package:dom24x7_flutter/pages/feed/widgets/post/feed_post_widget.dart';
-import 'package:dom24x7_flutter/pages/feed/widgets/feed_vote_widget.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/feed_post.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/feed_vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
