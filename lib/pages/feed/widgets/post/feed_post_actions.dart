@@ -1,11 +1,14 @@
+import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
 import 'package:dom24x7_flutter/models/post/reaction.dart';
 import 'package:dom24x7_flutter/pages/feed/utils.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/favorite_icon_button.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/tap_fade_icon.dart';
+import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/theme.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FeedPostActions extends StatefulWidget {
   const FeedPostActions({Key? key, required this.enrichedActivity}) : super(key: key);
@@ -19,8 +22,21 @@ class FeedPostActions extends StatefulWidget {
 class _FeedPostActionsState extends State<FeedPostActions> {
   late var likeReactions = getLikeReactions() ?? [];
   late var likeCount = getLikeCount() ?? 0;
+  late var ownLikeReactions = widget.enrichedActivity.ownReactions?['like'] ?? [];
 
   Reaction? latestLikeReaction;
+
+  late SocketClient _client;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final store = Provider.of<MainStore>(context, listen: false);
+      _client = store.client;
+    });
+  }
 
   List<Reaction>? getLikeReactions() {
     return widget.enrichedActivity.latestReactions?['like'] ?? [];
@@ -30,44 +46,30 @@ class _FeedPostActionsState extends State<FeedPostActions> {
     return widget.enrichedActivity.reactionCounts?['like'] ?? 0;
   }
 
-  Future<void> _addLikeReaction() async {
-    // FIXME
-    // latestLikeReaction = await context.appState.client.reactions.add(
-    //   'like',
-    //   widget.enrichedActivity.id,
-    //   userId: context.appState.user.id,
-    // );
-
-    setState(() {
-      likeReactions.add(latestLikeReaction!);
-      likeCount++;
+  void _addLikeReaction() {
+    _client.socket.emit('post.like', { 'postId': widget.enrichedActivity.id }, (String name, dynamic error, dynamic data) {
+      if (data != null && data['status'] == 'OK') {
+        latestLikeReaction = Reaction.fromMap(data['reaction']);
+        setState(() {
+          likeReactions.add(latestLikeReaction!);
+          ownLikeReactions = [latestLikeReaction!];
+          likeCount++;
+        });
+      }
     });
   }
 
-  Future<void> _removeLikeReaction() async {
-    late String? reactionId;
-    // A new reaction was added to this state.
-    if (latestLikeReaction != null) {
-      reactionId = latestLikeReaction?.id.toString();
-    } else {
-      // An old reaction has been retrieved from Stream.
-      final prevReaction = widget.enrichedActivity.ownReactions?['like'];
-      if (prevReaction != null && prevReaction.isNotEmpty) {
-        reactionId = prevReaction[0].id.toString();
+  void _removeLikeReaction() {
+    String reactionId = ownLikeReactions[0].id.toString();
+    _client.socket.emit('post.unlike', { 'postId': widget.enrichedActivity.id }, (String name, dynamic error, dynamic data) {
+      if (data != null && data['status'] == 'OK') {
+        setState(() {
+          likeReactions.removeWhere((reaction) => reaction.id.toString() == reactionId);
+          likeCount--;
+          latestLikeReaction = null;
+          ownLikeReactions = [];
+        });
       }
-    }
-
-    try {
-      if (reactionId != null) {
-        // FIXME await context.appState.client.reactions.delete(reactionId);
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-    setState(() {
-      likeReactions.removeWhere((element) => element.id.toString() == reactionId);
-      likeCount--;
-      latestLikeReaction = null;
     });
   }
 
@@ -81,13 +83,13 @@ class _FeedPostActionsState extends State<FeedPostActions> {
             style: AppTextStyle.textStyleLight,
             children: [
               TextSpan(
-                  text: Utilities.getPersonTitle(likeReactions[0].user!.person, likeReactions[0].user!.flat),
-                  style: AppTextStyle.textStyleBold),
+                text: Utilities.getPersonTitle(likeReactions[0].user!.person, likeReactions[0].user!.flat),
+                style: AppTextStyle.textStyleBold),
               if (likeCount > 1 && likeCount < 3) ...[
                 const TextSpan(text: ' и '),
                 TextSpan(
-                    text: Utilities.getPersonTitle(likeReactions[1].user!.person, likeReactions[1].user!.flat),
-                    style: AppTextStyle.textStyleBold),
+                  text: Utilities.getPersonTitle(likeReactions[1].user!.person, likeReactions[1].user!.flat),
+                  style: AppTextStyle.textStyleBold),
               ],
               if (likeCount >= 3) ...[
                 const TextSpan(text: ' и '),
@@ -107,11 +109,6 @@ class _FeedPostActionsState extends State<FeedPostActions> {
     const iconPadding = EdgeInsets.symmetric(horizontal: 8, vertical: 4);
     final iconColor = Theme.of(context).iconTheme.color!;
 
-    bool isLiked = false;
-    if (widget.enrichedActivity.ownReactions?['like'] != null) {
-      isLiked = (widget.enrichedActivity.ownReactions?['like']! as List).isNotEmpty;
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -121,7 +118,7 @@ class _FeedPostActionsState extends State<FeedPostActions> {
             Padding(
               padding: iconPadding,
               child: FavoriteIconButton(
-                isLiked: isLiked,
+                isLiked: ownLikeReactions.isNotEmpty,
                 onTap: (liked) {
                   if (liked) {
                     _addLikeReaction();
