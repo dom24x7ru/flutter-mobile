@@ -43,7 +43,7 @@ class _InteractiveCommentSlabState extends State<InteractiveCommentSlab> {
               TextSpan(
                 children: <TextSpan>[
                   TextSpan(
-                    text: Utilities.getPersonTitle(comments[0].user!.person!, comments[0].user!.residents[0].flat!),
+                    text: Utilities.getPersonTitle(comments[0].user!.person, comments[0].user!.flat),
                     style: AppTextStyle.textStyleBold),
                   const TextSpan(text: '  '),
                   TextSpan(text: comments[0].data?['message'] as String?),
@@ -58,7 +58,7 @@ class _InteractiveCommentSlabState extends State<InteractiveCommentSlab> {
               TextSpan(
                 children: <TextSpan>[
                   TextSpan(
-                    text: Utilities.getPersonTitle(comments[1].user!.person!, comments[1].user!.residents[0].flat!),
+                    text: Utilities.getPersonTitle(comments[1].user!.person, comments[1].user!.flat),
                     style: AppTextStyle.textStyleBold),
                   const TextSpan(text: '  '),
                   TextSpan(text: comments[1].data?['message'] as String?),

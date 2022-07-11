@@ -7,15 +7,24 @@ part 'im_person.g.dart';
 @HiveType(typeId: 21)
 class IMPerson {
   @HiveField(1)
-  final Person person;
+  late Person person;
   @HiveField(2)
-  final Flat? flat;
+  Flat? flat;
   @HiveField(3)
-  final String? profilePhotoThumbnail;
+  String? profilePhotoThumbnail;
   @HiveField(4)
-  final String? profilePhotoResized;
+  String? profilePhotoResized;
 
   IMPerson(this.person, this.flat, this.profilePhotoThumbnail, this.profilePhotoResized);
+
+  IMPerson.fromMap(Map<String, dynamic> map) {
+    person = Person.fromMap(map);
+    if (map['flat'] != null) flat = Flat.fromMap(map['flat']);
+    if (map['profilePhoto'] != null) {
+      profilePhotoThumbnail = map['profilePhoto']['thumbnail'];
+      profilePhotoResized = map['profilePhoto']['resized'];
+    }
+  }
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = { 'person': person.toMap() };

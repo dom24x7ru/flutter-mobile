@@ -9,6 +9,7 @@ import 'package:dom24x7_flutter/models/im/im_message_body.dart';
 import 'package:dom24x7_flutter/models/im/im_message_extra.dart';
 import 'package:dom24x7_flutter/models/im/im_message_history_item.dart';
 import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
+import 'package:dom24x7_flutter/models/post/reaction.dart';
 import 'package:dom24x7_flutter/models/user/im_person.dart';
 import 'package:dom24x7_flutter/models/miniapp/miniapp.dart';
 import 'package:dom24x7_flutter/models/miniapp/miniapp_extra.dart';
@@ -114,6 +115,7 @@ void main() async {
   Hive.registerAdapter(MiniAppTypeAdapter());
   Hive.registerAdapter(MiniAppExtraAdapter());
   Hive.registerAdapter(EnrichedActivityAdapter());
+  Hive.registerAdapter(ReactionAdapter());
 
   runApp(const MyApp());
 }

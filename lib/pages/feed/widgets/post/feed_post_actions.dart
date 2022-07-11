@@ -53,7 +53,7 @@ class _FeedPostActionsState extends State<FeedPostActions> {
       // An old reaction has been retrieved from Stream.
       final prevReaction = widget.enrichedActivity.ownReactions?['like'];
       if (prevReaction != null && prevReaction.isNotEmpty) {
-        reactionId = prevReaction[0].id;
+        reactionId = prevReaction[0].id.toString();
       }
     }
 
@@ -77,21 +77,21 @@ class _FeedPostActionsState extends State<FeedPostActions> {
         padding: const EdgeInsets.only(left: 16.0, top: 8),
         child: Text.rich(
           TextSpan(
-            text: 'Liked by ',
+            text: 'Нравится: ',
             style: AppTextStyle.textStyleLight,
-            children: <TextSpan>[
+            children: [
               TextSpan(
-                  text: Utilities.getPersonTitle(likeReactions[0].user!.person!, likeReactions[0].user!.residents[0].flat!),
+                  text: Utilities.getPersonTitle(likeReactions[0].user!.person, likeReactions[0].user!.flat),
                   style: AppTextStyle.textStyleBold),
               if (likeCount > 1 && likeCount < 3) ...[
-                const TextSpan(text: ' and '),
+                const TextSpan(text: ' и '),
                 TextSpan(
-                    text: Utilities.getPersonTitle(likeReactions[1].user!.person!, likeReactions[1].user!.residents[0].flat!),
+                    text: Utilities.getPersonTitle(likeReactions[1].user!.person, likeReactions[1].user!.flat),
                     style: AppTextStyle.textStyleBold),
               ],
               if (likeCount > 3) ...[
-                const TextSpan(text: ' and '),
-                const TextSpan(text: 'others', style: AppTextStyle.textStyleBold),
+                const TextSpan(text: ' и '),
+                const TextSpan(text: 'другие', style: AppTextStyle.textStyleBold),
               ],
             ],
           ),

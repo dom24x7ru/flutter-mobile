@@ -21,8 +21,10 @@ class EnrichedActivityAdapter extends TypeAdapter<EnrichedActivity> {
     )
       ..actor = fields[1] as IMPerson?
       ..time = fields[2] as int
-      ..latestReactions = (fields[3] as Map?)?.cast<String, dynamic>()
-      ..ownReactions = (fields[4] as Map?)?.cast<String, dynamic>()
+      ..latestReactions = (fields[3] as Map?)?.map((dynamic k, dynamic v) =>
+          MapEntry(k as String, (v as List).cast<Reaction>()))
+      ..ownReactions = (fields[4] as Map?)?.map((dynamic k, dynamic v) =>
+          MapEntry(k as String, (v as List).cast<Reaction>()))
       ..reactionCounts = (fields[5] as Map?)?.cast<String, int>()
       ..extraData = (fields[6] as Map?)?.cast<String, dynamic>();
   }

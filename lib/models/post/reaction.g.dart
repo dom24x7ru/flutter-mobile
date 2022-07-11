@@ -19,7 +19,7 @@ class ReactionAdapter extends TypeAdapter<Reaction> {
     return Reaction(
       fields[0] as int,
     )
-      ..user = fields[1] as User?
+      ..user = fields[1] as IMPerson?
       ..data = (fields[2] as Map?)?.cast<String, dynamic>();
   }
 

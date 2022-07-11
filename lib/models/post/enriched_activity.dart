@@ -1,7 +1,6 @@
-import 'package:dom24x7_flutter/models/house/flat.dart';
 import 'package:dom24x7_flutter/models/model.dart';
+import 'package:dom24x7_flutter/models/post/reaction.dart';
 import 'package:dom24x7_flutter/models/user/im_person.dart';
-import 'package:dom24x7_flutter/models/user/person.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'enriched_activity.g.dart';
@@ -13,9 +12,9 @@ class EnrichedActivity extends Model {
   @HiveField(2)
   late int time;
   @HiveField(3)
-  Map<String, dynamic>? latestReactions;
+  Map<String, List<Reaction>>? latestReactions;
   @HiveField(4)
-  Map<String, dynamic>? ownReactions;
+  Map<String, List<Reaction>>? ownReactions;
   @HiveField(5)
   Map<String, int>? reactionCounts;
   @HiveField(6)
@@ -24,21 +23,23 @@ class EnrichedActivity extends Model {
   EnrichedActivity(int id) : super(id);
 
   EnrichedActivity.fromMap(Map<String, dynamic> map) : super(map['id']) {
-    if (map['actor'] != null) {
-      Person person = Person.fromMap(map['actor']);
-      Flat? flat;
-      if (map['actor']['flat'] != null) flat = Flat.fromMap(map['actor']['flat']);
-      actor = IMPerson(
-          person,
-          flat,
-          map['actor']['profilePhoto'] != null ? map['actor']['profilePhoto']['thumbnail'] : null,
-          map['actor']['profilePhoto'] != null ? map['actor']['profilePhoto']['resized'] : null
-      );
-    }
+    if (map['actor'] != null) actor = IMPerson.fromMap(map['actor']);
     time = map['time'];
-    latestReactions = map['latestReactions'];
-    ownReactions = map['ownReactions'];
-    reactionCounts = map['reactionCounts'];
+    if (map['latestReactions'] != null) {
+      latestReactions = { 'like': [] };
+      for (var reactionMap in map['latestReactions']['like']) {
+        (latestReactions!['like'] as List).add(Reaction.fromMap(reactionMap));
+      }
+    }
+    if (map['ownReactions'] != null) {
+      ownReactions = { 'like': [] };
+      for (var reactionMap in map['ownReactions']['like']) {
+        (ownReactions!['like'] as List).add(Reaction.fromMap(reactionMap));
+      }
+    }
+    if (map['reactionCounts'] != null) {
+      reactionCounts = { 'like': map['reactionCounts']['like'] as int };
+    }
     extraData = map['extraData'];
   }
 
