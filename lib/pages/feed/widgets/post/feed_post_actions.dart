@@ -89,7 +89,7 @@ class _FeedPostActionsState extends State<FeedPostActions> {
                     text: Utilities.getPersonTitle(likeReactions[1].user!.person, likeReactions[1].user!.flat),
                     style: AppTextStyle.textStyleBold),
               ],
-              if (likeCount > 3) ...[
+              if (likeCount >= 3) ...[
                 const TextSpan(text: ' и '),
                 const TextSpan(text: 'другие', style: AppTextStyle.textStyleBold),
               ],
@@ -106,6 +106,12 @@ class _FeedPostActionsState extends State<FeedPostActions> {
   Widget build(BuildContext context) {
     const iconPadding = EdgeInsets.symmetric(horizontal: 8, vertical: 4);
     final iconColor = Theme.of(context).iconTheme.color!;
+
+    bool isLiked = false;
+    if (widget.enrichedActivity.ownReactions?['like'] != null) {
+      isLiked = (widget.enrichedActivity.ownReactions?['like']! as List).isNotEmpty;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -115,7 +121,7 @@ class _FeedPostActionsState extends State<FeedPostActions> {
             Padding(
               padding: iconPadding,
               child: FavoriteIconButton(
-                isLiked: widget.enrichedActivity.ownReactions?['like'] != null,
+                isLiked: isLiked,
                 onTap: (liked) {
                   if (liked) {
                     _addLikeReaction();
