@@ -93,7 +93,7 @@ class _FeedPostActionsState extends State<FeedPostActions> {
               ],
               if (likeCount >= 3) ...[
                 const TextSpan(text: ' и '),
-                const TextSpan(text: 'другие', style: AppTextStyle.textStyleBold),
+                const TextSpan(text: 'другим', style: AppTextStyle.textStyleBold),
               ],
             ],
           ),

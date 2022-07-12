@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/model.dart';
+import 'package:dom24x7_flutter/models/user/im_person.dart';
 import 'package:dom24x7_flutter/models/user/person.dart';
 import 'package:dom24x7_flutter/models/house/resident.dart';
 import 'package:dom24x7_flutter/models/user/role.dart';
@@ -45,5 +46,9 @@ class User extends Model {
       map['residents'].add(resident.toMap());
     }
     return map;
+  }
+
+  IMPerson toIMPerson() {
+    return IMPerson(person!, residents[0].flat, null, null);
   }
 }

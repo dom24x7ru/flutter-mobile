@@ -1,6 +1,5 @@
 import 'package:dom24x7_flutter/models/model.dart';
 import 'package:dom24x7_flutter/models/user/im_person.dart';
-import 'package:dom24x7_flutter/models/user/user.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'reaction.g.dart';
@@ -16,11 +15,14 @@ class Reaction extends Model {
   
   Reaction.fromMap(Map<String, dynamic> map) : super(map['id']) {
     if (map['user'] != null) user = IMPerson.fromMap(map['user']);
+    data = map['data'];
   }
 
   @override
   Map<String, dynamic> toMap() {
-    // TODO: implement toMap
-    throw UnimplementedError();
+    Map<String, dynamic> map = { 'id': id };
+    if (user != null) map['user'] = user!.toMap();
+    if (data != null) map['data'] = data;
+    return map;
   }
 }

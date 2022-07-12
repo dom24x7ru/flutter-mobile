@@ -1,5 +1,8 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
+import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
 import 'package:dom24x7_flutter/models/post/post.dart';
+import 'package:dom24x7_flutter/models/post/reaction.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/comment_box_wrapper.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/feed_post.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/feed_vote.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -20,14 +23,22 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-  Vote? vote;
+  Vote? _vote;
+  List<Post> _posts = [];
   late SocketClient _client;
   final List<dynamic> _listeners = [];
+
+  final ValueNotifier<bool> _showCommentBox = ValueNotifier(false);
+  late TextEditingController _commentTextController;
+  final FocusNode _commentFocusNode = FocusNode();
+  EnrichedActivity? _activeActivity;
 
   @override
   void initState() {
     super.initState();
     _initDynamicLinks();
+
+    _commentTextController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
@@ -35,9 +46,15 @@ class _FeedPageState extends State<FeedPage> {
 
       _checkNewVersion(context);
 
-      setState(() { vote = _getVote(store); });
+      setState(() => _vote = _getVote(store));
       var listener = _client.on('vote', this, (event, cont) {
-        setState(() { vote = _getVote(store); });
+        setState(() => _vote = _getVote(store));
+      });
+      _listeners.add(listener);
+
+      setState(() => _posts = store.posts.list != null ? store.posts.list! : []);
+      listener = _client.on('posts', this, (event, cont) {
+        setState(() => _posts = store.posts.list != null ? store.posts.list! : []);
       });
       _listeners.add(listener);
     });
@@ -48,6 +65,10 @@ class _FeedPageState extends State<FeedPage> {
     for (var listener in _listeners) {
       _client.off(listener);
     }
+
+    _commentTextController.dispose();
+    _commentFocusNode.dispose();
+
     super.dispose();
   }
 
@@ -62,24 +83,66 @@ class _FeedPageState extends State<FeedPage> {
       );
     }
 
-    final int itemCount = store.posts.list!.length + (vote != null ? 1 : 0);
+    final int itemCount = _posts.length + (_vote != null ? 1 : 0);
 
     return Scaffold(
         appBar: Header.get(context, 'Новости'),
         bottomNavigationBar: const Footer(FooterNav.news),
-        body: ListView.builder(
-          itemCount: itemCount,
-          itemBuilder: (BuildContext context, int index) {
-            if (vote != null && index == 0) {
-              // отображаем карточку голосования
-              return FeedVote(vote!);
-            }
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            _showCommentBox.value = false;
+          },
+          child: Stack(
+              children: [
+                ListView.builder(
+                    itemCount: itemCount,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (_vote != null && index == 0) {
+                        // отображаем карточку голосования
+                        return FeedVote(_vote!);
+                      }
 
-            final Post post = store.posts.list![index + (vote != null ? -1 : 0)];
-            return FeedPost(post);
-          }
+                      final Post post = _posts[index + (_vote != null ? -1 : 0)];
+                      return FeedPost(post: post, onAddComment: _openCommentBox);
+                    }
+                ),
+                CommentBoxWrapper(
+                  commenter: store.user.value!.toIMPerson(),
+                  textEditingController: _commentTextController,
+                  focusNode: _commentFocusNode,
+                  addComment: _addComment,
+                  showCommentBox: _showCommentBox,
+                )
+              ]
+          )
         )
     );
+  }
+
+  void _openCommentBox(EnrichedActivity activity, { String? message }) {
+    _commentTextController.text = message ?? '';
+    _commentTextController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _commentTextController.text.length));
+    _activeActivity = activity;
+    _showCommentBox.value = true;
+    _commentFocusNode.requestFocus();
+  }
+
+  void _addComment(String? message) {
+    if (_activeActivity != null && message != null && message.isNotEmpty && message != '') {
+      _client.socket.emit('post.comment', { 'postId': _activeActivity!.id, 'message': message }, (String name, dynamic error, dynamic data) {
+        if (data != null && data['status'] == 'OK') {
+          final reactionMap = data['reaction'];
+          Reaction reaction = Reaction.fromMap(reactionMap);
+          // TODO: обновить данные и визуальную часть
+
+          _commentTextController.clear();
+          FocusScope.of(context).unfocus();
+          _showCommentBox.value = false;
+        }
+      });
+    }
   }
 
   Future<void> _initDynamicLinks() async {

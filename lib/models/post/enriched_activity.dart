@@ -26,19 +26,28 @@ class EnrichedActivity extends Model {
     if (map['actor'] != null) actor = IMPerson.fromMap(map['actor']);
     time = map['time'];
     if (map['latestReactions'] != null) {
-      latestReactions = { 'like': [] };
+      latestReactions = { 'like': [], 'comment': [] };
       for (var reactionMap in map['latestReactions']['like']) {
         (latestReactions!['like'] as List).add(Reaction.fromMap(reactionMap));
       }
+      for (var reactionMap in map['latestReactions']['comment']) {
+        (latestReactions!['comment'] as List).add(Reaction.fromMap(reactionMap));
+      }
     }
     if (map['ownReactions'] != null) {
-      ownReactions = { 'like': [] };
+      ownReactions = { 'like': [], 'comment': [] };
       for (var reactionMap in map['ownReactions']['like']) {
         (ownReactions!['like'] as List).add(Reaction.fromMap(reactionMap));
       }
+      for (var reactionMap in map['ownReactions']['comment']) {
+        (ownReactions!['comment'] as List).add(Reaction.fromMap(reactionMap));
+      }
     }
     if (map['reactionCounts'] != null) {
-      reactionCounts = { 'like': map['reactionCounts']['like'] as int };
+      reactionCounts = {
+        'like': map['reactionCounts']['like'] as int,
+        'comment': map['reactionCounts']['comment'] as int
+      };
     }
     extraData = map['extraData'];
   }
