@@ -75,7 +75,7 @@ class CommentBox extends StatelessWidget {
                         textEditingController: textEditingController,
                         onSubmitted: onSubmitted,
                       ),
-                      hintText: 'Add a comment...',
+                      hintText: 'Добавить комментарий...',
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
@@ -166,7 +166,7 @@ class _DoneButtonState extends State<_DoneButton> {
         widget.onSubmitted(widget.textEditingController.text);
       },
       child: Text(
-        'Done',
+        'Опубликовать',
         style: textStyle,
       ),
     )

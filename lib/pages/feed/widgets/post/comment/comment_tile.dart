@@ -141,7 +141,7 @@ class _CommentTileState extends State<CommentTile> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: 80,
+                          width: 90,
                           child: Text(
                             timeSince,
                             style: AppTextStyle.textStyleFadedSmall,
@@ -174,9 +174,9 @@ class _CommentTileState extends State<CommentTile> {
                               FocusScope.of(context).requestFocus(context.read<FocusNode>());
                             },
                             child: const SizedBox(
-                              width: 50,
+                              width: 60,
                               child: Text(
-                                'Reply',
+                                'Ответить',
                                 style: AppTextStyle.textStyleFadedSmallBold,
                               ),
                             ),

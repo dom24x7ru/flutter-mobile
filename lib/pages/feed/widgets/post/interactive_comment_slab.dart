@@ -76,8 +76,8 @@ class _InteractiveCommentSlabState extends State<InteractiveCommentSlab> {
                   activityOwnerData: actor,
                 ));
               },
-              child: const Text(
-                'Показать все комментарии',
+              child: Text(
+                'Смотреть все комментарии ($commentCount)',
                 style: AppTextStyle.textStyleFaded,
               ),
             ),
@@ -94,7 +94,7 @@ class _InteractiveCommentSlabState extends State<InteractiveCommentSlab> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 8.0),
                     child: Text(
-                      'Добавить комментарий',
+                      'Добавить комментарий...',
                       style: TextStyle(
                         color: AppColors.faded,
                         fontSize: 14,

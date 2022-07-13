@@ -1,8 +1,10 @@
+import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
 import 'package:dom24x7_flutter/models/user/im_person.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comment_comment_box.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comment_state.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comments_list.dart';
+import 'package:dom24x7_flutter/store/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +39,10 @@ class CommentsScreen extends StatefulWidget {
 }
 
 class _CommentsScreenState extends State<CommentsScreen> {
+  late SocketClient _client;
+  final List<dynamic> _listeners = [];
+  EnrichedActivity? _enrichedActivity;
+
   late FocusNode commentFocusNode;
   late CommentState commentState;
 
@@ -48,6 +54,23 @@ class _CommentsScreenState extends State<CommentsScreen> {
       activityId: widget.enrichedActivity.id.toString(),
       activityOwnerData: widget.activityOwnerData,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final store = Provider.of<MainStore>(context, listen: false);
+      _client = store.client;
+
+      setState(() => _enrichedActivity = widget.enrichedActivity);
+      var listener = _client.on('posts', this, (event, cont) {
+        final posts = store.posts.list;
+        if (posts != null) {
+          final list = posts.where((post) => post.id == _enrichedActivity!.id).toList();
+          if (list.isNotEmpty) {
+            setState(() => _enrichedActivity = list[0].enrichedActivity!);
+          }
+        }
+      });
+      _listeners.add(listener);
+    });
   }
 
   @override
@@ -70,15 +93,15 @@ class _CommentsScreenState extends State<CommentsScreen> {
         },
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Comments',
+            title: const Text('Комментарии',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             elevation: 0.5,
             shadowColor: Colors.white,
           ),
           body: Stack(
             children: [
-              CommentsList(enrichedActivity: widget.enrichedActivity),
-              CommentCommentBox(enrichedActivity: widget.enrichedActivity),
+              CommentsList(enrichedActivity: _enrichedActivity ?? widget.enrichedActivity),
+              CommentCommentBox(enrichedActivity: _enrichedActivity ?? widget.enrichedActivity),
             ],
           ),
         ),

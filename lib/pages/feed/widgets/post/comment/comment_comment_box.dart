@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
+import 'package:dom24x7_flutter/models/post/reaction.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comment_focus.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comment_state.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/enum/type_of_comment.dart';
@@ -25,7 +26,10 @@ class CommentCommentBox extends StatefulWidget {
 class _CommentCommentBoxState extends State<CommentCommentBox> {
   late final _commentTextController = TextEditingController();
 
-  Future<void> handleSubmit(String? value) async {
+  void _handleSubmit(String? value) {
+    final store = Provider.of<MainStore>(context, listen: false);
+    final client = store.client;
+
     if (value != null && value.isNotEmpty) {
       _commentTextController.clear();
       FocusScope.of(context).unfocus();
@@ -34,20 +38,24 @@ class _CommentCommentBoxState extends State<CommentCommentBox> {
       final commentFocus = commentState.commentFocus;
 
       if (commentFocus.typeOfComment == TypeOfComment.activityComment) {
-        // await FeedProvider.of(context).bloc.onAddReaction(
-        //   kind: 'comment',
-        //   activity: widget.enrichedActivity,
-        //   feedGroup: 'timeline',
-        //   data: {'message': value},
-        // );
+        final data = { 'postId': widget.enrichedActivity.id, 'message': value };
+        client.socket.emit('post.comment', data, (String name, dynamic error, dynamic data) {
+          if (data != null && data['status'] == 'OK') {
+            final reactionMap = data['reaction'];
+            Reaction reaction = Reaction.fromMap(reactionMap);
+            // TODO: обновить данные и визуальную часть
+          }
+        });
       } else if (commentFocus.typeOfComment == TypeOfComment.reactionComment) {
         if (commentFocus.reaction != null) {
-          // await FeedProvider.of(context).bloc.onAddChildReaction(
-          //   kind: 'comment',
-          //   reaction: commentFocus.reaction!,
-          //   activity: widget.enrichedActivity,
-          //   data: {'message': value},
-          // );
+          final data = { 'postId': widget.enrichedActivity.id, 'commentId': commentFocus.reaction!.id, 'message': value };
+          client.socket.emit('post.comment', data, (String name, dynamic error, dynamic data) {
+            if (data != null && data['status'] == 'OK') {
+              final reactionMap = data['reaction'];
+              Reaction reaction = Reaction.fromMap(reactionMap);
+              // TODO: обновить данные и визуальную часть
+            }
+          });
         }
       }
     }
@@ -94,7 +102,7 @@ class _CommentCommentBoxState extends State<CommentCommentBox> {
             CommentBox(
               commenter: store.user.value!.toIMPerson(),
               textEditingController: _commentTextController,
-              onSubmitted: handleSubmit,
+              onSubmitted: _handleSubmit,
               focusNode: focusNode,
             ),
             SizedBox(
@@ -116,7 +124,7 @@ class _CommentCommentBoxState extends State<CommentCommentBox> {
         child: Row(
           children: [
             Text(
-              'Replying to ${Utilities.getPersonTitle(commentFocus.user.person, commentFocus.user.flat)}',
+              'Ответ ${Utilities.getPersonTitle(commentFocus.user.person, commentFocus.user.flat)}',
               style: AppTextStyle.textStyleFaded,
             ),
             const Spacer(),
