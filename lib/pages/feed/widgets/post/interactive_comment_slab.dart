@@ -1,4 +1,5 @@
 import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comments_screen.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/on_add_comment.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/profile_picture.dart';
 import 'package:dom24x7_flutter/models/post/reaction.dart';
@@ -69,7 +70,11 @@ class _InteractiveCommentSlabState extends State<InteractiveCommentSlab> {
             padding: spacePadding,
             child: GestureDetector(
               onTap: () {
-                // TODO: переход на страницу с комментариями
+                final actor = widget.enrichedActivity.actor!;
+                Navigator.of(context).push(CommentsScreen.route(
+                  enrichedActivity: widget.enrichedActivity,
+                  activityOwnerData: actor,
+                ));
               },
               child: const Text(
                 'Показать все комментарии',

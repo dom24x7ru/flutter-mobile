@@ -2,6 +2,7 @@ import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
 import 'package:dom24x7_flutter/models/post/reaction.dart';
 import 'package:dom24x7_flutter/pages/feed/utils.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comments_screen.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/favorite_icon_button.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/tap_fade_icon.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -132,7 +133,13 @@ class _FeedPostActionsState extends State<FeedPostActions> {
               padding: iconPadding,
               child: TapFadeIcon(
                 onTap: () {
-                  // TODO
+                  final actor = widget.enrichedActivity.actor!;
+                  Navigator.of(context).push(
+                    CommentsScreen.route(
+                      enrichedActivity: widget.enrichedActivity,
+                      activityOwnerData: actor,
+                    ),
+                  );
                 },
                 icon: Icons.chat_bubble_outline,
                 iconColor: iconColor,

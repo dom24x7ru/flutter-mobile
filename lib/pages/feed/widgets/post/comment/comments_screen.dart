@@ -1,0 +1,88 @@
+import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
+import 'package:dom24x7_flutter/models/user/im_person.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comment_comment_box.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comment_state.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comments_list.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+/// Screen that shows all comments for a given post.
+class CommentsScreen extends StatefulWidget {
+  /// Creates a new [CommentsScreen].
+  const CommentsScreen({
+    Key? key,
+    required this.enrichedActivity,
+    required this.activityOwnerData,
+  }) : super(key: key);
+
+  final EnrichedActivity enrichedActivity;
+
+  /// Owner / [User] of the activity.
+  final IMPerson activityOwnerData;
+
+  /// MaterialPageRoute to this screen.
+  static Route route({
+    required EnrichedActivity enrichedActivity,
+    required IMPerson activityOwnerData,
+  }) =>
+      MaterialPageRoute(
+        builder: (context) => CommentsScreen(
+          enrichedActivity: enrichedActivity,
+          activityOwnerData: activityOwnerData,
+        ),
+      );
+
+  @override
+  State<CommentsScreen> createState() => _CommentsScreenState();
+}
+
+class _CommentsScreenState extends State<CommentsScreen> {
+  late FocusNode commentFocusNode;
+  late CommentState commentState;
+
+  @override
+  void initState() {
+    super.initState();
+    commentFocusNode = FocusNode();
+    commentState = CommentState(
+      activityId: widget.enrichedActivity.id.toString(),
+      activityOwnerData: widget.activityOwnerData,
+    );
+  }
+
+  @override
+  void dispose() {
+    commentFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: commentState),
+        ChangeNotifierProvider.value(value: commentFocusNode),
+      ],
+      child: GestureDetector(
+        onTap: () {
+          commentState.resetCommentFocus();
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Comments',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            elevation: 0.5,
+            shadowColor: Colors.white,
+          ),
+          body: Stack(
+            children: [
+              CommentsList(enrichedActivity: widget.enrichedActivity),
+              CommentCommentBox(enrichedActivity: widget.enrichedActivity),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
