@@ -84,9 +84,7 @@ class CommentBox extends StatelessWidget {
                       enabledBorder: border),
                 ),
               ),
-              const SizedBox(
-                width: 8,
-              ),
+              const SizedBox(width: 8),
             ],
           ),
         ],
@@ -139,8 +137,7 @@ class _DoneButton extends StatefulWidget {
 }
 
 class _DoneButtonState extends State<_DoneButton> {
-  final fadedTextStyle =
-  AppTextStyle.textStyleAction.copyWith(color: Colors.grey);
+  final fadedTextStyle = AppTextStyle.textStyleAction.copyWith(color: Colors.grey);
   late TextStyle textStyle = fadedTextStyle;
 
   @override
@@ -162,13 +159,8 @@ class _DoneButtonState extends State<_DoneButton> {
   Widget build(BuildContext context) {
     return widget.textEditorFocusNode.hasFocus
         ? GestureDetector(
-      onTap: () {
-        widget.onSubmitted(widget.textEditingController.text);
-      },
-      child: Text(
-        'Опубликовать',
-        style: textStyle,
-      ),
+      onTap: () => widget.onSubmitted(widget.textEditingController.text),
+      child: Text('Опубликовать', style: textStyle),
     )
         : const SizedBox.shrink();
   }

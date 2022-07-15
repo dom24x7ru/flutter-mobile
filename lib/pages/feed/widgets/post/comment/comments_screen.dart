@@ -5,6 +5,8 @@ import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comment_comment_
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comment_state.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comments_list.dart';
 import 'package:dom24x7_flutter/store/main.dart';
+import 'package:dom24x7_flutter/utilities.dart';
+import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -92,12 +94,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
           FocusScope.of(context).unfocus();
         },
         child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Комментарии',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-            elevation: 0.5,
-            shadowColor: Colors.white,
-          ),
+          appBar: Header.get(context, Utilities.getHeaderTitle('Комментарии')),
           body: Stack(
             children: [
               CommentsList(enrichedActivity: _enrichedActivity ?? widget.enrichedActivity),

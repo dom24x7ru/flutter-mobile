@@ -5,7 +5,10 @@ import 'package:dom24x7_flutter/models/post/reaction.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment_box_wrapper.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/feed_post.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/feed_vote.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/post_create_screen.dart';
+import 'package:dom24x7_flutter/pages/feed/widgets/post/profile_picture.dart';
 import 'package:dom24x7_flutter/store/main.dart';
+import 'package:dom24x7_flutter/theme.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
 import 'package:dom24x7_flutter/widgets/header_widget.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -83,7 +86,7 @@ class _FeedPageState extends State<FeedPage> {
       );
     }
 
-    final int itemCount = _posts.length + (_vote != null ? 1 : 0);
+    final int itemCount = _posts.length + (_vote != null ? 2 : 1);
 
     return Scaffold(
         appBar: Header.get(context, 'Новости'),
@@ -98,12 +101,43 @@ class _FeedPageState extends State<FeedPage> {
                 ListView.builder(
                     itemCount: itemCount,
                     itemBuilder: (BuildContext context, int index) {
-                      if (_vote != null && index == 0) {
+                      if (index == 0) {
+                        // отобразить поле ввода поста
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            Navigator.of(context).push(PostCreateScreen.route());
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: ProfilePicture.medium(),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                      padding: const EdgeInsets.all(10.0),
+                                      decoration: _border(context),
+                                      child: const Text('Что у вас нового?', style: TextStyle(color: Colors.grey))
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                              ],
+                            )
+                          ),
+                        );
+                      }
+
+                      if (_vote != null && index == 1) {
                         // отображаем карточку голосования
                         return FeedVote(_vote!);
                       }
 
-                      final Post post = _posts[index + (_vote != null ? -1 : 0)];
+                      final Post post = _posts[index + (_vote != null ? -2 : -1)];
                       return FeedPost(post: post, onAddComment: _openCommentBox);
                     }
                 ),
@@ -117,6 +151,13 @@ class _FeedPageState extends State<FeedPage> {
               ]
           )
         )
+    );
+  }
+
+  BoxDecoration _border(BuildContext context) {
+    return BoxDecoration(
+      border: Border.all(color: AppColors.grey.withOpacity(0.3)),
+      borderRadius: const BorderRadius.all(Radius.circular(24)),
     );
   }
 

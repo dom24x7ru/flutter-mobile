@@ -110,7 +110,7 @@ class _CommentTileState extends State<CommentTile> {
                       Expanded(
                         child: Text.rich(
                           TextSpan(
-                            children: <TextSpan>[
+                            children: [
                               TextSpan(
                                   text: Utilities.getPersonTitle(user.person, user.flat),
                                   style: AppTextStyle.textStyleSmallBold),
@@ -123,16 +123,16 @@ class _CommentTileState extends State<CommentTile> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Center(
-                          child: FavoriteIconButton(
-                            isLiked: isLiked,
-                            size: 14,
-                            onTap: _handleFavorite,
-                          ),
-                        ),
-                      )
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      //   child: Center(
+                      //     child: FavoriteIconButton(
+                      //       isLiked: isLiked,
+                      //       size: 14,
+                      //       onTap: _handleFavorite,
+                      //     ),
+                      //   ),
+                      // )
                     ],
                   ),
                   Padding(

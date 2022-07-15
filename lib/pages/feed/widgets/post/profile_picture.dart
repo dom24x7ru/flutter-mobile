@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePicture extends StatelessWidget {
-  const ProfilePicture({Key? key}) : super(key: key);
+  const ProfilePicture({Key? key}) : _avatarSize = 'small', super(key: key);
+  const ProfilePicture.medium({Key? key}) : _avatarSize = 'medium', super(key: key);
+
+  final String _avatarSize;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +23,6 @@ class ProfilePicture extends StatelessWidget {
         null,
         null
     );
-    return Avatar.small(user: person);
+    return _avatarSize == 'small' ? Avatar.small(user: person) : Avatar.medium(user: person);
   }
 }

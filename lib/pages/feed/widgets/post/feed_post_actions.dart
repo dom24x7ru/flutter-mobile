@@ -1,7 +1,6 @@
 import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/models/post/enriched_activity.dart';
 import 'package:dom24x7_flutter/models/post/reaction.dart';
-import 'package:dom24x7_flutter/pages/feed/utils.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment/comments_screen.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/favorite_icon_button.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/tap_fade_icon.dart';
@@ -145,23 +144,23 @@ class _FeedPostActionsState extends State<FeedPostActions> {
                 iconColor: iconColor,
               ),
             ),
-            Padding(
-              padding: iconPadding,
-              child: TapFadeIcon(
-                onTap: () => context.removeAndShowSnackbar('Message: Not yet implemented'),
-                icon: Icons.call_made,
-                iconColor: iconColor,
-              ),
-            ),
-            const Spacer(),
-            Padding(
-              padding: iconPadding,
-              child: TapFadeIcon(
-                onTap: () => context.removeAndShowSnackbar('Bookmark: Not yet implemented'),
-                icon: Icons.bookmark_border,
-                iconColor: iconColor,
-              ),
-            ),
+            // Padding(
+            //   padding: iconPadding,
+            //   child: TapFadeIcon(
+            //     onTap: () => context.removeAndShowSnackbar('Message: Not yet implemented'),
+            //     icon: Icons.call_made,
+            //     iconColor: iconColor,
+            //   ),
+            // ),
+            // const Spacer(),
+            // Padding(
+            //   padding: iconPadding,
+            //   child: TapFadeIcon(
+            //     onTap: () => context.removeAndShowSnackbar('Bookmark: Not yet implemented'),
+            //     icon: Icons.bookmark_border,
+            //     iconColor: iconColor,
+            //   ),
+            // )
           ],
         ),
         _likes()
