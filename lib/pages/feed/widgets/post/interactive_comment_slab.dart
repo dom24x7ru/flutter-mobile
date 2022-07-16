@@ -20,14 +20,13 @@ class InteractiveCommentSlab extends StatefulWidget {
 class _InteractiveCommentSlabState extends State<InteractiveCommentSlab> {
   EnrichedActivity get enrichedActivity => widget.enrichedActivity;
 
-  late final String _timeSinceMessage = Utilities.getDateIM(widget.enrichedActivity.time);
-
   List<Reaction> get _commentReactions => enrichedActivity.latestReactions?['comment'] ?? [];
 
   int get _commentCount => enrichedActivity.reactionCounts?['comment'] ?? 0;
 
   @override
   Widget build(BuildContext context) {
+    final String timeSinceMessage = Utilities.getDateIM(widget.enrichedActivity.time);
     const textPadding = EdgeInsets.all(8);
     const spacePadding = EdgeInsets.only(left: 20.0, top: 8);
     final comments = _commentReactions;
@@ -123,7 +122,7 @@ class _InteractiveCommentSlabState extends State<InteractiveCommentSlab> {
         Padding(
           padding: const EdgeInsets.only(left: 16.0, top: 4),
           child: Text(
-            _timeSinceMessage,
+            timeSinceMessage,
             style: const TextStyle(
               color: AppColors.faded,
               fontWeight: FontWeight.w400,

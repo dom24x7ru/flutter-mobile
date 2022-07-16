@@ -50,6 +50,28 @@ mixin _$PostsStore on _PostsStore, Store {
   }
 
   @override
+  void markAllAsDeleted() {
+    final _$actionInfo = _$_PostsStoreActionController.startAction(
+        name: '_PostsStore.markAllAsDeleted');
+    try {
+      return super.markAllAsDeleted();
+    } finally {
+      _$_PostsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void clearDeleted() {
+    final _$actionInfo = _$_PostsStoreActionController.startAction(
+        name: '_PostsStore.clearDeleted');
+    try {
+      return super.clearDeleted();
+    } finally {
+      _$_PostsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void clear() {
     final _$actionInfo =
         _$_PostsStoreActionController.startAction(name: '_PostsStore.clear');

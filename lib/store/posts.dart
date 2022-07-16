@@ -12,12 +12,26 @@ abstract class _PostsStore with Store {
 
   @action
   void addPost(Post post) {
-    list = Utilities.addOrReplaceById(list, post);
+    list = Utilities.addOrReplaceById(list, post, false);
   }
 
   @action
   void setPosts(List<Post> posts) {
     list = posts;
+  }
+
+  @action
+  void markAllAsDeleted() {
+    if (list == null) return;
+    for (var i = 0; i < list!.length; i++) {
+      list![i].deleted = true;
+    }
+  }
+
+  @action
+  void clearDeleted() {
+    if (list == null) return;
+    list = list!.where((post) => !post.deleted).toList();
   }
 
   @action

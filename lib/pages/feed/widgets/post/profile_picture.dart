@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 class ProfilePicture extends StatelessWidget {
   const ProfilePicture({Key? key}) : _avatarSize = 'small', super(key: key);
   const ProfilePicture.medium({Key? key}) : _avatarSize = 'medium', super(key: key);
+  const ProfilePicture.big({Key? key}) : _avatarSize = 'big', super(key: key);
 
   final String _avatarSize;
 
@@ -23,6 +24,11 @@ class ProfilePicture extends StatelessWidget {
         null,
         null
     );
-    return _avatarSize == 'small' ? Avatar.small(user: person) : Avatar.medium(user: person);
+    switch (_avatarSize) {
+      case 'small': return Avatar.small(user: person);
+      case 'medium': return Avatar.medium(user: person);
+      case 'big': return Avatar.big(user: person);
+      default: return Avatar.small(user: person);
+    }
   }
 }

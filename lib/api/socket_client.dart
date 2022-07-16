@@ -176,6 +176,7 @@ class SocketClient extends BasicListener with EventEmitter {
         checkReady('flats');
       } else if (name.contains('posts')) {
         store.posts.setPosts((cacheData as List).map((post) => post as Post).toList());
+        store.posts.markAllAsDeleted();
         emit('loading', 'socket', { 'channel': 'posts'});
         checkReady('posts');
       } else if (name.contains('imChannels')) {
@@ -309,6 +310,7 @@ class SocketClient extends BasicListener with EventEmitter {
   void onPosts(event, context) {
     if (event.eventData['event'] == 'ready') {
       debugPrint('${DateTime.now()}: подгружены с сервера данные по ленте новостей');
+      store.posts.clearDeleted();
       _box!.put('posts.${store.user.value!.houseId}', store.posts.list);
       emit('loading', 'socket', { 'channel': 'posts' });
       checkReady('posts');

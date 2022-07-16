@@ -257,10 +257,14 @@ class Utilities {
     return '$result%';
   }
 
-  static List<T> addOrReplaceById<T extends Model>(List<T>? list, T obj) {
+  static List<T> addOrReplaceById<T extends Model>(List<T>? list, T obj, [bool last = true]) {
     list ??= [];
     if (list.where((item) => obj.id == item.id).isEmpty) {
-      list.add(obj);
+      if (last) {
+        list.add(obj);
+      } else {
+        list.insert(0, obj);
+      }
     } else {
       for (int index = 0; index < list.length; index++) {
         if (list[index].id == obj.id) {

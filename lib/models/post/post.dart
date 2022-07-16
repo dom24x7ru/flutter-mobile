@@ -13,13 +13,14 @@ class Post extends Model {
   @HiveField(3)
   late String type;
   @HiveField(4)
-  late String title;
+  String? title;
   @HiveField(5)
   late String body;
   @HiveField(6)
   String? url;
   @HiveField(7)
   EnrichedActivity? enrichedActivity;
+  bool deleted = false; // техническое поле для выявления удаленных постов и очищения кэша
 
   Post(id, this.createdAt, this.updatedAt, this.type, this.title, this.body, this.url) : super(id);
 
@@ -35,8 +36,9 @@ class Post extends Model {
 
   @override
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = { 'id': id, 'createdAt': createdAt, 'updatedAt': updatedAt, 'type': type, 'title': title, 'body': body };
+    Map<String, dynamic> map = { 'id': id, 'createdAt': createdAt, 'updatedAt': updatedAt, 'type': type, 'body': body };
     if (url != null) map['url'] = url;
+    if (title != null) map['title'] = title;
     if (enrichedActivity != null) map['enrichedActivity'] = enrichedActivity!.toMap();
     return map;
   }
