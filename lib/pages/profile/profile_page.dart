@@ -84,9 +84,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (index == 0) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      ProfileHeader(numberOfPosts: 0),
-                      Divider(color: Colors.grey)
+                    children: [
+                      ProfileHeader(numberOfPosts: _posts.length),
+                      const Divider(color: Colors.grey)
                     ]
                   );
                 }
