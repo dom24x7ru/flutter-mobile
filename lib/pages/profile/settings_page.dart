@@ -5,6 +5,7 @@ import 'package:dom24x7_flutter/models/user/person.dart';
 import 'package:dom24x7_flutter/models/house/resident.dart';
 import 'package:dom24x7_flutter/models/user/user.dart';
 import 'package:dom24x7_flutter/pages/profile/space_edit_page.dart';
+import 'package:dom24x7_flutter/pages/profile/widgets/change_profile_picture_button.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:dom24x7_flutter/widgets/footer_widget.dart';
@@ -88,33 +89,27 @@ class _SettingsPage extends State<SettingsPage> {
         padding: const EdgeInsets.all(15.0),
         child: ListView(
           children: [
+            const ChangeProfilePictureButton(),
+            const Divider(color: Colors.grey),
             TextField(
-                controller: _cSurname,
-                decoration: const InputDecoration(
-                    hintText: 'Фамилия'
-                )
+              controller: _cSurname,
+              decoration: const InputDecoration(hintText: 'Фамилия')
             ),
             TextField(
-                controller: _cName,
-                decoration: const InputDecoration(
-                    hintText: 'Имя'
-                )
+              controller: _cName,
+              decoration: const InputDecoration(hintText: 'Имя')
             ),
             TextField(
-                controller: _cMidname,
-                decoration: const InputDecoration(
-                    hintText: 'Отчество'
-                )
+              controller: _cMidname,
+              decoration: const InputDecoration(hintText: 'Отчество')
             ),
             Row(
               children: [
                 Expanded(
                   child: TextField(
-                      controller: _cFlat,
-                      enabled: _user == null || _user!.residents.isEmpty || _user!.residents[0].flat == null,
-                      decoration: const InputDecoration(
-                          hintText: 'Введите номер квартиры'
-                      )
+                    controller: _cFlat,
+                    enabled: _user == null || _user!.residents.isEmpty || _user!.residents[0].flat == null,
+                    decoration: const InputDecoration(hintText: 'Введите номер квартиры')
                   )
                 ),
                 InkWell(
@@ -129,56 +124,56 @@ class _SettingsPage extends State<SettingsPage> {
             ),
             Text(_getFlatInfo(_flat), style: const TextStyle(color: Colors.black45)),
             TextField(
-                controller: _cTelegram,
-                decoration: const InputDecoration(
-                    hintText: 'Аккаунт в телеграм',
-                    prefix: Text('@ ')
-                )
+              controller: _cTelegram,
+              decoration: const InputDecoration(
+                hintText: 'Аккаунт в телеграм',
+                prefix: Text('@ ')
+              )
             ),
             Container(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Настройки приватности', style: TextStyle(fontSize: 22.0)),
-                      Container(padding: const EdgeInsets.all(5.0)),
-                      const Text('Отображение имени', style: TextStyle(fontSize: 18.0)),
-                      Dom24x7Radio<AccessName>(
-                        value: AccessName.nothing,
-                        groupValue: _accessName,
-                        label: 'Не показывать имя',
-                        onChanged: (AccessName? value) { setState(() { _accessName = value; }); }
-                      ),
-                      Dom24x7Radio<AccessName>(
-                        value: AccessName.name,
-                        groupValue: _accessName,
-                        label: 'Показывать только имя',
-                        onChanged: (AccessName? value) { setState(() { _accessName = value; }); }
-                      ),
-                      Dom24x7Radio<AccessName>(
-                        value: AccessName.all,
-                        groupValue: _accessName,
-                        label: 'Показывать полностью',
-                        onChanged: (AccessName? value) { setState(() { _accessName = value; }); }
-                      ),
-                      const Text('Отображение контактов', style: TextStyle(fontSize: 18.0)),
-                      Dom24x7Checkbox(value: _mobileLevel, label: 'Показывать телефон', onChanged: (bool? value) => setState(() => _mobileLevel = value!)),
-                      Dom24x7Checkbox(value: _telegramLevel, label: 'Показывать аккаунт телеграм (если указан)', onChanged: (bool? value) => setState(() => _telegramLevel = value!))
-                    ]
-                )
+              padding: const EdgeInsets.only(top: 15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Настройки приватности', style: TextStyle(fontSize: 22.0)),
+                  Container(padding: const EdgeInsets.all(5.0)),
+                  const Text('Отображение имени', style: TextStyle(fontSize: 18.0)),
+                  Dom24x7Radio<AccessName>(
+                    value: AccessName.nothing,
+                    groupValue: _accessName,
+                    label: 'Не показывать имя',
+                    onChanged: (AccessName? value) { setState(() { _accessName = value; }); }
+                  ),
+                  Dom24x7Radio<AccessName>(
+                    value: AccessName.name,
+                    groupValue: _accessName,
+                    label: 'Показывать только имя',
+                    onChanged: (AccessName? value) { setState(() { _accessName = value; }); }
+                  ),
+                  Dom24x7Radio<AccessName>(
+                    value: AccessName.all,
+                    groupValue: _accessName,
+                    label: 'Показывать полностью',
+                    onChanged: (AccessName? value) { setState(() { _accessName = value; }); }
+                  ),
+                  const Text('Отображение контактов', style: TextStyle(fontSize: 18.0)),
+                  Dom24x7Checkbox(value: _mobileLevel, label: 'Показывать телефон', onChanged: (bool? value) => setState(() => _mobileLevel = value!)),
+                  Dom24x7Checkbox(value: _telegramLevel, label: 'Показывать аккаунт телеграм (если указан)', onChanged: (bool? value) => setState(() => _telegramLevel = value!))
+                ]
+              )
             ),
             Container(
-                padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                child: Row(
-                    children: [
-                      const Text('Я хочу '),
-                      InkWell(
-                        child: const Text('выйти', style: TextStyle(color: Colors.blue)),
-                        onTap: () => _logout(context, store),
-                      ),
-                      const Text(' из приложения')
-                    ]
-                )
+              padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+              child: Row(
+                children: [
+                  const Text('Я хочу '),
+                  InkWell(
+                    child: const Text('выйти', style: TextStyle(color: Colors.blue)),
+                    onTap: () => _logout(context, store),
+                  ),
+                  const Text(' из приложения')
+                ]
+              )
             ),
             ElevatedButton(
               onPressed: () => _save(store),

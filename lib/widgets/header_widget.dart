@@ -65,8 +65,8 @@ class Header {
             value: AppBarMenu.about, child: Text('О приложении')
           ),
           const PopupMenuDivider(),
-          // const PopupMenuItem<AppBarMenu>(
-          //   value: AppBarMenu.profile, child: Text('Профиль')),
+          const PopupMenuItem<AppBarMenu>(
+            value: AppBarMenu.profile, child: Text('Профиль')),
           const PopupMenuItem<AppBarMenu>(
             value: AppBarMenu.invite, child: Text('Приглашения')
           ),

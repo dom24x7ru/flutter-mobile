@@ -21,6 +21,8 @@ class User extends Model {
   Person? person;
   @HiveField(6)
   List<Resident> residents = [];
+  @HiveField(7)
+  Map<String, dynamic>? profile;
 
   User(id, this.mobile, this.banned, this.role) : super(id);
   User.fromMap(Map<String, dynamic> map) : super(map['id']) {
@@ -34,6 +36,7 @@ class User extends Model {
         residents.add(Resident.fromMap(resident));
       }
     }
+    profile = map['profile'];
   }
 
   @override
@@ -45,6 +48,7 @@ class User extends Model {
     for (var resident in residents) {
       map['residents'].add(resident.toMap());
     }
+    if (profile != null) map['profile'] = profile;
     return map;
   }
 
