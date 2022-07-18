@@ -1,5 +1,6 @@
 import 'package:dom24x7_flutter/models/user/im_person.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/avatar/avatar.dart';
+import 'package:dom24x7_flutter/pages/profile/followers_page.dart';
 import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/theme.dart';
 import 'package:dom24x7_flutter/utilities.dart';
@@ -40,25 +41,31 @@ class ProfileHeader extends StatelessWidget {
                       Text('$numberOfPosts', style: AppTextStyle.textStyleBold),
                       const Text('Публикации', style: AppTextStyle.textStyleLight)
                     ],
-                  ),
+                  )
                 ),
                 Padding(
                   padding: _statisticsPadding,
-                  child: Column(
-                    children: [
-                      Text('${user.profile!['followers']}', style: AppTextStyle.textStyleBold),
-                      const Text('Подписчики', style: AppTextStyle.textStyleLight),
-                    ],
-                  ),
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(context).push(FollowersPage.route()),
+                    child: Column(
+                      children: [
+                        Text('${user.profile!['followers']}', style: AppTextStyle.textStyleBold),
+                        const Text('Подписчики', style: AppTextStyle.textStyleLight),
+                      ],
+                    )
+                  )
                 ),
                 Padding(
                   padding: _statisticsPadding,
-                  child: Column(
-                    children: [
-                      Text('${user.profile!['following']}', style: AppTextStyle.textStyleBold),
-                      const Text('Подписки', style: AppTextStyle.textStyleLight),
-                    ],
-                  ),
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(context).push(FollowersPage.route()),
+                    child: Column(
+                      children: [
+                        Text('${user.profile!['following']}', style: AppTextStyle.textStyleBold),
+                        const Text('Подписки', style: AppTextStyle.textStyleLight),
+                      ],
+                    )
+                  )
                 ),
               ],
             ),

@@ -89,68 +89,66 @@ class _FeedPageState extends State<FeedPage> {
     final int itemCount = _posts.length + (_vote != null ? 2 : 1);
 
     return Scaffold(
-        appBar: Header.get(context, 'Новости'),
-        bottomNavigationBar: const Footer(FooterNav.news),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-            _showCommentBox.value = false;
-          },
-          child: Stack(
-              children: [
-                ListView.builder(
-                    itemCount: itemCount,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index == 0) {
-                        // отобразить поле ввода поста
-                        return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            Navigator.of(context).push(PostCreateScreen.route());
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: ProfilePicture.medium(),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                      padding: const EdgeInsets.all(10.0),
-                                      decoration: _border(context),
-                                      child: const Text('Что у вас нового?', style: TextStyle(color: Colors.grey))
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                              ],
-                            )
+      appBar: Header.get(context, 'Новости'),
+      bottomNavigationBar: const Footer(FooterNav.news),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+          _showCommentBox.value = false;
+        },
+        child: Stack(
+          children: [
+            ListView.builder(
+              itemCount: itemCount,
+              itemBuilder: (BuildContext context, int index) {
+                if (index == 0) {
+                  // отобразить поле ввода поста
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => Navigator.of(context).push(PostCreateScreen.route()),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: ProfilePicture.medium(),
                           ),
-                        );
-                      }
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(10.0),
+                              decoration: _border(context),
+                              child: const Text('Что у вас нового?', style: TextStyle(color: Colors.grey))
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
+                      )
+                    ),
+                  );
+                }
 
-                      if (_vote != null && index == 1) {
-                        // отображаем карточку голосования
-                        return FeedVote(_vote!);
-                      }
+                if (_vote != null && index == 1) {
+                  // отображаем карточку голосования
+                  return FeedVote(_vote!);
+                }
 
-                      final Post post = _posts[index + (_vote != null ? -2 : -1)];
-                      return FeedPost(post: post, onAddComment: _openCommentBox);
-                    }
-                ),
-                CommentBoxWrapper(
-                  commenter: store.user.value!.toIMPerson(),
-                  textEditingController: _commentTextController,
-                  focusNode: _commentFocusNode,
-                  addComment: _addComment,
-                  showCommentBox: _showCommentBox,
-                )
-              ]
-          )
+                final Post post = _posts[index + (_vote != null ? -2 : -1)];
+                return FeedPost(post: post, onAddComment: _openCommentBox);
+              }
+            ),
+            CommentBoxWrapper(
+              commenter: store.user.value!.toIMPerson(),
+              textEditingController: _commentTextController,
+              focusNode: _commentFocusNode,
+              addComment: _addComment,
+              showCommentBox: _showCommentBox,
+            )
+          ]
         )
+      )
     );
   }
 
