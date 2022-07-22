@@ -71,13 +71,11 @@ class _ProfileTileState extends State<ProfileTile> {
           child: _isLoading
             ? const CircularProgressIndicator(strokeWidth: 3)
             : OutlinedButton(
-              onPressed: () {
-                followOrUnfollowUser(context);
-              },
-            child: _isFollowing
-              ? const Text('Unfollow')
-              : const Text('Follow'),
-          ),
+              onPressed: () => followOrUnfollowUser(context),
+              child: _isFollowing
+                ? const Text('Отписаться')
+                : const Text('Подписаться'),
+            ),
         )
       ],
     );

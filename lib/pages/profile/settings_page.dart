@@ -292,7 +292,7 @@ class _SettingsPage extends State<SettingsPage> {
     store.client.socket.emit('user.saveProfile', data, (String name, dynamic error, dynamic data) {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+          SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
         );
         return;
       }
@@ -300,11 +300,11 @@ class _SettingsPage extends State<SettingsPage> {
         store.user.setPerson(Person.fromMap(data['person']));
         store.user.addResident(Resident.fromMap(data['resident']));
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Успешно сохранили'), backgroundColor: Colors.green)
+          const SnackBar(content: Text('Успешно сохранили'), backgroundColor: Colors.green)
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Сохранить не удалось. Попробуйте сохранить позже'), backgroundColor: Colors.red)
+          const SnackBar(content: Text('Сохранить не удалось. Попробуйте сохранить позже'), backgroundColor: Colors.red)
         );
       }
     });

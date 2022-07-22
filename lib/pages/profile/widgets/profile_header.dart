@@ -46,7 +46,7 @@ class ProfileHeader extends StatelessWidget {
                 Padding(
                   padding: _statisticsPadding,
                   child: GestureDetector(
-                    onTap: () => Navigator.of(context).push(FollowersPage.route()),
+                    onTap: () => Navigator.of(context).push(FollowersPage.route(type: DataType.followers)),
                     child: Column(
                       children: [
                         Text('${user.profile!['followers']}', style: AppTextStyle.textStyleBold),
@@ -58,7 +58,7 @@ class ProfileHeader extends StatelessWidget {
                 Padding(
                   padding: _statisticsPadding,
                   child: GestureDetector(
-                    onTap: () => Navigator.of(context).push(FollowersPage.route()),
+                    onTap: () => Navigator.of(context).push(FollowersPage.route(type: DataType.following)),
                     child: Column(
                       children: [
                         Text('${user.profile!['following']}', style: AppTextStyle.textStyleBold),
