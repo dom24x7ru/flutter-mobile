@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dom24x7_flutter/api/socket_client.dart';
 import 'package:dom24x7_flutter/pages/feed/utils.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/avatar/avatar.dart';
 import 'package:dom24x7_flutter/store/main.dart';
@@ -14,36 +17,72 @@ class ChangeProfilePictureButton extends StatefulWidget {
 }
 
 class _ChangeProfilePictureButtonState extends State<ChangeProfilePictureButton> {
+  late SocketClient _client;
   final _picker = ImagePicker();
   bool _isUploadingProfilePicture = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final store = Provider.of<MainStore>(context, listen: false);
+      _client = store.client;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   Future<void> _changePicture() async {
     if (_isUploadingProfilePicture == true) {
       return;
     }
 
-    final pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 800,
-      maxHeight: 800,
-      imageQuality: 70,
-    );
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      await _updateProfilePhoto(pickedFile.path);
+      await _updateProfilePhoto(pickedFile);
     } else {
       context.removeAndShowSnackbar('Картинка не выбрана');
     }
   }
 
-  Future<void> _updateProfilePhoto(String filePath) async {
+  Future<void> _updateProfilePhoto(XFile pickedFile) async {
     setState(() => _isUploadingProfilePicture = true);
 
-    // final imageUrl = await client.images.upload(AttachmentFile(path: filePath));
-    // if (imageUrl == null) {
-    //   debugPrint('Could not upload the image. Not setting profile picture');
-    //   setState(() => _isUploadingProfilePicture = false);
-    //   return;
-    // }
+    final bytes = await pickedFile.readAsBytes();
+    final image = await decodeImageFromList(bytes);
+
+    final data = {
+      'base64': base64Encode(bytes),
+      'name': pickedFile.name,
+      'size': bytes.length,
+      'width': image.width,
+      'height': image.height
+    };
+
+    _client.socket.emit('file.upload', data, (String name, dynamic error, dynamic data) {
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        setState(() => _isUploadingProfilePicture = false);
+        return;
+      }
+      if (data == null || data['status'] != 'OK') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Произошла неизвестная ошибка. Попробуйте позже...'), backgroundColor: Colors.red)
+        );
+        setState(() => _isUploadingProfilePicture = false);
+        return;
+      }
+
+      // TODO: теперь можем обновить аватар пользователя
+      // data['file']['link']
+      setState(() => _isUploadingProfilePicture = false);
+    });
+
     // // Get resized images using the Stream Feed client.
     // final results = await Future.wait([
     //   client.images.getResized(imageUrl, const Resize(500, 500)),
