@@ -14,7 +14,6 @@ class FollowersPage extends StatefulWidget {
 
   final DataType type;
 
-  /// MaterialPageRoute to this screen.
   static Route route({ required DataType type }) =>
       MaterialPageRoute(builder: (context) => FollowersPage(type: type));
 
@@ -25,17 +24,18 @@ class FollowersPage extends StatefulWidget {
 class _FollowersPageState extends State<FollowersPage> {
   late SocketClient _client;
   late List<IMPerson> _persons;
+  late List<IMPerson> _following;
 
   @override
   void initState() {
     super.initState();
     setState(() => _persons = []);
+    setState(() => _following = []);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
 
-      print('user.${widget.type.name}');
-      _client.socket.emit('user.${widget.type.name}', {}, (String name, dynamic error, dynamic data) {
+      _client.socket.emit('social.${widget.type.name}', {}, (String name, dynamic error, dynamic data) {
         if (error != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
@@ -44,11 +44,36 @@ class _FollowersPageState extends State<FollowersPage> {
         }
         if (data != null && data['status'] == 'OK') {
           for (var personMap in data[widget.type.name]) {
-            setState(() => _persons.add(IMPerson.fromMap(personMap)));
+            final person = IMPerson.fromMap(personMap);
+            setState(() => _persons.add(person));
+            if (widget.type == DataType.following) {
+              setState(() => _following.add(person));
+            }
           }
         }
       });
+
+      if (widget.type == DataType.followers) {
+        _client.socket.emit('social.following', {}, (String name, dynamic error, dynamic data) {
+          if (error != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+            );
+            return;
+          }
+          if (data != null && data['status'] == 'OK') {
+            for (var personMap in data['following']) {
+              final person = IMPerson.fromMap(personMap);
+              setState(() => _following.add(person));
+            }
+          }
+        });
+      }
     });
+  }
+
+  bool _isFollowing(IMPerson user) {
+    return _following.where((item) => item.person.id == user.person.id).isNotEmpty;
   }
 
   @override
@@ -59,7 +84,8 @@ class _FollowersPageState extends State<FollowersPage> {
       body: ListView.builder(
         itemCount: _persons.length,
         itemBuilder: (BuildContext context, int index) {
-          return UserProfile(user: _persons[index]);
+          final person = _persons[index];
+          return UserProfile(user: person, isFollowing: _isFollowing(person));
         }
       )
     );

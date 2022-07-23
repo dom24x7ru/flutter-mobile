@@ -1,8 +1,11 @@
 import 'package:dom24x7_flutter/models/user/im_person.dart';
+import 'package:dom24x7_flutter/models/user/user.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/avatar/avatar.dart';
+import 'package:dom24x7_flutter/store/main.dart';
 import 'package:dom24x7_flutter/theme.dart';
 import 'package:dom24x7_flutter/utilities.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileTile extends StatefulWidget {
   const ProfileTile({
@@ -23,28 +26,26 @@ class _ProfileTileState extends State<ProfileTile> {
   late bool _isFollowing = widget.isFollowing;
 
   void followOrUnfollowUser(BuildContext context) {
+    final store = Provider.of<MainStore>(context, listen: false);
+    final data = { 'followingId': widget.user.person.id };
     setState(() => _isLoading = true);
-    if (_isFollowing) {
-      // final bloc = FeedProvider.of(context).bloc;
-      // await bloc.unfollowFeed(unfolloweeId: widget.user.id);
-      _isFollowing = false;
-    } else {
-      // await FeedProvider.of(context)
-      //     .bloc
-      //     .followFeed(followeeId: widget.user.id);
-      _isFollowing = true;
-    }
-    // FeedProvider.of(context)
-    //     .bloc
-    //     .queryEnrichedActivities(
-    //   feedGroup: 'timeline',
-    //   flags: EnrichmentFlags()
-    //     ..withOwnReactions()
-    //     ..withRecentReactions()
-    //     ..withReactionCounts(),
-    // );
+    store.client.socket.emit('social.${_isFollowing ? "unfollow" : "follow"}', data, (String name, dynamic error, dynamic data) {
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+        );
+        return;
+      }
+      if (data == null || data['status'] != 'OK') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Произошла неизвестная ошибка. Попробуйте позже...'), backgroundColor: Colors.red)
+        );
+        return;
+      }
 
-    setState(() => _isLoading = false);
+      _isFollowing = !_isFollowing;
+      setState(() => _isLoading = false);
+    });
   }
 
   @override

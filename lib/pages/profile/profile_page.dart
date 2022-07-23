@@ -4,6 +4,7 @@ import 'package:dom24x7_flutter/models/post/post.dart';
 import 'package:dom24x7_flutter/models/post/reaction.dart';
 import 'package:dom24x7_flutter/models/user/im_person.dart';
 import 'package:dom24x7_flutter/models/user/person.dart';
+import 'package:dom24x7_flutter/models/user/user.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/comment_box_wrapper.dart';
 import 'package:dom24x7_flutter/pages/feed/widgets/post/feed_post.dart';
 import 'package:dom24x7_flutter/pages/profile/widgets/profile_header.dart';
@@ -16,6 +17,8 @@ import 'package:provider/provider.dart';
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
+  static Route route() => MaterialPageRoute(builder: (context) => const ProfilePage());
+
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
@@ -24,7 +27,8 @@ class _ProfilePageState extends State<ProfilePage> {
   List<Post> _posts = [];
   late SocketClient _client;
   final List<dynamic> _listeners = [];
-  late IMPerson _user;
+  late User _user;
+  late IMPerson _person;
 
   final ValueNotifier<bool> _showCommentBox = ValueNotifier(false);
   late TextEditingController _commentTextController;
@@ -40,14 +44,33 @@ class _ProfilePageState extends State<ProfilePage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       final store = Provider.of<MainStore>(context, listen: false);
       _client = store.client;
-      _user = store.user.value!.toIMPerson();
-      final Person person = _user.person;
+      setState(() {
+        _user = store.user.value!;
+        _person = _user.toIMPerson();
+      });
 
-      setState(() => _posts = _getOwnPosts(store.posts.list, person));
+      setState(() => _posts = _getOwnPosts(store.posts.list, _person.person));
       var listener = _client.on('posts', this, (event, cont) {
-        setState(() => _posts = _getOwnPosts(store.posts.list, person));
+        if (!mounted) return;
+        setState(() => _posts = _getOwnPosts(store.posts.list, _person.person));
       });
       _listeners.add(listener);
+
+      _client.initChannel('follow.${_user.id}', false);
+      listener = _client.on('follow', this, (event, cont) {
+        if ((event.eventData as Map)['event'] == 'ready') {
+          return;
+        }
+        final data = (event.eventData as Map)['data'];
+        final user = User.fromMap(data);
+        store.user.setUser(user);
+
+        if (!mounted) return;
+        setState(() {
+          _user = user;
+          _person = _user.toIMPerson();
+        });
+      });
     });
   }
 
@@ -56,6 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
     for (var listener in _listeners) {
       _client.off(listener);
     }
+    _client.closeChannel('follow.${_user.id}');
 
     _commentTextController.dispose();
     _commentFocusNode.dispose();
@@ -66,7 +90,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<MainStore>(context);
-    _user = store.user.value!.toIMPerson();
+    setState(() {
+      _user = store.user.value!;
+      _person = _user.toIMPerson();
+    });
 
     return Scaffold(
       appBar: Header.get(context, 'Профиль'),
@@ -85,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ProfileHeader(numberOfPosts: _posts.length),
+                      ProfileHeader(user: _user, numberOfPosts: _posts.length),
                       const Divider(color: Colors.grey)
                     ]
                   );
@@ -94,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             ),
             CommentBoxWrapper(
-              commenter: _user,
+              commenter: _person,
               textEditingController: _commentTextController,
               focusNode: _commentFocusNode,
               addComment: _addComment,
