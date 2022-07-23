@@ -610,7 +610,7 @@ class _IMMessagesPageState extends State<IMMessagesPage> {
               _client.socket.emit('im.setMute', { 'channelId': widget.channel.id, 'mute': !_mute }, (String name, dynamic error, dynamic data) {
                 if (error != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+                    SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
                   );
                   return;
                 }

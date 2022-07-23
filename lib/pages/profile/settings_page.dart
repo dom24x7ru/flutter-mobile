@@ -318,7 +318,7 @@ class _SettingsPage extends State<SettingsPage> {
     store.client.socket.emit('user.del', {}, (String name, dynamic error, dynamic data) async {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
+          SnackBar(content: Text('${error['code']}: ${error['message']}'), backgroundColor: Colors.red)
         );
         return;
       }
